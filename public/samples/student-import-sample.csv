@@ -1,0 +1,3 @@
+name,email,phone,password,is_active,team_code
+John Doe,john.doe@example.com,9876543210,Password@123,yes,
+Jane Smith,jane.smith@example.com,9876543211,Password@123,yes,ABCD
