@@ -24,7 +24,7 @@ class MediaRepository extends Repository
     public static function storeByRequest(UploadedFile $file, $path, $type = null): Media
     {
         $diskName = MediaStorage::diskName($type);
-        $src = Storage::disk($diskName)->put('/' . trim($path, '/'), $file, 'public');
+        $src = self::putFile($diskName, $path, $file);
 
         return self::create([
             'extension' => $file->extension(),
@@ -43,7 +43,7 @@ class MediaRepository extends Repository
         $fileContents = file_get_contents($filePath);
         $fileName = basename($filePath);
 
-        $src = Storage::disk($diskName)->put('/' . trim($path, '/') . '/' . $fileName, $fileContents, 'public');
+        $src = self::putContents($diskName, trim($path, '/') . '/' . $fileName, $fileContents);
 
         return self::create([
             'extension' => pathinfo($filePath, PATHINFO_EXTENSION),
@@ -57,7 +57,7 @@ class MediaRepository extends Repository
     public static function updateByRequest(UploadedFile $file, Media $media, $path, $type = null): Media
     {
         $diskName = MediaStorage::diskName($type);
-        $src = Storage::disk($diskName)->put('/' . trim($path, '/'), $file, 'public');
+        $src = self::putFile($diskName, $path, $file);
 
         MediaStorage::delete($media);
 
@@ -75,7 +75,7 @@ class MediaRepository extends Repository
     public static function updateOrCreateByRequest(UploadedFile $file, $path, $media = null, $type = null): Media
     {
         $diskName = MediaStorage::diskName($type);
-        $src = Storage::disk($diskName)->put('/' . trim($path, '/'), $file, 'public');
+        $src = self::putFile($diskName, $path, $file);
 
         if ($media) {
             MediaStorage::delete($media);
@@ -92,5 +92,27 @@ class MediaRepository extends Repository
         ]);
 
         return $media;
+    }
+
+    private static function putFile(string $diskName, string $path, UploadedFile $file): string
+    {
+        $src = Storage::disk($diskName)->put('/' . trim($path, '/'), $file, 'public');
+
+        if (! $src) {
+            throw new \RuntimeException("Failed to upload file to [{$diskName}] disk.");
+        }
+
+        return $src;
+    }
+
+    private static function putContents(string $diskName, string $path, string $contents): string
+    {
+        $src = Storage::disk($diskName)->put('/' . trim($path, '/'), $contents, 'public');
+
+        if (! $src) {
+            throw new \RuntimeException("Failed to upload file to [{$diskName}] disk.");
+        }
+
+        return $src;
     }
 }
