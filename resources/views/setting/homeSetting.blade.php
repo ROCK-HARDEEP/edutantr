@@ -43,6 +43,63 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
+                                        <h3 class="m-0 p-0 fw-bold text-primary">{{ __('Frontend Visibility') }}</h3>
+                                        <p class="text-muted mb-0 mt-2">
+                                            {{ __('Enable this to hide the public website and show a coming soon / under construction page instead.') }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="frontend-visibility-toggle bg-light rounded p-3">
+                                            <input type="hidden" name="frontend_coming_soon" value="0">
+                                            <label class="switch switch-primary mb-0">
+                                                <input type="checkbox" class="switch-input" name="frontend_coming_soon"
+                                                    value="1" {{ $setting?->frontend_coming_soon ? 'checked' : '' }}>
+                                                <span class="switch-toggle-slider">
+                                                    <span class="switch-on">
+                                                        <i class="fa fa-check"></i>
+                                                    </span>
+                                                    <span class="switch-off">
+                                                        <i class="fa fa-times"></i>
+                                                    </span>
+                                                    <i></i>
+                                                </span>
+                                                <p class="switch-label text-primary mb-0">
+                                                    {{ __('Show Coming Soon / Under Construction Page') }}
+                                                </p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="comingSoonTitle" class="form-label">{{ __('Coming Soon Title') }}</label>
+                                        <input type="text" class="form-control" id="comingSoonTitle"
+                                            name="coming_soon_title"
+                                            value="{{ old('coming_soon_title', $setting?->coming_soon_title) }}"
+                                            placeholder="{{ __('Under Construction') }}" />
+                                        @error('coming_soon_title')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="comingSoonMessage" class="form-label">{{ __('Coming Soon Message') }}</label>
+                                        <textarea class="form-control" id="comingSoonMessage" name="coming_soon_message"
+                                            rows="3"
+                                            placeholder="{{ __('Our website is currently under development. Please check back soon.') }}">{{ old('coming_soon_message', $setting?->coming_soon_message) }}</textarea>
+                                        @error('coming_soon_message')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
                                         <h3 class="m-0 p-0 fw-bold text-primary">{{ __('Site Logo Settings') }}</h3>
                                     </div>
                                     <div class="col-md-4 border-end mt-auto">
@@ -348,3 +405,146 @@
     </div>
     <!-- ****Body-Section***** -->
 @endsection
+
+@push('styles')
+    <style>
+        .frontend-visibility-toggle .switch {
+            margin-right: .75rem;
+            position: relative;
+            vertical-align: middle;
+            margin-bottom: 0;
+            border-radius: 30rem;
+            cursor: pointer;
+            min-height: 1.35rem;
+            font-size: .9375rem;
+            line-height: 1.4;
+            width: 100% !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .frontend-visibility-toggle .switch-input {
+            opacity: 0;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            z-index: -1;
+        }
+
+        .frontend-visibility-toggle .switch-primary.switch .switch-input:checked~.switch-toggle-slider,
+        .frontend-visibility-toggle .switch-input:checked~.switch-toggle-slider {
+            background: #7367f0;
+            color: #fff;
+            box-shadow: 0 2px 6px 0 rgba(115, 103, 240, .3);
+        }
+
+        .frontend-visibility-toggle .switch .switch-toggle-slider {
+            width: 2.5rem;
+            height: 1.35rem;
+            font-size: .625rem;
+            line-height: 1.35rem;
+            border: 1px solid rgba(0, 0, 0, 0);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .frontend-visibility-toggle .switch-toggle-slider {
+            position: absolute;
+            overflow: hidden;
+            border-radius: 30rem;
+            background: #eaeaec;
+            color: rgba(47, 43, 61, .4);
+            transition-duration: .2s;
+            transition-property: left, right, background, box-shadow;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 0 .25rem 0 rgba(0, 0, 0, .16) inset;
+        }
+
+        .frontend-visibility-toggle .switch-input:checked~.switch-toggle-slider .switch-on {
+            left: 0;
+        }
+
+        .frontend-visibility-toggle .switch .switch-on {
+            padding-left: .25rem;
+            padding-right: 1.1rem;
+        }
+
+        .frontend-visibility-toggle .switch-on {
+            left: -100%;
+        }
+
+        .frontend-visibility-toggle .switch-off,
+        .frontend-visibility-toggle .switch-on {
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            transition-duration: .2s;
+            transition-property: left, right;
+        }
+
+        .frontend-visibility-toggle .switch .switch-toggle-slider i {
+            position: relative;
+            font-size: .9375rem;
+            top: -1.35px;
+        }
+
+        .frontend-visibility-toggle .switch-input:checked~.switch-toggle-slider .switch-off {
+            left: 100%;
+            color: rgba(0, 0, 0, 0);
+        }
+
+        .frontend-visibility-toggle .switch .switch-off {
+            padding-left: 1.1rem;
+            padding-right: .25rem;
+        }
+
+        .frontend-visibility-toggle .switch-off {
+            left: 0;
+        }
+
+        .frontend-visibility-toggle .switch .switch-input~.switch-label {
+            padding-left: 3rem;
+        }
+
+        .frontend-visibility-toggle .switch .switch-label {
+            top: .01875rem;
+        }
+
+        .frontend-visibility-toggle .switch-label {
+            display: inline-block;
+            font-weight: 500;
+            color: #444050;
+            position: relative;
+            cursor: pointer;
+            white-space: normal;
+            word-break: normal;
+        }
+
+        .frontend-visibility-toggle .switch .switch-input:checked~.switch-toggle-slider::after {
+            left: 1.05rem;
+        }
+
+        .frontend-visibility-toggle .switch .switch-toggle-slider::after {
+            margin-left: .25rem;
+            width: 14px;
+            height: 14px;
+        }
+
+        .frontend-visibility-toggle .switch-toggle-slider::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: block;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 0 .0625rem .375rem 0 rgba(47, 43, 61, .1);
+            transition-duration: .2s;
+            transition-property: left, right, background;
+        }
+    </style>
+@endpush

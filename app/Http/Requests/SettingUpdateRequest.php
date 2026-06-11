@@ -41,6 +41,9 @@ class SettingUpdateRequest extends FormRequest
             "hero_title" => "nullable|string|max:255",
             "hero_subtitle" => "nullable|string|max:255",
             "hero_description" => "nullable|string",
+            'frontend_coming_soon' => 'nullable|boolean',
+            'coming_soon_title' => 'nullable|string|max:255',
+            'coming_soon_message' => 'nullable|string|max:1000',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WebAdmin\LoginController;
+use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Org\Auth\RegisterController;
 use App\Http\Controllers\Org\Home\HomeController;
 
@@ -321,10 +322,6 @@ Route::middleware(['auth', 'restrict_sales_counselor'])->group(function () {
 // PUBLIC/FRONTEND ROUTES (Vue.js SPA)
 // ============================================
 // Exclude admin, instructor, organization paths from Vue catch-all
-Route::get('/{any}', function () {
-    $app_setting = [
-        'name' => config('app.name', 'Laravel'),
-        'favicon' => asset('favicon.ico'),
-    ];
-    return view('website', compact('app_setting'));
-})->where('any', '^(?!admin|instructor|organization|organizations|sales).*$');
+Route::get('/', [FrontendController::class, 'spa']);
+Route::get('/{any}', [FrontendController::class, 'spa'])
+    ->where('any', '^(?!admin|instructor|organization|organizations|sales).*$');

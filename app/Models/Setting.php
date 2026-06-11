@@ -14,6 +14,12 @@ class Setting extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'frontend_coming_soon' => 'boolean',
+        'show_banner' => 'boolean',
+        'publish_plan' => 'boolean',
+    ];
+
     public function logo(): BelongsTo
     {
         return $this->belongsTo(Media::class);

@@ -67,7 +67,7 @@ class SettingRepository extends Repository
         ) : $setting->footerBG;
 
 
-        return self::update($setting, [
+        $data = [
             'logo_id' => $logo ? $logo->id : null,
             'footerlogo_id' => $footer ? $footer->id : null,
             'favicon_id' => $favicon ? $favicon->id : null,
@@ -88,6 +88,20 @@ class SettingRepository extends Repository
             'hero_title' => $request->hero_title ?? null,
             'hero_subtitle' => $request->hero_subtitle ?? null,
             'hero_description' => $request->hero_description ?? null,
-        ]);
+        ];
+
+        if ($request->has('frontend_coming_soon')) {
+            $data['frontend_coming_soon'] = $request->boolean('frontend_coming_soon');
+        }
+
+        if ($request->has('coming_soon_title')) {
+            $data['coming_soon_title'] = $request->coming_soon_title;
+        }
+
+        if ($request->has('coming_soon_message')) {
+            $data['coming_soon_message'] = $request->coming_soon_message;
+        }
+
+        return self::update($setting, $data);
     }
 }
