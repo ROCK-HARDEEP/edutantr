@@ -242,6 +242,8 @@
             </div>
         </section>
     </section>
+
+    <LoginModal v-model="showLoginModal" @success="onLoginSuccess" />
 </template>
 
 <style scoped>
@@ -303,8 +305,8 @@
 </style>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
-import Header from "../components/Header.vue";
+import { computed, onMounted, ref, watch } from "vue";
+import LoginModal from "../components/LoginModal.vue";
 import { useMasterStore } from "@/stores/master";
 import { useAuthStore } from "@/stores/auth";
 import { useRoute, useRouter } from "vue-router";
@@ -333,6 +335,21 @@ const teamCodeError = ref("");
 const teamMembers = ref([]);
 const selectedCounselorId = ref("");
 let acceptTerms = ref(false);
+const showLoginModal = ref(false);
+
+const isLoggedIn = computed(() => Boolean(authStore.userData));
+
+const requireLogin = () => {
+    if (!isLoggedIn.value) {
+        showLoginModal.value = true;
+        return false;
+    }
+    return true;
+};
+
+const onLoginSuccess = () => {
+    fetchCourseData();
+};
 
 watch(
     () => discountAmount.value,
@@ -473,6 +490,10 @@ const fetchCourseData = async () => {
 };
 
 const handleButtonClick = () => {
+    if (!requireLogin()) {
+        return;
+    }
+
     if (!selectedClassMode.value) {
         Swal.fire({
             icon: "error",
@@ -587,6 +608,10 @@ const initiateTransaction = async () => {
 };
 
 const freeEnrollment = async () => {
+    if (!requireLogin()) {
+        return;
+    }
+
     if (!selectedClassMode.value) {
         Swal.fire({
             icon: "error",
@@ -609,10 +634,7 @@ const freeEnrollment = async () => {
         });
 
         if (response?.data?.data?.status == "success") {
-            let status = response?.data?.data?.status;
-            router.push(
-                `/enroll_status?status=${status}&course_id=${course_id}`
-            );
+            router.push("/dashboard");
         }
     } catch (error) {
 
@@ -629,6 +651,10 @@ const freeEnrollment = async () => {
 onMounted(async () => {
     await fetchCourseData();
     localStorage.removeItem("handle_course_id");
+
+    if (!isLoggedIn.value) {
+        showLoginModal.value = true;
+    }
 });
 
 const openPaymentPopupWindow = (url, debug = false) => {
@@ -679,16 +705,16 @@ const openPaymentPopupWindow = (url, debug = false) => {
             const currentHost = location.host;
             if (win.location.host === currentHost) {
                 const pathname = win.location.pathname;
-                if (pathname.includes("payment/success")) {
+                if (
+                    pathname.includes("payment/success") ||
+                    pathname === "/dashboard"
+                ) {
                     clearInterval(intervalID);
                     handleWindowClose("success");
                 } else if (pathname.includes("payment/cancel")) {
                     clearInterval(intervalID);
                     handleWindowClose("cancel");
                 } else if (pathname.includes("payment/fail")) {
-                    clearInterval(intervalID);
-                    handleWindowClose("fail");
-                } else {
                     clearInterval(intervalID);
                     handleWindowClose("fail");
                 }

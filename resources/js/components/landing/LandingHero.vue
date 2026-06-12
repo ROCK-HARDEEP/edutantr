@@ -2,19 +2,26 @@
     <section class="landing-hero position-relative" :class="{ 'landing-hero--partners': hasPartnerBg }">
         <!-- Cinematic 5-column partner background (reference layout) -->
         <div v-if="hasPartnerBg" class="hero-bg hero-bg--cinematic">
-            <div class="hero-columns" aria-hidden="true">
-                <div
-                    v-for="(item, index) in partnerTiles"
-                    :key="`hero-col-${index}`"
-                    class="hero-columns__panel"
-                >
-                    <img
-                        :src="item.logo"
-                        :alt="item.name"
-                        class="hero-columns__img"
-                        loading="eager"
-                    />
-                    <div class="hero-columns__shade"></div>
+            <div class="hero-partners-scroll" aria-hidden="true">
+                <div class="hero-partners-track" :style="{ '--partners-duration': `${partnersScrollDuration}s` }">
+                    <div class="hero-partners-strip">
+                        <img
+                            v-for="(item, index) in partners"
+                            :key="`partner-a-${item.id ?? index}`"
+                            :src="item.logo"
+                            :alt="item.name"
+                            loading="eager"
+                        />
+                    </div>
+                    <div class="hero-partners-strip">
+                        <img
+                            v-for="(item, index) in partners"
+                            :key="`partner-b-${item.id ?? index}`"
+                            :src="item.logo"
+                            :alt="item.name"
+                            loading="eager"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -135,12 +142,13 @@
 <style scoped lang="scss">
 .landing-hero {
     margin-bottom: 0;
+    min-height: 100vh;
 }
 
-/* ─── Cinematic partner background (5 portrait columns) ─── */
+/* ─── Cinematic partner background (auto-scrolling logos) ─── */
 .hero-bg--cinematic {
     position: relative;
-    min-height: clamp(520px, 72vh, 720px);
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -149,40 +157,44 @@
     padding: 4rem 1.5rem;
 }
 
-.hero-columns {
+.hero-partners-scroll {
     position: absolute;
     inset: 0;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    overflow: hidden;
     z-index: 0;
 }
 
-.hero-columns__panel {
-    position: relative;
-    overflow: hidden;
-    background: #111;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-
-    &:last-child {
-        border-right: none;
-    }
-}
-
-.hero-columns__img {
-    display: block;
-    width: 100%;
+.hero-partners-track {
+    display: flex;
     height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    filter: grayscale(15%) contrast(1.05);
-    transform: scale(1.02);
+    width: max-content;
+    animation: hero-partners-marquee var(--partners-duration, 36s) linear infinite;
 }
 
-.hero-columns__shade {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.45) 100%);
-    pointer-events: none;
+.hero-partners-strip {
+    display: flex;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.hero-partners-strip img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    flex-shrink: 0;
+    object-fit: cover;
+    filter: grayscale(10%) contrast(1.05);
+}
+
+@keyframes hero-partners-marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .hero-cinematic-overlay {
@@ -282,6 +294,9 @@
 /* ─── Classic hero (fallback) ─── */
 .hero-bg--classic {
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
     overflow: hidden;
     padding: 1.5rem 6rem 2rem;
     background:
@@ -648,18 +663,6 @@
 }
 
 @media (max-width: 575px) {
-    .hero-bg--cinematic {
-        min-height: 520px;
-    }
-
-    .hero-columns {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .hero-columns__panel:nth-child(n + 3) {
-        display: none;
-    }
-
     .hero-actions {
         flex-direction: column;
         align-items: stretch !important;
@@ -695,8 +698,6 @@ import { useMasterStore } from "@/stores/master";
 const { t } = useI18n();
 const authStore = useAuthStore();
 
-const MAX_PARTNERS = 5;
-
 const masterStore = useMasterStore();
 const programs = ref([]);
 const partners = ref([]);
@@ -704,19 +705,9 @@ const activeIndex = ref(0);
 
 const hasPartnerBg = computed(() => partners.value.length > 0);
 
-const partnerTiles = computed(() => {
-    const items = partners.value;
-    if (!items.length) {
-        return [];
-    }
-
-    const tiles = [...items];
-    while (tiles.length < MAX_PARTNERS) {
-        tiles.push(items[tiles.length % items.length]);
-    }
-
-    return tiles.slice(0, MAX_PARTNERS);
-});
+const partnersScrollDuration = computed(() =>
+    Math.max(24, partners.value.length * 6)
+);
 
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
 const isLoggedIn = computed(() => Boolean(authStore.authToken));
@@ -767,7 +758,7 @@ onMounted(async () => {
         );
 
         const companyPartners = logos.filter((item) => item.partner_type === "company");
-        partners.value = (companyPartners.length ? companyPartners : logos).slice(0, MAX_PARTNERS);
+        partners.value = companyPartners.length ? companyPartners : logos;
     } catch (error) {
         console.error("Error fetching landing hero data:", error);
     }

@@ -534,6 +534,12 @@ const openPaymentPopupWindow = (url, debug = false) => {
         if (win && !win.closed) {
             win.close();
         }
+        if (status === "success") {
+            if (window.location.pathname !== "/dashboard") {
+                window.location.href = "/dashboard";
+            }
+            return;
+        }
         if (window.location.pathname !== "/plan_enroll_status") {
             window.location.href = `/plan_enroll_status?status=${status}`;
         }
@@ -552,16 +558,16 @@ const openPaymentPopupWindow = (url, debug = false) => {
             const currentHost = location.host;
             if (win.location.host === currentHost) {
                 const pathname = win.location.pathname;
-                if (pathname.includes("payment/success")) {
+                if (
+                    pathname.includes("payment/success") ||
+                    pathname === "/dashboard"
+                ) {
                     clearInterval(intervalID);
                     handleWindowClose("success");
                 } else if (pathname.includes("payment/cancel")) {
                     clearInterval(intervalID);
                     handleWindowClose("cancel");
                 } else if (pathname.includes("payment/fail")) {
-                    clearInterval(intervalID);
-                    handleWindowClose("fail");
-                } else {
                     clearInterval(intervalID);
                     handleWindowClose("fail");
                 }

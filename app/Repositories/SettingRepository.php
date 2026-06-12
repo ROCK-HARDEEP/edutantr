@@ -66,12 +66,21 @@ class SettingRepository extends Repository
             MediaTypeEnum::IMAGE
         ) : $setting->footerBG;
 
+        $contactOffersImage = $request->hasFile('contact_offers_image') ? MediaRepository::updateOrCreateByRequest(
+            $request->file('contact_offers_image'),
+            'setting/contact_offers',
+            $setting->contactOffersImage,
+            MediaTypeEnum::IMAGE
+        ) : $setting->contactOffersImage;
 
         $data = [
             'logo_id' => $logo ? $logo->id : null,
             'footerlogo_id' => $footer ? $footer->id : null,
             'favicon_id' => $favicon ? $favicon->id : null,
             'scaner_id' => $scaner ? $scaner->id : null,
+            'app_name' => $request->app_name ?? $setting->app_name,
+            'app_currency' => $request->app_currency ?? $setting->app_currency,
+            'app_currency_symbol' => $request->app_currency_symbol ?? $setting->app_currency_symbol,
             'footer_text' => $request->footer_text ?? $setting->footer_text,
             'currency_position' => $request->currency_position ?? $setting->currency_position,
             'footer_contact_number' => $request->footer_contact_number ?? $setting->footer_contact_number,
@@ -88,6 +97,11 @@ class SettingRepository extends Repository
             'hero_title' => $request->hero_title ?? null,
             'hero_subtitle' => $request->hero_subtitle ?? null,
             'hero_description' => $request->hero_description ?? null,
+            'contact_offers_title' => $request->contact_offers_title ?? $setting->contact_offers_title,
+            'contact_offers_description' => $request->contact_offers_description ?? $setting->contact_offers_description,
+            'contact_offers_icon' => $request->contact_offers_icon ?? $setting->contact_offers_icon,
+            'contact_offers_image_id' => $contactOffersImage ? $contactOffersImage->id : $setting->contact_offers_image_id,
+            'head_office_address' => $request->head_office_address ?? $setting->head_office_address,
         ];
 
         if ($request->has('frontend_coming_soon')) {

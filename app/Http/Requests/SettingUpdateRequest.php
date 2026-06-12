@@ -44,6 +44,12 @@ class SettingUpdateRequest extends FormRequest
             'frontend_coming_soon' => 'nullable|boolean',
             'coming_soon_title' => 'nullable|string|max:255',
             'coming_soon_message' => 'nullable|string|max:1000',
+            'contact_offers_title' => 'nullable|string|max:255',
+            'contact_offers_description' => 'nullable|string|max:5000',
+            'contact_offers_icon' => 'nullable|string|max:120',
+            'contact_offers_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'head_office_address' => 'nullable|string|max:2000',
+            'google_map_embed_code' => 'nullable|string|max:5000',
         ];
     }
 

@@ -187,7 +187,7 @@
             </div>
 
             <!-- Heading -->
-            <div class="row justify-content-center text-center mb-5">
+            <!-- <div class="row justify-content-center text-center mb-5">
                 <div class="col-lg-8">
                     <h2 class="fw-bold display-5 text-dark">{{ $t('Our Best Learning Offers') }}</h2>
                     <p class="text-muted lead">
@@ -195,11 +195,11 @@
                     </p>
                     <hr class="w-25 mx-auto border-3 border-primary" />
                 </div>
-            </div>
+            </div>-->
 
             <!-- Feature Cards -->
-            <div class="row g-4">
-                <!-- Card -->
+            <!--<div class="row g-4">
+                
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-primary fs-1 mb-3">
@@ -210,7 +210,6 @@
                     </div>
                 </div>
 
-                <!-- Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-success fs-1 mb-3">
@@ -221,7 +220,6 @@
                     </div>
                 </div>
 
-                <!-- Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-warning fs-1 mb-3">
@@ -232,7 +230,6 @@
                     </div>
                 </div>
 
-                <!-- Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-danger fs-1 mb-3">
@@ -243,7 +240,6 @@
                     </div>
                 </div>
 
-                <!-- Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-info fs-1 mb-3">
@@ -254,7 +250,6 @@
                     </div>
                 </div>
 
-                <!-- Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
                         <div class="text-purple fs-1 mb-3">
@@ -264,7 +259,7 @@
                         <p class="text-muted">{{ $t('Earn officially recognized credentials to boost your career profile.') }}</p>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </div>
     </section>
 

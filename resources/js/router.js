@@ -93,7 +93,6 @@ const router = createRouter({
             component: () => import("./pages/Checkout.vue"),
             meta: {
                 layout: Blank,
-                requiresAuth: true,
             },
         },
         {

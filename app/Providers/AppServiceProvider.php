@@ -34,10 +34,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $setting = SettingRepository::query()->first();
             $app_setting = [
-                'name' => $setting?->name ?? config('app.name', 'Laravel'),
+                'name' => $setting?->app_name ?? config('app.name', 'Laravel'),
                 'favicon' => $setting?->faviconPath ?? asset('assets/images/favicon.ico'),
                 'logo' => $setting?->logoPath ?? asset('assets/images/logo-new.png'),
-                'currency_symbol' => $setting?->currency_symbol ?? '$',
+                'currency_symbol' => $setting?->app_currency_symbol ?? config('app.currency_symbol', '$'),
                 'currency_position' => $setting?->currency_position ?? 'Left',
                 'footer_text' => $setting?->footer_text ?? '© 2026 All Rights Reserved',
             ];

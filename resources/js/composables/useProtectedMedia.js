@@ -62,6 +62,16 @@ export function processEmbedHtml(html) {
     const template = document.createElement("div");
     template.innerHTML = html;
 
+    const video = template.querySelector("video");
+    if (video) {
+        video.classList.add("protected-media-embed__video");
+        video.setAttribute("controls", "");
+        video.setAttribute("playsinline", "");
+        video.setAttribute("controlsList", "nodownload");
+
+        return template.innerHTML;
+    }
+
     const iframe = template.querySelector("iframe");
     if (!iframe) {
         return html;
@@ -156,6 +166,11 @@ export async function attachEmbeddedMediaProtection(container) {
     }
 
     const cleanups = [];
+
+    const videos = container.querySelectorAll("video");
+    for (const video of videos) {
+        cleanups.push(attachNativeMediaProtection(video));
+    }
 
     const iframes = container.querySelectorAll("iframe");
     for (const iframe of iframes) {

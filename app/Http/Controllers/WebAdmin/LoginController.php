@@ -51,7 +51,7 @@ class LoginController extends Controller
 
         $setting = SettingRepository::query()->first();
         $app_setting = [
-            'name' => $setting?->name ?? config('app.name', 'Laravel'),
+            'name' => $setting?->app_name ?? config('app.name', 'Laravel'),
             'favicon' => $setting?->faviconPath ?? asset('assets/images/favicon.ico'),
             'logo' => $setting?->logoPath ?? asset('assets/images/logo-new.png'),
         ];
@@ -161,7 +161,7 @@ class LoginController extends Controller
     {
         $setting = SettingRepository::query()->first();
         $app_setting = [
-            'name' => $setting?->name ?? config('app.name', 'Laravel'),
+            'name' => $setting?->app_name ?? config('app.name', 'Laravel'),
             'favicon' => $setting?->faviconPath ?? asset('assets/images/favicon.ico'),
             'logo' => $setting?->logoPath ?? asset('assets/images/logo-new.png'),
         ];

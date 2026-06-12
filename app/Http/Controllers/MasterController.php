@@ -51,15 +51,15 @@ class MasterController extends Controller
 
         return $this->json('Master info found', [
             'master' => [
-                'name' => $organization ? ($setting?->app_name ?? config('app.name')) : config('app.name'),
+                'name' => $setting?->app_name ?? config('app.name'),
                 'mode' => config('app.env'),
                 'version' => config('app.version'),
                 'logo' => $setting?->logoPath ?? asset('assets/images/logo-new.png'),
                 'favicon' => $setting?->faviconPath ?? asset('assets/images/favicon.ico'),
                 'footer' => $setting?->footerPath ?? asset('assets/images/logo-new.png'),
                 'scaner' => $setting?->scanerPath ?? asset('assets/website/scaner/scan.png'),
-                'currency_symbol' => $organization ? ($setting?->app_currency_symbol ?? config('app.currency_symbol')) : config('app.currency_symbol'),
-                'currency' => $organization ? ($setting?->app_currency ?? config('app.currency')) : config('app.currency'),
+                'currency_symbol' => $setting?->app_currency_symbol ?? config('app.currency_symbol'),
+                'currency' => $setting?->app_currency ?? config('app.currency'),
                 'default_language' => config('app.locale'),
                 'minimum_amount' => config('app.minimum_amount'),
                 'currency_position' => $organization ? 'Left' : ($setting?->currency_position ?? 'Left'),
@@ -94,6 +94,11 @@ class MasterController extends Controller
                 'hero_title' => $setting?->hero_title ?? '',
                 'hero_subtitle' => $setting?->hero_subtitle ?? '',
                 'hero_description' => $setting?->hero_description ?? '',
+                'contact_offers_title' => $setting?->contact_offers_title ?? '',
+                'contact_offers_description' => $setting?->contact_offers_description ?? '',
+                'contact_offers_icon' => $setting?->contact_offers_icon ?? '',
+                'contact_offers_image' => $setting?->contactOffersImagePath ?? '',
+                'head_office_address' => $setting?->head_office_address ?? '',
             ],
         ]);
     }

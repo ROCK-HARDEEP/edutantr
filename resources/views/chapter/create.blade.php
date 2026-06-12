@@ -252,11 +252,11 @@
                                                 <div class="col-3 {{ old("contents.$key.video_type") == 'link' ? '' : 'hidden' }}"
                                                     id="linkSection{{ $key }}">
                                                     <div class="">
-                                                        <label for="fileInput" class="form-label">Upload Link (only
-                                                            embed link)</label>
+                                                        <label for="fileInput" class="form-label">Video URL or Embed
+                                                            Link</label>
                                                         <input name="contents[{{ $key }}][link]" type="text"
                                                             class="form-control" value="{{ old("contents.$key.link") }}"
-                                                            placeholder="Enter Youtube Embed Video Links">
+                                                            placeholder="https://www.youtube.com/watch?v=... or iframe embed code">
                                                     </div>
                                                 </div>
 
@@ -394,11 +394,11 @@
                                             <div class="col-3 {{ old("contents.${contentCounter}.video_type") == 'link' ? '' : 'hidden' }}"
                                                 id="linkSection${contentCounter}">
                                                 <div class="">
-                                                    <label for="fileInput" class="form-label">Upload Link (only
-                                                        embed link)</label>
+                                                    <label for="fileInput" class="form-label">Video URL or Embed
+                                                        Link</label>
                                                     <input name="contents[${contentCounter}][link]" type="text"
                                                         class="form-control" value="{{ old("contents.${contentCounter}.link") }}"
-                                                        placeholder="Enter Youtube Embed Video Links">
+                                                        placeholder="https://www.youtube.com/watch?v=... or iframe embed code">
                                                 </div>
                                             </div>
 

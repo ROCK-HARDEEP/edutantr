@@ -3,7 +3,7 @@
         <header class="site-header">
             <Header />
         </header>
-        <main class="flex-grow-1 d-flex flex-column">
+        <main class="flex-grow-1 d-flex flex-column site-main">
             <!-- WhatsApp Support -->
             <div v-if="masterStore?.masterData?.whatsapp_support_number != ''"
                 class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 99;">
@@ -55,9 +55,15 @@ const handleContextMenu = (event) => {
 }
 
 .site-header {
-    flex-shrink: 0;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1040;
+}
+
+.site-main {
+    padding-top: 66px;
 }
 
 .bubble-arrow {

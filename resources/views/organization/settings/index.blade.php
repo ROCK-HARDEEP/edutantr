@@ -326,25 +326,84 @@
                                                 <div class="row">
                                                     <div class="col-md-12 my-3">
                                                         <p class="fw-bold border-bottom border-2 pb-3 text-primary fs-5">
-                                                            {{ __('Google Map Credentials (support only embed code)') }}
+                                                            {{ __('Contact Us Page') }}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-12">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <label for="google_map_embed_code" class="form-label">
-                                                            {{ __('Google Map Embed Code') }}</label>
-                                                        <input type="text" class="form-control"
-                                                            id="google_map_embed_code" name="google_map_embed_code"
-                                                            value="{{ $setting->google_map_embed_code ?? '' }}" />
-                                                        @error('google_map_embed_code')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contact_offers_title" class="form-label">
+                                                    {{ __('Our Best Learning Offers Title') }}
+                                                </label>
+                                                <input type="text" class="form-control" id="contact_offers_title"
+                                                    name="contact_offers_title"
+                                                    value="{{ old('contact_offers_title', $setting->contact_offers_title ?? '') }}" />
+                                                @error('contact_offers_title')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contact_offers_icon" class="form-label">
+                                                    {{ __('Section Icon Class') }}
+                                                </label>
+                                                <input type="text" class="form-control" id="contact_offers_icon"
+                                                    name="contact_offers_icon"
+                                                    value="{{ old('contact_offers_icon', $setting->contact_offers_icon ?? 'bi bi-mortarboard-fill') }}" />
+                                                @error('contact_offers_icon')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label for="contact_offers_description" class="form-label">
+                                                    {{ __('Our Best Learning Offers Description') }}
+                                                </label>
+                                                <textarea class="form-control" id="contact_offers_description"
+                                                    name="contact_offers_description" rows="5">{{ old('contact_offers_description', $setting->contact_offers_description ?? '') }}</textarea>
+                                                @error('contact_offers_description')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contact_offers_image" class="form-label">
+                                                    {{ __('Section Header Image') }}
+                                                </label>
+                                                @if ($setting?->contactOffersImagePath)
+                                                    <div class="mb-2">
+                                                        <img src="{{ $setting->contactOffersImagePath }}" alt="Contact offers"
+                                                            style="max-height: 80px; border-radius: 0.75rem;">
                                                     </div>
-                                                </div>
+                                                @endif
+                                                <input type="file" class="form-control" id="contact_offers_image"
+                                                    name="contact_offers_image" accept="image/*" />
+                                                @error('contact_offers_image')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label for="head_office_address" class="form-label">
+                                                    {{ __('Head Office Address') }}
+                                                </label>
+                                                <textarea class="form-control" id="head_office_address"
+                                                    name="head_office_address" rows="4">{{ old('head_office_address', $setting->head_office_address ?? '') }}</textarea>
+                                                @error('head_office_address')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label for="google_map_embed_code" class="form-label">
+                                                    {{ __('Google Map Embed Code') }}
+                                                </label>
+                                                <textarea class="form-control" id="google_map_embed_code"
+                                                    name="google_map_embed_code" rows="4">{{ old('google_map_embed_code', $setting->google_map_embed_code ?? '') }}</textarea>
+                                                @error('google_map_embed_code')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
 
                                             <div class="col-md-12">

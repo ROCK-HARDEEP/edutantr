@@ -135,6 +135,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
@@ -142,6 +143,7 @@ import CourseVideoPlayer from "@/components/CourseVideoPlayer.vue";
 
 const authStore = useAuthStore();
 const masterStore = useMasterStore();
+const router = useRouter();
 
 let props = defineProps({
     course: Object,
@@ -155,11 +157,17 @@ function playVideo() {
 }
 
 const handleRoute = () => {
-    localStorage.setItem("handle_course_id", props.course.id);
-}
+    router.push("/checkout/" + props.course?.id);
+};
 
-let handleWaring = () => {
-    if (!authStore.userData) {
+const handleWaring = () => {
+    const target = props.course?.check_subscription
+        ? "/dashboard/plan-renewal-history?plan_id=" + props.course?.current_plan_id
+        : props.course?.is_enrolled && !props.course?.check_subscription
+            ? "/play/" + props.course?.id
+            : "/checkout/" + props.course?.id;
+
+    if (!authStore.userData && target.startsWith("/play")) {
         Swal.fire({
             icon: "error",
             title: "Sorry...",
@@ -167,11 +175,13 @@ let handleWaring = () => {
             confirmButtonText: "Go to Login",
         }).then((result) => {
             if (result.isConfirmed) {
-                // Redirect to the login page when the user clicks the button
-                window.location.href = "/login"; // Replace "/login" with your actual login URL
+                window.location.href = "/login";
             }
         });
+        return;
     }
+
+    router.push(target);
 };
 
 

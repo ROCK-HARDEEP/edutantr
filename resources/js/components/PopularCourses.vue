@@ -10,50 +10,25 @@
             </h2>
         </div>
 
-        <div class="category-tabs d-flex justify-content-center flex-wrap gap-2 mb-5">
-            <button
-                @click="categoryId = null"
-                :class="['category-tab', categoryId == null ? 'category-tab--active' : '']"
+        <div v-if="popularCourses.length" class="popular-courses__slider">
+            <swiper
+                :modules="[Navigation, Pagination, Autoplay]"
+                :space-between="20"
+                :breakpoints="swiperBreakpoints"
+                navigation
+                pagination
+                autoplay
+                loop
             >
-                <i v-if="categoryId == null" class="bi bi-check-lg category-tab__check" aria-hidden="true"></i>
-                <i v-else class="bi bi-grid-3x3-gap-fill category-tab__icon" aria-hidden="true"></i>
-                {{ $t('All') }}
-            </button>
-
-            <button
-                v-for="category in featuredCategories"
-                :key="category.id"
-                @click="categoryId = category.id; pageNumber = 1;"
-                :class="['category-tab', category.id == categoryId ? 'category-tab--active' : '']"
-            >
-                <i v-if="category.id == categoryId" class="bi bi-check-lg category-tab__check" aria-hidden="true"></i>
-                <img
-                    v-else-if="category.image"
-                    :src="category.image"
-                    :alt="category.title"
-                    class="category-tab__img"
-                />
-                <i v-else class="bi bi-bookmark-fill category-tab__icon" aria-hidden="true"></i>
-                {{ category.title }}
-            </button>
+                <swiper-slide v-for="course in popularCourses" :key="course.id" class="pb-4">
+                    <CourseCard :course="course" variant="popular" class="course-card-premium" />
+                </swiper-slide>
+            </swiper>
         </div>
 
-        <div class="row g-4">
-            <div v-for="course in popularCourses" :key="course.id" class="col-12 col-md-6 col-lg-4 col-xl-3">
-                <CourseCard :course="course" variant="popular" class="course-card-premium" />
-            </div>
-        </div>
-
-        <div v-if="popularCourses.length == 0" class="empty-state text-center my-5">
+        <div v-else class="empty-state text-center my-5">
             <i class="bi bi-journal-x text-muted display-1 mb-3 d-block"></i>
             <h4 class="fw-semibold text-muted">{{ $t('No courses found') }}</h4>
-        </div>
-
-        <div v-if="totalCourses > popularCourses.length" class="text-center">
-            <button @click="loadMore" class="btn load-more-btn mt-5 px-5 fw-bold">
-                {{ $t('Load More') }}
-                <i class="bi bi-arrow-down-circle ms-2"></i>
-            </button>
         </div>
     </div>
 </template>
@@ -95,69 +70,26 @@
     margin-right: auto;
 }
 
-.category-tabs {
-    max-width: 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start !important;
-    padding-bottom: 0.25rem;
+.popular-courses__slider {
+    :deep(.swiper-button-next),
+    :deep(.swiper-button-prev) {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        color: #f97316;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 
-    @media (min-width: 768px) {
-        flex-wrap: wrap;
-        justify-content: center !important;
-        overflow-x: visible;
+        &::after {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
     }
-}
 
-.category-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.category-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.6rem 1.15rem;
-    border-radius: 12px;
-    border: 1px solid #f0f0f0;
-    background: #fff;
-    color: #374151;
-    font-size: 0.84rem;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: all 0.25s ease;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-
-    &:hover:not(.category-tab--active) {
-        background: #fafafa;
-        border-color: #e5e7eb;
+    :deep(.swiper-pagination-bullet-active) {
+        background: #f97316;
     }
-}
-
-.category-tab--active {
-    background: #ffedd5;
-    border-color: #fed7aa;
-    color: #9a3412;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.12);
-}
-
-.category-tab__check {
-    font-size: 0.95rem;
-    color: #ea580c;
-    font-weight: 700;
-}
-
-.category-tab__icon {
-    font-size: 0.95rem;
-    color: #9ca3af;
-}
-
-.category-tab__img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    border-radius: 4px;
 }
 
 .course-card-premium {
@@ -172,101 +104,47 @@
     opacity: 0.4;
     font-size: 3.5rem;
 }
-
-.load-more-btn {
-    background: #f97316;
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 0.85rem 2.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.28);
-
-    &:hover {
-        background: #ea580c;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 28px rgba(249, 115, 22, 0.38);
-        color: #fff;
-    }
-}
 </style>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import CourseCard from "./CourseCard.vue";
 
-const categoryId = ref(null);
-const pageNumber = ref(1);
-const itemsPerPage = ref(8);
 const popularCourses = ref([]);
-const totalCourses = ref(0);
-const featuredCategories = ref([]);
+
+const swiperBreakpoints = {
+    320: { slidesPerView: 1.15, spaceBetween: 16 },
+    576: { slidesPerView: 2, spaceBetween: 18 },
+    768: { slidesPerView: 2.5, spaceBetween: 20 },
+    992: { slidesPerView: 3, spaceBetween: 22 },
+    1200: { slidesPerView: 4, spaceBetween: 24 },
+};
 
 const fetchPopularCourses = async () => {
     try {
-        const params = {
-            items_per_page: itemsPerPage.value,
-            page_number: pageNumber.value,
-            sort: "view_count",
-            sortDirection: "desc",
-        };
-
-        if (categoryId.value) {
-            params.category_id = categoryId.value;
-        }
-
         const response = await axios.get(`/course/list`, {
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            params,
+            params: {
+                items_per_page: 12,
+                page_number: 1,
+                sort: "view_count",
+                sortDirection: "desc",
+            },
         });
 
-        const courses = response.data.data.courses ?? [];
-
-        if (pageNumber.value === 1) {
-            popularCourses.value = courses;
-        } else {
-            popularCourses.value = [...popularCourses.value, ...courses];
-        }
-        totalCourses.value = response.data.data.total_courses ?? 0;
+        popularCourses.value = response.data.data.courses ?? [];
     } catch (error) {
         console.error("Error fetching courses:", error);
     }
 };
 
-const fetchFeaturedCategories = async () => {
-    try {
-        const response = await axios.get(`/categories`, {
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            params: {
-                is_featured: true,
-                items_per_page: 20,
-                page_number: 1,
-            },
-        });
-        featuredCategories.value = response.data.data.categories;
-    } catch (error) {
-        console.error("Error fetching categories:", error);
-    }
-};
-
-const loadMore = () => {
-    pageNumber.value++;
-    fetchPopularCourses();
-};
-
-watch(categoryId, () => {
-    fetchPopularCourses();
-});
-
 onMounted(() => {
-    fetchFeaturedCategories();
     fetchPopularCourses();
 });
 </script>

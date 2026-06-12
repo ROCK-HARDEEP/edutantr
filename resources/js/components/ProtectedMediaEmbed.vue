@@ -52,7 +52,8 @@ onBeforeUnmount(() => {
     user-select: none;
     -webkit-user-select: none;
 
-    :deep(.protected-media-embed__iframe) {
+    :deep(.protected-media-embed__iframe),
+    :deep(.protected-media-embed__video) {
         display: block;
         width: 100%;
         min-height: 360px;

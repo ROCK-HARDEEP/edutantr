@@ -4,15 +4,7 @@
 
         <LandingHero />
 
-        <WhyChooseUs />
-
         <LandingStatistics />
-
-        <section class="home-section home-section--categories">
-            <div class="container">
-                <FeaturedCategories />
-            </div>
-        </section>
 
         <section class="home-section home-section--courses">
             <div class="container">
@@ -24,19 +16,26 @@
             <MentorsSection />
         </section>
 
-        <section class="home-section home-section--testimonials">
+        <section class="home-section home-section--feedback-why">
             <div class="container">
-                <SectionHeader
-                    :eyebrow="$t('Student Feedback')"
-                    icon="bi bi-chat-quote-fill"
-                    :subtitle="$t('Real stories from learners who transformed their careers with us.')"
-                >
-                    <template #title>
-                        {{ $t('Hear from Our') }}
-                        <span class="accent">{{ $t('Students & Instructors') }}</span>
-                    </template>
-                </SectionHeader>
-                <Testimonials />
+                <div class="row g-4 g-xl-5 align-items-start">
+                    <div class="col-lg-5">
+                        <WhyChooseUs embedded />
+                    </div>
+                    <div class="col-lg-7">
+                        <SectionHeader
+                            :eyebrow="$t('Student Feedback')"
+                            icon="bi bi-chat-quote-fill"
+                            :subtitle="$t('Real stories from learners who transformed their careers with us.')"
+                        >
+                            <template #title>
+                                {{ $t('Hear from Our') }}
+                                <span class="accent">{{ $t('Students & Instructors') }}</span>
+                            </template>
+                        </SectionHeader>
+                        <Testimonials />
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -61,10 +60,6 @@
     padding: 4rem 0;
 }
 
-.home-section--categories {
-    background: #f9fafb;
-}
-
 .home-section--courses {
     background:
         radial-gradient(ellipse 75% 55% at 8% 45%, rgba(255, 210, 190, 0.55) 0%, transparent 58%),
@@ -78,12 +73,12 @@
     background: #fff;
 }
 
-.home-section--testimonials {
+.home-section--feedback-why {
     background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f8fafc 100%);
     position: relative;
 }
 
-.home-section--testimonials::before {
+.home-section--feedback-why::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -93,7 +88,7 @@
     pointer-events: none;
 }
 
-.home-section--testimonials .container {
+.home-section--feedback-why .container {
     position: relative;
     z-index: 1;
 }
@@ -120,7 +115,6 @@ import LandingStatistics from "../components/landing/LandingStatistics.vue";
 import SectionHeader from "../components/landing/SectionHeader.vue";
 import WhyChooseUs from "../components/landing/WhyChooseUs.vue";
 import LandingCTA from "../components/landing/LandingCTA.vue";
-import FeaturedCategories from "../components/FeaturedCategories.vue";
 import FAQ from "../components/FAQ.vue";
 import Testimonials from "../components/Testimonials.vue";
 import PopularCourses from "../components/PopularCourses.vue";

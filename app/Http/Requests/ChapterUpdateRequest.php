@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\VideoEmbed;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChapterUpdateRequest extends FormRequest
@@ -32,7 +33,11 @@ class ChapterUpdateRequest extends FormRequest
             'contents.*.is_free' => '',
             'contents.*.link' => [
                 'nullable',
-                'regex:/^<iframe\s+.*?src=["\']https?:\/\/[^\s"\'<>]+["\'].*?><\/iframe>$/',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (! VideoEmbed::isValid(is_string($value) ? $value : null)) {
+                        $fail('The link must be a valid video URL or iframe embed code.');
+                    }
+                },
             ],
             'contents.*.duration' => ''
         ];
@@ -56,7 +61,7 @@ class ChapterUpdateRequest extends FormRequest
             'contents.*.media.mimes' => 'The media file must be one of the following types: jpeg, png, jpg, gif, svg, mp4, mpeg, mp3, wav, webm, ogg, raw or pdf.',
             'contents.*.media.max' => 'The media file size must not exceed 1 GB.',
             'contents.*.media.required_without' => 'Please provide either a media file or a valid link for each content item.',
-            'contents.*.link.regex' => 'The link must be a valid iframe containing a video source',
+            'contents.*.link' => 'The link must be a valid video URL or iframe embed code.',
             'contents.*.title.required' => 'Please provide a title for each content item.',
             'contents.*.title.max' => 'The content title can have a maximum of 500 characters.',
             'contents.*.serial_number.required' => 'Please provide a serial number for each content item.',

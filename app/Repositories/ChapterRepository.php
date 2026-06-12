@@ -8,6 +8,7 @@ use App\Http\Requests\ChapterStoreRequest;
 use App\Http\Requests\ChapterUpdateRequest;
 use App\Models\Chapter;
 use App\Models\Content;
+use App\Support\VideoEmbed;
 use Owenoj\LaravelGetId3\GetId3;
 
 class ChapterRepository extends Repository
@@ -59,20 +60,9 @@ class ChapterRepository extends Repository
             }
 
 
-            // customize media link
-            $customWidth = '100%';
-            $customHeight = '450';
-
-            $mediaLink = preg_replace('/\s*title="[^"]*"/', '', $mediaLink);
-
-            // Replace the width and height attributes in the iframe
-            $customizedIframe = preg_replace(
-                ['/width="\d+"/', '/height="\d+"/'], // Match width and height attributes
-                ["width=\"$customWidth\"", "height=\"$customHeight\""], // Replace with custom values
-                $mediaLink
-            );
-
-            $mediaLink = $customizedIframe;
+            if ($mediaLink) {
+                $mediaLink = VideoEmbed::normalize($mediaLink);
+            }
 
             ContentRepository::create([
                 'chapter_id' => $chapter->id,
@@ -130,19 +120,9 @@ class ChapterRepository extends Repository
             }
 
 
-            // Customize media link
-            $customWidth = '100%';
-            $customHeight = '450';
-
-            $mediaLink = preg_replace('/\s*title="[^"]*"/', '', $mediaLink);
-
-            $customizedIframe = preg_replace(
-                ['/width="\d+"/', '/height="\d+"/'],
-                ["width=\"$customWidth\"", "height=\"$customHeight\""],
-                $mediaLink
-            );
-
-            $mediaLink = $customizedIframe;
+            if ($mediaLink) {
+                $mediaLink = VideoEmbed::normalize($mediaLink);
+            }
 
             $contentExists = null;
 

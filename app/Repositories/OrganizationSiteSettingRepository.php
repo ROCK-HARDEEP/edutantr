@@ -43,6 +43,12 @@ class OrganizationSiteSettingRepository extends Repository
             MediaTypeEnum::IMAGE
         ) : null;
 
+        $contactOffersImage = $request->hasFile('contact_offers_image') ? MediaRepository::storeByRequest(
+            $request->file('contact_offers_image'),
+            'setting/contact_offers',
+            MediaTypeEnum::IMAGE
+        ) : null;
+
         return self::create([
             'organization_id' => $organizationId,
             'logo_id' => $logo ? $logo->id : null,
@@ -61,6 +67,11 @@ class OrganizationSiteSettingRepository extends Repository
             'google_map_embed_code' => $request->google_map_embed_code ?? '',
             'whatsapp_support_title' => $request->whatsapp_support_title ?? '',
             'whatsapp_support_number' => $request->whatsapp_support_number ?? '',
+            'contact_offers_title' => $request->contact_offers_title ?? '',
+            'contact_offers_description' => $request->contact_offers_description ?? '',
+            'contact_offers_icon' => $request->contact_offers_icon ?? '',
+            'contact_offers_image_id' => $contactOffersImage?->id,
+            'head_office_address' => $request->head_office_address ?? '',
         ]);
     }
 
@@ -98,6 +109,13 @@ class OrganizationSiteSettingRepository extends Repository
             MediaTypeEnum::IMAGE
         ) : $setting->scaner;
 
+        $contactOffersImage = $request->hasFile('contact_offers_image') ? MediaRepository::updateOrCreateByRequest(
+            $request->file('contact_offers_image'),
+            'setting/contact_offers',
+            $setting->contactOffersImage,
+            MediaTypeEnum::IMAGE
+        ) : $setting->contactOffersImage;
+
         return self::update($setting, [
             'organization_id' => $organizationId,
             'logo_id' => $logo ? $logo->id : $setting->logo_id,
@@ -116,6 +134,11 @@ class OrganizationSiteSettingRepository extends Repository
             'google_map_embed_code' => $request->google_map_embed_code ?? $setting->google_map_embed_code,
             'whatsapp_support_title' => $request->whatsapp_support_title ?? '',
             'whatsapp_support_number' => $request->whatsapp_support_number ?? '',
+            'contact_offers_title' => $request->contact_offers_title ?? $setting->contact_offers_title,
+            'contact_offers_description' => $request->contact_offers_description ?? $setting->contact_offers_description,
+            'contact_offers_icon' => $request->contact_offers_icon ?? $setting->contact_offers_icon,
+            'contact_offers_image_id' => $contactOffersImage ? $contactOffersImage->id : $setting->contact_offers_image_id,
+            'head_office_address' => $request->head_office_address ?? $setting->head_office_address,
         ]);
     }
 }

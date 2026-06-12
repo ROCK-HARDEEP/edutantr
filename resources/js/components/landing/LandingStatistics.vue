@@ -1,51 +1,29 @@
 <template>
     <section class="landing-stats">
-        <div class="colleges-section">
-            <div class="colleges-section__glow colleges-section__glow--left" aria-hidden="true"></div>
-            <div class="colleges-section__glow colleges-section__glow--right" aria-hidden="true"></div>
-
-            <div class="colleges-header text-center">
-                <span class="colleges-eyebrow">
-                    <i class="bi bi-mortarboard-fill me-1"></i>
-                    {{ $t('Academic Network') }}
-                </span>
-                <h3 class="colleges-title fw-bold fs-1 mt-3 mb-2">
-                    {{ $t('Colleges') }}
-                    <span class="colleges-title-accent">{{ $t('Partnered') }}</span>
-                </h3>
-                <p class="colleges-subtitle mb-0">{{ $t('Trusted by leading academic institutions nationwide') }}</p>
-            </div>
-
-            <div class="colleges-slider">
-                <HomeCardSlider :items="colleges" :empty-text="$t('Partner colleges coming soon.')">
-                    <template #default="{ item }">
-                        <div class="college-card h-100">
-                            <div class="college-card-frame">
-                                <div class="college-card-body">
-                                    <div class="college-logo-wrap">
-                                        <img :src="item.logo" :alt="item.name" class="college-logo" />
-                                        <span class="college-badge">
-                                            <i class="bi bi-patch-check-fill"></i>
-                                        </span>
-                                    </div>
-                                    <h4 class="college-name">{{ item.name }}</h4>
-                                    <div v-if="item.location" class="college-location">
-                                        <i class="bi bi-geo-alt-fill"></i>
-                                        <span>{{ item.location }}</span>
-                                    </div>
-                                    <p v-if="item.description" class="college-desc height-meature">{{ item.description }}</p>
-                                    <div class="college-footer">
-                                        <span class="college-trust">
-                                            <i class="bi bi-shield-fill-check"></i>
-                                            {{ $t('Verified Partner') }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </HomeCardSlider>
-            </div>
+        <div class="colleges-banner">
+            <swiper
+                v-if="colleges.length"
+                :modules="[Navigation, Pagination, Autoplay]"
+                :slides-per-view="1"
+                :space-between="0"
+                navigation
+                pagination
+                autoplay
+                loop
+                class="colleges-banner__swiper"
+            >
+                <swiper-slide v-for="college in colleges" :key="college.id">
+                    <img
+                        :src="college.logo"
+                        :alt="college.name"
+                        class="colleges-banner__image"
+                        loading="lazy"
+                    />
+                </swiper-slide>
+            </swiper>
+            <p v-else class="colleges-banner__empty text-center text-muted py-5 mb-0">
+                {{ $t('Partner colleges coming soon.') }}
+            </p>
         </div>
 
         <div class="container landing-stats__container">
@@ -130,72 +108,52 @@
     margin-bottom: 0;
 }
 
-.colleges-section {
-    position: relative;
+.colleges-banner {
     width: 100%;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
     overflow: hidden;
-    background: linear-gradient(135deg, #052e16 0%, #0b3d2e 38%, #14532d 72%, #166534 100%);
+    background: #0f172a;
 }
 
-.colleges-section__glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-
-    &--left {
-        width: 420px;
-        height: 420px;
-        top: -120px;
-        left: -80px;
-        background: rgba(74, 222, 128, 0.22);
-    }
-
-    &--right {
-        width: 380px;
-        height: 380px;
-        bottom: -100px;
-        right: -60px;
-        background: rgba(34, 197, 94, 0.18);
-    }
-}
-
-.colleges-header {
-    position: relative;
-    z-index: 1;
-    padding: 3rem 0 2rem;
-    margin: 0;
-}
-
-.colleges-slider {
-    position: relative;
-    z-index: 1;
+.colleges-banner__swiper {
     width: 100%;
-    padding: 0;
-    margin: 0 0 2.5rem;
+}
 
-    :deep(.text-muted) {
-        color: rgba(255, 255, 255, 0.55) !important;
+.colleges-banner__image {
+    display: block;
+    width: 100%;
+    height: clamp(220px, 32vw, 420px);
+    object-fit: cover;
+}
+
+.colleges-banner__empty {
+    background: #f1f5f9;
+}
+
+.colleges-banner :deep(.swiper-button-next),
+.colleges-banner :deep(.swiper-button-prev) {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #15803d;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+
+    &::after {
+        font-size: 0.95rem;
+        font-weight: 700;
     }
 }
 
-.colleges-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.4rem 1rem;
-    border-radius: 50px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(134, 239, 172, 0.25);
-    color: #86efac;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+.colleges-banner :deep(.swiper-pagination-bullet) {
+    background: rgba(255, 255, 255, 0.45);
+    opacity: 1;
+}
+
+.colleges-banner :deep(.swiper-pagination-bullet-active) {
+    width: 22px;
+    border-radius: 4px;
+    background: #fff;
 }
 
 .placements-eyebrow {
@@ -213,18 +171,8 @@
     text-transform: uppercase;
 }
 
-.colleges-title {
-    color: #fff;
-}
-
 .placements-title {
     color: #0f172a;
-}
-
-.colleges-title-accent {
-    color: #81e5a9;
-    -webkit-text-fill-color: #81e5a9;
-    background: none;
 }
 
 .placements-title-accent {
@@ -232,15 +180,6 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-}
-
-.colleges-subtitle {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 1.05rem;
-    max-width: 540px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
 }
 
 .placements-subtitle {
@@ -274,8 +213,6 @@
     }
 }
 
-.colleges-section :deep(.swiper-button-next),
-.colleges-section :deep(.swiper-button-prev),
 .placements-section :deep(.swiper-button-next),
 .placements-section :deep(.swiper-button-prev) {
     width: 42px;
@@ -298,17 +235,6 @@
     }
 }
 
-.colleges-section :deep(.swiper-pagination-bullet) {
-    background: rgba(255, 255, 255, 0.35);
-    opacity: 1;
-}
-
-.colleges-section :deep(.swiper-pagination-bullet-active) {
-    width: 22px;
-    border-radius: 4px;
-    background: #81e5a9;
-}
-
 .placements-section :deep(.swiper-pagination-bullet) {
     background: #cbd5e1;
     opacity: 1;
@@ -318,119 +244,6 @@
     width: 22px;
     border-radius: 4px;
     background: #22c55e;
-}
-
-.college-card {
-    transition: transform 0.3s ease;
-
-    &:hover {
-        transform: translateY(-6px);
-
-        .college-card-frame {
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
-            border-color: rgba(34, 197, 94, 0.25);
-        }
-    }
-}
-
-.college-card-frame {
-    height: 100%;
-    border-radius: 20px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.college-card-body {
-    padding: 1.5rem 1.25rem 1.25rem;
-    text-align: center;
-}
-
-.college-logo-wrap {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1rem;
-}
-
-.college-logo {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #f0fdf4;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
-}
-
-.college-badge {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    color: #fff;
-    font-size: 0.8rem;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35);
-}
-
-.college-name {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 0.5rem;
-    line-height: 1.35;
-}
-
-.college-location {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-bottom: 0.65rem;
-    padding: 0.28rem 0.75rem;
-    border-radius: 50px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-
-    i {
-        color: #22c55e;
-        font-size: 0.75rem;
-    }
-}
-
-.college-desc {
-    font-size: 0.82rem;
-    color: #64748b;
-    margin: 0 0 0.85rem;
-    line-height: 1.55;
-}
-
-.college-footer {
-    padding-top: 0.75rem;
-    border-top: 1px dashed #e2e8f0;
-}
-
-.college-trust {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #15803d;
-
-    i {
-        color: #22c55e;
-    }
 }
 
 .placement-card {
@@ -632,24 +445,7 @@
     }
 }
 
-.height-meature {
-    min-height: 40px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
 @media (max-width: 575px) {
-    .colleges-header {
-        padding: 2.25rem 0 1.5rem;
-    }
-
-    .colleges-slider {
-        margin-bottom: 2rem;
-    }
-
-    .colleges-title,
     .placements-title {
         font-size: 1.75rem !important;
     }
@@ -667,6 +463,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import HomeCardSlider from "./HomeCardSlider.vue";
 
 const colleges = ref([]);

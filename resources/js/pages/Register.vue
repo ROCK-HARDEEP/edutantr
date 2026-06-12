@@ -17,7 +17,7 @@
                             <div class="d-flex p-2 p-md-4">
                                 <div class="my-auto w-100">
                                     <h3 class="fw-bold mb-2">{{ $t('Sign up') }}</h3>
-                                    <span class="text-muted">{{ $t('Boost your skill always and forever') }}.</span>
+                                    <span class="text-muted">{{ $t('Sign in to continue with checkout') }}</span>
 
                                     <form class="my-4" @submit.prevent="registerUser">
                                         <div class="mb-3">
@@ -56,7 +56,7 @@
                                             <input type="text" v-model="collegeName" :class="errors?.college_name
                                                 ? 'is-invalid form-control'
                                                 : 'form-control'
-                                                " :placeholder="$t('College Name')" />
+                                                " :placeholder="$t('College / Institution Name')" />
                                             <p v-if="errors?.college_name" class="my-2 text-danger">
                                                 {{ errors?.college_name[0] }}
                                             </p>

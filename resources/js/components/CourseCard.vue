@@ -39,22 +39,7 @@
                 </div>
             </div>
 
-            <div class="popular-course-card__footer">
-                <div class="popular-course-card__price">
-                    <template v-if="!course?.is_free && !course?.is_enrolled">
-                        <strong>
-                            <span v-if="masterStore?.masterData?.currency_position == 'Left'">
-                                {{ masterStore?.masterData?.currency_symbol }}{{ course.price ?? course.regular_price }}
-                            </span>
-                            <span v-else>
-                                {{ course.price ?? course.regular_price }}{{ masterStore?.masterData?.currency_symbol }}
-                            </span>
-                        </strong>
-                    </template>
-                    <span v-else class="popular-course-card__badge">
-                        {{ course?.is_enrolled ? $t('Enrolled') : $t('Free') }}
-                    </span>
-                </div>
+            <div class="popular-course-card__footer popular-course-card__footer--rating-only">
                 <div class="popular-course-card__rating">
                     <i class="bi bi-star-fill" aria-hidden="true"></i>
                     <strong>{{ course.average_rating }}</strong>
@@ -256,18 +241,10 @@
         background: #f9fafb;
         border-top: 1px solid #f3f4f6;
         margin-top: auto;
-    }
 
-    .popular-course-card__price strong {
-        color: #111827;
-        font-size: 1rem;
-        font-weight: 800;
-    }
-
-    .popular-course-card__badge {
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: #ea580c;
+        &--rating-only {
+            justify-content: center;
+        }
     }
 
     .popular-course-card__rating {

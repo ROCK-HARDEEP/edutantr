@@ -1,11 +1,11 @@
 <template>
-    <section class="why-choose">
-        <div class="why-choose__bg" aria-hidden="true"></div>
-        <div class="why-choose__overlay" aria-hidden="true"></div>
+    <section class="why-choose" :class="{ 'why-choose--embedded': embedded }">
+        <div v-if="!embedded" class="why-choose__bg" aria-hidden="true"></div>
+        <div v-if="!embedded" class="why-choose__overlay" aria-hidden="true"></div>
 
-        <div class="container position-relative">
+        <div :class="embedded ? 'position-relative' : 'container position-relative'">
             <div class="row align-items-center g-4 g-lg-5">
-                <div class="col-lg-6">
+                <div :class="embedded ? 'col-12' : 'col-lg-6'">
                     <span class="why-badge">
                         <i class="bi bi-building"></i>
                         {{ $t('Why Choose Us') }}
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-6">
+                <div v-if="!embedded" class="col-lg-6">
                     <div class="why-visual">
                         <div class="why-visual-frame">
                             <img
@@ -105,6 +105,12 @@
     position: relative;
     padding: 5rem 4.5rem;
     overflow: hidden;
+}
+
+.why-choose--embedded {
+    padding: 0;
+    overflow: visible;
+    height: 100%;
 }
 
 .why-choose__bg {
@@ -450,6 +456,10 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMasterStore } from "@/stores/master";
+
+defineProps({
+    embedded: { type: Boolean, default: false },
+});
 
 const { t } = useI18n();
 const masterStore = useMasterStore();

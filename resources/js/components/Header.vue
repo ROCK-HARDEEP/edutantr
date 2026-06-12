@@ -1,6 +1,6 @@
 <template>
     <nav
-        class="navbar navbar-expand-lg sticky-top navbar-modern"
+        class="navbar navbar-expand-lg navbar-modern"
         :class="{ 'navbar-modern--scrolled': isScrolled }"
     >
         <div class="container navbar-modern__inner">
@@ -37,15 +37,6 @@
                     </li>
                     <li class="nav-item">
                         <router-link
-                            to="/college-mou-gallery"
-                            :class="['nav-link nav-pill', $route.path.startsWith('/college-mou-gallery') ? 'active' : '']"
-                        >
-                            <i class="bi bi-images"></i>
-                            {{ $t('MOU & Gallery') }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link
                             to="/careers"
                             :class="['nav-link nav-pill', $route.path.startsWith('/careers') ? 'active' : '']"
                         >
@@ -77,7 +68,7 @@
                     >
                         <router-link to="/login" class="login-btn">
                             <i class="bi bi-box-arrow-in-right"></i>
-                            {{ $t('Login') }}
+                            {{ $t('Student Login') }}
                         </router-link>
                     </li>
                     <li

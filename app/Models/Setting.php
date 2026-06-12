@@ -103,4 +103,18 @@ class Setting extends Model
             get: fn () => MediaStorage::urlOrDefault($this->scaner, asset('assets/website/scaner/scan.png')),
         );
     }
+
+    public function contactOffersImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'contact_offers_image_id');
+    }
+
+    public function contactOffersImagePath(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->contactOffersImage
+                ? MediaStorage::urlOrDefault($this->contactOffersImage, '')
+                : '',
+        );
+    }
 }
