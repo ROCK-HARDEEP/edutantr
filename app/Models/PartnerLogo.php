@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use App\Models\Scopes\OrganizationScope;
+use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 
 class PartnerLogo extends Model
 {
@@ -28,12 +28,8 @@ class PartnerLogo extends Model
 
     public function mediaPath(): Attribute
     {
-        $media = asset('assets/images/media/hero.png');
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
-        return Attribute::make(get: fn () => $media);
+        return Attribute::make(
+            get: fn () => MediaStorage::urlOrDefault($this->media, asset('assets/images/media/hero.png')),
+        );
     }
 }

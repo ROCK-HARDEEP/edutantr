@@ -22,6 +22,7 @@ class QuizRepository extends Repository
             'duration_per_question' => $request->duration_per_question,
             'mark_per_question' => $request->mark_per_question,
             'course_id' => $request->course_id,
+            'chapter_id' => $request->chapter_id,
         ]);
 
         foreach ($request->questions as $requestQuestion) {
@@ -56,6 +57,7 @@ class QuizRepository extends Repository
             'mark_per_question' => $request->mark_per_question ?? $quiz->mark_per_question,
             'pass_marks' => $request->pass_marks ?? $quiz->pass_marks,
             'course_id' => $request->course_id,
+            'chapter_id' => $request->chapter_id,
         ]);
 
         // Delete removed question

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Instructor extends Model
 {
@@ -73,14 +73,8 @@ class Instructor extends Model
 
     public function signaturePath(): Attribute
     {
-        $signature = asset('enrollment/upload.png');
-
-        if ($this->signature && Storage::exists($this->signature->src)) {
-            $signature = Storage::url($this->signature->src);
-        }
-
         return Attribute::make(
-            get: fn() => $signature,
+            get: fn () => MediaStorage::urlOrDefault($this->signature, asset('enrollment/upload.png')),
         );
     }
 }

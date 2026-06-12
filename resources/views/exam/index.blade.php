@@ -64,6 +64,7 @@
                                         <tr>
                                             <th><strong>#</strong></th>
                                             <th><strong>{{ __('Exam Title') }}</strong></th>
+                                            <th><strong>{{ __('Chapter') }}</strong></th>
                                             <th><strong>{{ __('Total Questions') }}</strong></th>
                                             <th><strong>{{ __('Duration') }}</strong></th>
                                             <th><strong>{{ __('Mark Per Question') }}</strong></th>
@@ -82,6 +83,7 @@
                                                         {{ $exam->title }}
                                                     @endif
                                                 </td>
+                                                <td class="tableId">{{ $exam->chapter?->title ?? __('Course level') }}</td>
                                                 <td class="tableId">{{ $exam->questions->count() }}</td>
                                                 <td class="tableId">{{ $exam->duration }}</td>
                                                 <td class="tableId">{{ $exam->mark_per_question }}</td>

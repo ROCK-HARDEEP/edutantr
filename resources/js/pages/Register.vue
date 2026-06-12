@@ -11,9 +11,8 @@
                             RazinSoft &copy;{{ new Date().getFullYear() }}
                         </div>
                         <div class="card-body" :class="masterStore?.masterData?.mode == 'local' ? 'pb-5' : 'pb-0'">
-                            <div class="text-start logo-img mb-2">
-                                <router-link to="/"><img :src="masterStore?.masterData?.logo" class="object-fit-cover"
-                                        alt="Login" /></router-link>
+                            <div class="logo-img mb-2">
+                                <BrandLogo to="/" centered size="lg" />
                             </div>
                             <div class="d-flex p-2 p-md-4">
                                 <div class="my-auto w-100">
@@ -53,6 +52,15 @@
                                             </div>
                                         </div>
 
+                                        <div class="mb-3">
+                                            <input type="text" v-model="collegeName" :class="errors?.college_name
+                                                ? 'is-invalid form-control'
+                                                : 'form-control'
+                                                " :placeholder="$t('College Name')" />
+                                            <p v-if="errors?.college_name" class="my-2 text-danger">
+                                                {{ errors?.college_name[0] }}
+                                            </p>
+                                        </div>
 
                                         <div class="d-block d-sm-flex gap-3 align-items-center justify-content-between">
                                             <div class="mb-3 position-relative register-input">
@@ -198,19 +206,6 @@
     background: #F9FBFF;
     padding: 1.5rem 0;
     border-radius: 1rem;
-
-    img {
-        max-width: 250px;
-        max-height: 90px;
-        object-fit: cover;
-    }
-}
-
-@media (max-width: 576px) {
-    .logo-img img {
-        width: 100%;
-        height: auto;
-    }
 }
 
 .loader {
@@ -272,6 +267,7 @@
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
@@ -299,6 +295,7 @@ const terms = () => {
 }
 
 const name = ref("");
+const collegeName = ref("");
 const phone = ref("");
 const email = ref("");
 const password = ref("");
@@ -308,6 +305,9 @@ const teamCode = ref("");
 // Watchers to clear errors when user inputs data
 watch(name, (newValue) => {
     errors.value.name = newValue ? "" : errors.value.name; // Only clear if there's a value
+});
+watch(collegeName, (newValue) => {
+    errors.value.college_name = newValue ? "" : errors.value.college_name;
 });
 watch(phone, (newValue) => {
     errors.value.phone = newValue ? "" : errors.value.phone;
@@ -337,6 +337,7 @@ const registerUser = async () => {
         signUpBtnText.value = "Signing up...";
         const response = await axios.post(`/register`, {
             name: name.value,
+            college_name: collegeName.value,
             phone: phone.value,
             email: email.value,
             password: password.value,

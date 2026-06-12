@@ -15,11 +15,14 @@ class ChapterResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'serial_number' => $this->serial_number,
             'total_duration' => $this->contents->sum('duration'),
             'duration' => $this->contents->sum('duration'),
             'contents' => ContentResource::collection($this->contents),
+            'quizzes' => QuizResource::collection($this->whenLoaded('quizzes')),
+            'exams' => ExamResource::collection($this->whenLoaded('exams')),
         ];
     }
 }

@@ -187,8 +187,7 @@
 
                 <div class="col-12 col-lg-4 ps-0 d-flex flex-column pt-3" v-if="!course?.is_free">
                     <div class="p-2">
-                        <div class="d-flex justify-content-between align-items-center mb-4 px-3">
-                            <h5 class="fw-bold m-0">{{ $t('Payment Method') }}</h5>
+                        <div class="d-flex justify-content-end align-items-center mb-4 px-3">
                             <small class="bg-lightgreen text-success rounded px-2 py-1 text-center">
                                 <i class="ri-shield-check-fill me-1"></i>
                                 {{ $t('100% Secure Payment') }}
@@ -319,7 +318,7 @@ const router = useRouter();
 
 const course_id = route.params.id;
 const selectedClassMode = ref("online");
-const selectedPaymentMethod = ref("stripe");
+const selectedPaymentMethod = ref("");
 
 const course = ref({});
 const discountAmount = ref(0);
@@ -350,9 +349,11 @@ watch(
 );
 
 const selectDefaultPaymentMethod = () => {
-    const methods = masterStore?.masterData?.payment_methods;
-    if (methods?.length === 1) {
-        selectedPaymentMethod.value = methods[0].gateway;
+    const methods = masterStore?.masterData?.payment_methods ?? [];
+    const activeGateways = methods.map((method) => method.gateway);
+
+    if (selectedPaymentMethod.value && !activeGateways.includes(selectedPaymentMethod.value)) {
+        selectedPaymentMethod.value = "";
     }
 };
 
@@ -653,6 +654,12 @@ const openPaymentPopupWindow = (url, debug = false) => {
         if (debug) console.log(`Closing with status: ${status}`);
         if (win && !win.closed) {
             win.close();
+        }
+        if (status === "success") {
+            if (window.location.pathname !== "/dashboard") {
+                window.location.href = "/dashboard";
+            }
+            return;
         }
         if (window.location.pathname !== "/enroll_status") {
             window.location.href = `/enroll_status?status=${status}&course_id=${course_id}`;

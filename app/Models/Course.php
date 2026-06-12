@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Support\MediaStorage;
-use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
 {
@@ -60,14 +59,8 @@ class Course extends Model
 
     public function mediaPath(): Attribute
     {
-        $media = 'https://placehold.co/350x200';
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
         return Attribute::make(
-            get: fn() => $media,
+            get: fn () => MediaStorage::urlOrDefault($this->media, 'https://placehold.co/350x200'),
         );
     }
 

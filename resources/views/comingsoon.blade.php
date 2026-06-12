@@ -7,6 +7,8 @@
     <title>{{ $setting?->coming_soon_title ?? __('Coming Soon') }} | Edutantr</title>
     <link rel="shortcut icon" href="{{ $setting?->faviconPath ?? asset('assets/images/favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
     <style>
         :root {
             --green-dark: #0f4d2a;
@@ -105,17 +107,6 @@
             box-shadow:
                 0 24px 64px rgba(0, 0, 0, 0.18),
                 inset 0 1px 0 rgba(255, 255, 255, 0.35);
-        }
-
-        .brand-logo {
-            display: inline-block;
-            font-size: clamp(2.4rem, 6vw, 3.4rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            margin-bottom: 28px;
-            color: #ffffff;
-            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
 
         .status-pill {
@@ -229,7 +220,7 @@
 
     <div class="coming-soon-wrap">
         <div class="coming-soon-card">
-            <div class="brand-logo">Edutantr</div>
+            <x-brand-logo variant="light" size="lg" centered class="mb-4" />
 
             <div class="status-pill">
                 <span class="status-dot"></span>

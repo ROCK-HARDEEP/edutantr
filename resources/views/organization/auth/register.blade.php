@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!--Responsive--Css-Link -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
 
     <style>
         #togglePassword {
@@ -94,12 +95,7 @@
                     <div class="col-lg-6 my-auto ">
                         <div class="card-body">
                             <div class="text-center mb-5 rounded-4" style="background: #F9FBFF ; padding: 10px 0px;">
-                                @if ($app_setting['logo'])
-                                    <img src="{{ $app_setting['logo'] }}" alt="" width="200">
-                                @else
-                                    <img src="{{ asset('assets/images/org/register/org-register.jpg') }}"
-                                        alt="" width="200">
-                                @endif
+                                <x-brand-logo :href="url('/')" centered size="lg" />
                             </div>
                             <form action="{{ route('org.authentication') }}" method="POST">
                                 @csrf

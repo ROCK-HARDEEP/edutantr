@@ -9,8 +9,7 @@
         <section class="container footer-container">
             <div class="row">
                 <div class="col-md-8 col-lg-4 mb-5 mb-lg-0 mx-0">
-                    <img class="mb-3 object-fit-contain" :src="masterStore?.masterData?.footer" width="150px"
-                        height="60px" />
+                    <BrandLogo to="/" variant="light" class="mb-3" />
                     <p class="small text-light col-xl-8">
                         {{ masterStore?.masterData?.footer_description }}
                     </p>
@@ -180,6 +179,7 @@ footer {
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { useMasterStore } from "@/stores/master";
 import { ref } from "vue";
 import Swal from "sweetalert2";

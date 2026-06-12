@@ -66,6 +66,7 @@
                                         <tr>
                                             <th><strong>#</strong></th>
                                             <th><strong>{{ __('Quiz Title') }}</strong></th>
+                                            <th><strong>{{ __('Chapter') }}</strong></th>
                                             <th><strong>{{ __('Total Questions') }}</strong></th>
                                             <th><strong>{{ __('Duration Per Question') }}</strong></th>
                                             <th><strong>{{ __('Mark Per Question') }}</strong></th>
@@ -83,6 +84,7 @@
                                                         {{ $quiz->title }}
                                                     @endif
                                                 </td>
+                                                <td class="tableId">{{ $quiz->chapter?->title ?? __('Course level') }}</td>
                                                 <td class="tableId">{{ $quiz->questions->count() }}</td>
                                                 <td class="tableId">{{ $quiz->duration_per_question }}</td>
                                                 <td class="tableId">{{ $quiz->mark_per_question }}</td>

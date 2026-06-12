@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Testimonial extends Model
 {
@@ -30,14 +30,8 @@ class Testimonial extends Model
 
     public function mediaPath(): Attribute
     {
-        $media = asset('assets/images/profile/demo-profile.png');
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
         return Attribute::make(
-            get: fn() => $media,
+            get: fn () => MediaStorage::urlOrDefault($this->media, asset('assets/images/profile/demo-profile.png')),
         );
     }
 }

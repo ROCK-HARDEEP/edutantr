@@ -1,9 +1,9 @@
 @extends($layout_path)
 
-@section('title', $app_setting['name'] . ' | ' . __('Admin List'))
+@section('title', $app_setting['name'] . ' | ' . $pageTitle)
 
 @section('header-title')
-    <h3 class="title">{{ __('Administrators') }}</h3>
+    <h3 class="title">{{ $pageTitle }}</h3>
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             <i class="fa-solid fa-layer-group"></i>
-                            {{ __('Administrators') }}
+                            {{ $pageTitle }}
                         </li>
                     </ol>
                 </nav>
@@ -35,10 +35,14 @@
                 <div class="col-md-12">
                     <div class="card mb-5">
                         <div class="card-body">
-                            <div class="d-flex flex-wrap gap-3 justify-content-end mb-4 align-items-center">
-                                <!-- Right Search & Refresh -->
-                                <div class="d-flex flex-column justify-content-end align-items-end contain-width gap-3">
-                                    <form action="{{ route('user.index') }}" method="GET" class="w-100">
+                            <div class="d-flex flex-wrap gap-3 justify-content-between mb-4 align-items-center">
+                                @if (auth()->user()->is_root)
+                                    <a href="{{ $createRoute }}" class="btn btn-shadow btn-outline-primary rounded-pill">
+                                        <i class="fa-solid fa-plus me-1"></i> {{ __('+ New Employee') }}
+                                    </a>
+                                @endif
+                                <div class="d-flex flex-column justify-content-end align-items-end contain-width gap-3 ms-auto">
+                                    <form action="{{ $searchRoute }}" method="GET" class="w-100">
                                         <div class="input-group">
                                             <input type="text" class="form-control rounded ps-4"
                                                 placeholder="🔍 Search ..." name="cat_search"

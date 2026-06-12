@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WebAdmin;
 
 use App\Events\MailSendEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminUserStoreRequest;
 use App\Http\Requests\UserImportRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -11,18 +12,25 @@ use App\Models\User;
 use App\Repositories\AccountActivationRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\VerifyOtpRepository;
+use App\Models\SalesTeam;
+use App\Repositories\CourseRepository;
+use App\Services\StudentAccountService;
 use App\Services\UserImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private StudentAccountService $studentAccountService
+    ) {}
     public function index(Request $request)
     {
-
         $search = $request->cat_search ? strtolower($request->cat_search) : null;
         $organization = app()->bound('currentOrganization') ? app('currentOrganization') : null;
-        $instructor = auth()->user()->instructor ?? null;
+        $authUser = auth()->user();
+        $instructor = $authUser->instructor ?? null;
+        $isPlatformAdmin = $authUser->is_root || ($authUser->is_admin && !$authUser->is_org);
 
         $usersQuery = UserRepository::query()
             ->when($search, function ($query) use ($search) {
@@ -36,11 +44,16 @@ class UserController extends Controller
             ->where('is_root', false)
             ->where('is_org', false)
             ->whereDoesntHave('instructor')
-            ->whereDoesntHave('organization');
+            ->whereDoesntHave('organization')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'sales_counselor');
+            });
 
-        if ($organization && !auth()->user()->hasRole('instructor')) {
+        if ($isPlatformAdmin) {
+            // Root / main admins see every student on the platform.
+        } elseif ($organization && !$authUser->hasRole('instructor')) {
             $usersQuery->where('student_organization_id', $organization->id);
-        } else if ($instructor && auth()->user()->hasRole('instructor')) {
+        } elseif ($instructor && $authUser->hasRole('instructor')) {
             $usersQuery->whereHas('enrollments', function ($q) use ($instructor) {
                 $q->whereHas('course', function ($qc) use ($instructor) {
                     $qc->where('instructor_id', $instructor->id);
@@ -51,6 +64,7 @@ class UserController extends Controller
         }
 
         $users = $usersQuery
+            ->withCount('studentCertificates')
             ->latest('id')
             ->withTrashed()
             ->paginate(25)
@@ -62,10 +76,17 @@ class UserController extends Controller
         ]);
     }
 
-    public function admin()
+    public function admin(Request $request)
     {
+        $search = $request->cat_search ? strtolower($request->cat_search) : null;
 
         $users = UserRepository::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
             ->where('is_admin', true)
             ->where('is_developer', false)
             ->where('is_root', true)
@@ -76,13 +97,29 @@ class UserController extends Controller
 
         return view('user.admin', [
             'users' => $users,
+            'adminType' => 'super',
+            'pageTitle' => __('Super Admin'),
+            'listTitle' => __('Super Admin'),
+            'listRoute' => route('admin.index'),
+            'createRoute' => route('admin.sup-admin.create'),
+            'searchRoute' => route('admin.index'),
         ]);
     }
 
-    public function subAdmin()
+    public function subAdmin(Request $request)
     {
+        $search = $request->cat_search ? strtolower($request->cat_search) : null;
+
         $users = UserRepository::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
             ->where('is_admin', true)
+            ->where('is_developer', false)
+            ->where('is_root', false)
             ->withTrashed()
             ->latest('id')
             ->paginate(10)
@@ -90,12 +127,109 @@ class UserController extends Controller
 
         return view('user.admin', [
             'users' => $users,
+            'adminType' => 'assistant',
+            'pageTitle' => __("Associate Admin's"),
+            'listTitle' => __("Associate Admin's"),
+            'listRoute' => route('admin.assistant.index'),
+            'createRoute' => route('admin.assistant.create'),
+            'searchRoute' => route('admin.assistant.index'),
         ]);
+    }
+
+    public function createSuperAdmin()
+    {
+        abort_unless(auth()->user()->is_root, 403);
+
+        return view('user.create-admin', [
+            'adminType' => 'super',
+            'pageTitle' => __('Create Super Admin'),
+            'listTitle' => __('Super Admin'),
+            'listRoute' => route('admin.index'),
+            'storeRoute' => route('admin.sup-admin.store'),
+        ]);
+    }
+
+    public function createAssistantAdmin()
+    {
+        abort_unless(auth()->user()->is_root, 403);
+
+        return view('user.create-admin', [
+            'adminType' => 'assistant',
+            'pageTitle' => __('Create Associate Admin'),
+            'listTitle' => __("Associate Admin's"),
+            'listRoute' => route('admin.assistant.index'),
+            'storeRoute' => route('admin.assistant.store'),
+        ]);
+    }
+
+    public function storeSuperAdmin(AdminUserStoreRequest $request)
+    {
+        return $this->storeAdminUser($request, isRoot: true);
+    }
+
+    public function storeAssistantAdmin(AdminUserStoreRequest $request)
+    {
+        return $this->storeAdminUser($request, isRoot: false);
+    }
+
+    private function storeAdminUser(AdminUserStoreRequest $request, bool $isRoot)
+    {
+        $newUser = UserRepository::storeByRequest($request);
+
+        $isActive = $request->has('is_active');
+        if ($isActive) {
+            $newUser->update([
+                'email_verified_at' => now(),
+            ]);
+        } else {
+            $this->sendActivationOtp($newUser);
+        }
+
+        $newUser->assignRole('admin');
+        $newUser->update([
+            'is_active' => $isActive,
+            'is_admin' => true,
+            'is_root' => $isRoot,
+        ]);
+
+        $redirectRoute = $isRoot ? 'admin.index' : 'admin.assistant.index';
+
+        return to_route($redirectRoute)->with('success', __('Employee created successfully'));
+    }
+
+    private function sendActivationOtp(User $user): void
+    {
+        $otp = rand(111111, 999999);
+        $token = Str::random(15);
+
+        AccountActivationRepository::create([
+            'user_id' => $user->id,
+            'code' => $otp,
+            'valid_until' => now()->addHour(),
+        ]);
+
+        VerifyOtpRepository::query()->updateOrCreate([
+            'contact' => $user->email,
+        ], [
+            'otp_code' => $otp,
+            'token' => $token,
+        ]);
+
+        $user->update([
+            'email_verified_at' => null,
+        ]);
+
+        try {
+            MailSendEvent::dispatch($otp, $user->email);
+            session()->put('verification_token', $token);
+        } catch (\Exception $e) {
+            //
+        }
     }
 
     public function create()
     {
-        return view('user.create');
+        return view('user.create', $this->studentFormOptions());
     }
 
     public function downloadImportSample(UserImportService $userImportService)
@@ -186,14 +320,20 @@ class UserController extends Controller
             'is_admin' => $isAdmin,
         ]);
 
+        if (!$isAdmin) {
+            $this->studentAccountService->syncFromAdminRequest($newUser, $request);
+        }
+
         return to_route('user.index')->with('success', 'User created');
     }
 
     public function edit(User $user)
     {
-        return view('user.edit', [
-            'user' => $user
-        ]);
+        return view('user.edit', array_merge(
+            ['user' => $user],
+            $this->studentFormOptions(),
+            $this->studentAccountService->formDefaults($user)
+        ));
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -244,7 +384,25 @@ class UserController extends Controller
             }
         }
 
+        if (!$user->is_admin) {
+            $this->studentAccountService->syncFromAdminRequest($user, $request);
+        }
+
         return back()->withSuccess('User updated');
+    }
+
+    private function studentFormOptions(): array
+    {
+        return [
+            'courses' => CourseRepository::query()
+                ->where('is_active', true)
+                ->orderBy('title')
+                ->get(['id', 'title', 'price']),
+            'salesTeams' => SalesTeam::query()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'code']),
+        ];
     }
 
     public function delete(User $user)

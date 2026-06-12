@@ -29,6 +29,7 @@ class StudentRegisterRequest extends FormRequest
             'password' => 'required|confirmed|min:8',
             'profile_picture' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'name' => 'required|string|max:255',
+            'college_name' => 'required|string|max:255',
             'fcm_token' => 'string',
             'team_code' => 'nullable|string|size:4|exists:sales_teams,code',
         ];

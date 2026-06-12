@@ -24,13 +24,6 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-free-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-free" type="button" role="tab" aria-controls="pills-free"
-                                    aria-selected="false">
-                                    {{ $t('Free Trial') }}
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-reviews" type="button" role="tab"
                                     aria-controls="pills-reviews" aria-selected="false">
@@ -50,10 +43,6 @@
                                     aria-labelledby="pills-lessons-tab" tabindex="0">
                                     <CourseLessons :chapters="courseData?.chapters" :courseId="courseData?.course?.id"
                                         :course="courseData?.course" />
-                                </div>
-                                <div class="tab-pane fade" id="pills-free" role="tabpanel"
-                                    aria-labelledby="pills-free-tab" tabindex="0">
-                                    <CourseFree :chapters="courseData?.chapters" :courseId="courseData?.course?.id" />
                                 </div>
                                 <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
                                     aria-labelledby="pills-reviews-tab" tabindex="0">
@@ -109,7 +98,6 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import CourseAbout from "../components/CourseAbout.vue";
 import CourseLessons from "../components/CourseLessons.vue";
-import CourseFree from "../components/CourseFree.vue";
 import CourseMetadata from "../components/CourseMetadata.vue";
 import CoursePreview from "../components/CoursePreview.vue";
 import CourseReviews from "../components/CourseReviews.vue";

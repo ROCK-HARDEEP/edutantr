@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!--Responsive--Css-Link -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
 
 
     <style>
@@ -59,11 +60,7 @@
                     <div class="col-lg-6">
                         <div class="px-4 py-5 m-0">
                             <div class="text-center mb-5 rounded-4" style="background: #F9FBFF ; padding: 16px 0px;">
-                                @if ($app_setting['logo'])
-                                    <img src="{{ $app_setting['logo'] }}" alt="" width="200">
-                                @else
-                                    <img src="{{ asset('assets/images/auth/logo.png') }}" alt="" width="200">
-                                @endif
+                                <x-brand-logo :href="url('/')" centered size="lg" />
                             </div>
                             <form action="{{ route('instructor.authenticate') }}" method="POST">
                                 @csrf

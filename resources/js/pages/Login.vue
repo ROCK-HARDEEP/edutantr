@@ -11,12 +11,15 @@
                             RazinSoft &copy;{{ new Date().getFullYear() }}
                         </div>
                         <div class="card-body" :class="masterStore?.masterData?.mode == 'local' ? 'pb-5' : 'pb-0'">
-                            <div class="text-start logo-img mb-2">
-                                <router-link to="/"><img :src="masterStore?.masterData?.logo" class="object-fit-cover"
-                                        alt="Login" /></router-link>
+                            <div class="logo-img mb-2">
+                                <BrandLogo to="/" centered size="lg" />
                             </div>
                             <div class="d-flex p-2 p-md-4">
                                 <div class="my-auto w-100">
+                                    <router-link to="/" class="btn btn-outline-primary btn-sm rounded-pill home-btn mb-3">
+                                        <FontAwesomeIcon :icon="faArrowLeft" class="me-1" />
+                                        {{ $t('Go to Home Page') }}
+                                    </router-link>
                                     <h3 class="fw-bold mb-3">{{ $t('Login') }}</h3>
                                     <span class="text-muted">{{ $t('Boost your skill always and forever') }}.</span>
 
@@ -108,20 +111,18 @@
     }
 }
 
+.home-btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 .logo-img {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 2rem;
     background: #F9FBFF;
     padding: 1.5rem 0;
     border-radius: 1rem;
-
-    img {
-        max-width: 250px;
-        max-height: 90px;
-        object-fit: cover;
-    }
 }
 
 .loader {
@@ -154,13 +155,6 @@
     }
 }
 
-@media (max-width: 576px) {
-    .logo-img img {
-        width: 100%;
-        height: auto;
-    }
-}
-
 .version-badge {
     position: absolute;
     top: 0px;
@@ -190,6 +184,7 @@
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { onMounted, ref, watch } from "vue";

@@ -8,18 +8,22 @@
         <div class="card">
             <div class="card-body">
                 <section v-if="canView" class="row">
-                    <section class="col-12 col-lg-7 px-2 px-lg-4">
-                        <video class="rounded" v-if="
-                            contentData.type == 'video' &&
-                            contentData.media_id
-                        " :src="contentData?.media" width="100%" ref="videoElement" controls @play="onPlayVideo"
-                            @pause="onPauseVideo"></video>
-                        <div v-if="
-                            contentData.type == 'video' &&
-                            contentData.media_link
-                        ">
-                            <div width="100%" v-html="contentData.media_link"></div>
-                        </div>
+                    <section
+                        class="col-12 col-lg-7 px-2 px-lg-4 protected-lesson-media"
+                        @contextmenu.prevent
+                        @dragstart.prevent
+                    >
+                        <CourseVideoPlayer
+                            v-if="contentData.type == 'video' && contentData.media_id"
+                            :src="contentData?.media"
+                            ref="videoElement"
+                            @play="onPlayVideo"
+                            @pause="onPauseVideo"
+                        />
+                        <ProtectedMediaEmbed
+                            v-if="contentData.type == 'video' && contentData.media_link"
+                            :embed-html="contentData.media_link"
+                        />
                         <div v-if="contentData.type == 'audio'"
                             class="border border-primary text-center px-4 pb-4 pt-5 rounded mb-5">
                             <i class="bi bi-mic display-1 rounded-circle border px-3 text-primary"></i>
@@ -28,8 +32,12 @@
                                     contentData?.file_extension
                                 }}
                             </p>
-                            <audio :src="contentData.media" ref="audioElement" controls @play="onPlayAudio"
-                                @pause="onPauseAudio" class="w-100"></audio>
+                            <ProtectedAudioPlayer
+                                :src="contentData.media"
+                                ref="audioElement"
+                                @play="onPlayAudio"
+                                @pause="onPauseAudio"
+                            />
                         </div>
                         <div v-if="contentData.type == 'image'">
                             <img :src="contentData?.media" width="100%" height="400"
@@ -176,10 +184,18 @@
     font-size: 12px;
     margin: 0;
 }
+
+.protected-lesson-media {
+    user-select: none;
+    -webkit-user-select: none;
+}
 </style>
 
 <script setup>
 import CourseLessons from "../components/CourseLessons.vue";
+import CourseVideoPlayer from "../components/CourseVideoPlayer.vue";
+import ProtectedMediaEmbed from "../components/ProtectedMediaEmbed.vue";
+import ProtectedAudioPlayer from "../components/ProtectedAudioPlayer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
@@ -199,36 +215,28 @@ let quizesData = ref({});
 
 let isPlayingVideo = ref(false);
 let isPlayingAudio = ref(false);
-const videoElement = ref(null); // Reference to the video element
-const audioElement = ref(null); // Reference to the audio element
+const videoElement = ref(null);
+const audioElement = ref(null);
 const subscriptionError = ref(false);
 
-const onPlayVideo = (id) => {
+const onPlayVideo = () => {
     isPlayingVideo.value = true;
-    if (isPlayingVideo.value && videoElement.value) {
-        videoElement.value.play();
-    }
+    videoElement.value?.play();
 };
 
-const onPauseVideo = (id) => {
+const onPauseVideo = () => {
     isPlayingVideo.value = false;
-    if (!isPlayingVideo.value && videoElement.value) {
-        videoElement.value.pause(); // If you have a reference to the video element
-    }
+    videoElement.value?.pause();
 };
 
-const onPlayAudio = (id) => {
+const onPlayAudio = () => {
     isPlayingAudio.value = true;
-    if (isPlayingAudio.value && audioElement.value) {
-        audioElement.value.play();
-    }
+    audioElement.value?.play();
 };
 
-const onPauseAudio = (id) => {
+const onPauseAudio = () => {
     isPlayingAudio.value = false;
-    if (!isPlayingAudio.value && audioElement.value) {
-        audioElement.value.pause();
-    }
+    audioElement.value?.pause();
 };
 
 watch(

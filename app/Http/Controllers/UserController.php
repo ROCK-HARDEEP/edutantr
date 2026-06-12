@@ -125,14 +125,14 @@ class UserController extends Controller
     public function index()
     {
         return $this->json('User data found', [
-            'user' => UserResource::make(auth()->user()),
+            'user' => UserResource::make(Auth::guard('api')->user()),
         ]);
     }
 
     public function update(UserUpdateRequest $request)
     {
         /** @var User */
-        $user = auth()->user();
+        $user = Auth::guard('api')->user();
 
         // Check current password if provided
         if ($request->current_password) {
@@ -145,7 +145,7 @@ class UserController extends Controller
         UserRepository::updateByRequest($request, $user);
 
         // Retrieve the updated user
-        $updatedUser = UserRepository::find(auth()->user()->id);
+        $updatedUser = UserRepository::find($user->id);
 
         // Generate a new JWT token
         $token = JWTAuth::fromUser($updatedUser);

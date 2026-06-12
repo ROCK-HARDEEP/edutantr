@@ -1,7 +1,7 @@
 <div class="tp-sidebar-area tp-navy-blue-bg">
     <div class="tp-deashboard-head position-relative">
         <a href="{{ route('org.dashboard') }}" class="tp-deashboard-logo mb-16">
-            <img src="{{ $app_setting['logo'] ?? 'https://placehold.co/500x120' }}" alt="">
+            <x-brand-logo variant="light" />
         </a>
         <span class="tp-deashboard-close-icon d-md-block d-lg-none">
             <i class="fal fa-times"></i>

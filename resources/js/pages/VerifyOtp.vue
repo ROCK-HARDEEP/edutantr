@@ -3,7 +3,7 @@
         <section class="login-wizard bg-white col-12 col-lg-8 theme-shadow p-4">
             <div class="row">
                 <div class="col-12 col-lg-6 px-5 py-4">
-                    <img :src="'/assets/images/logo-new.png'" class="object-fit-cover" alt="Login" height="50px" />
+                    <BrandLogo to="/" class="mb-3" />
                     <div class="d-flex h-100">
                         <div class="my-auto w-100">
                             <h3 class="fw-bold mb-3">{{ $t('Enter Code') }}</h3>
@@ -34,6 +34,7 @@
     </section>
 </template>
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import axios from "axios";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";

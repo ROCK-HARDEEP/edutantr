@@ -66,14 +66,14 @@ const items = computed(() => {
     if (master.total_courses) {
         messages.push({
             icon: "bi bi-journal-bookmark-fill",
-            text: t("{count}+ courses available to explore.", { count: master.total_courses }),
+            text: t("10+ courses available to explore.", { count: master.total_courses }),
         });
     }
 
     if (master.total_student) {
         messages.push({
             icon: "bi bi-people-fill",
-            text: t("Join {count}+ learners already growing with us.", { count: master.total_student }),
+            text: t("Join 10+ learners already growing with us.", { count: master.total_student }),
         });
     }
 

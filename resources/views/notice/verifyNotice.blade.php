@@ -8,6 +8,8 @@
     <link rel="icon" href="{{ $app_setting['favicon'] }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -175,7 +177,7 @@
 <body>
     <div class="container">
         <div>
-            <img src="{{ $app_setting['logo'] }}" alt="logo" width="200" class="mb-5">
+            <x-brand-logo centered size="lg" class="mb-5" />
         </div>
         <div class="header">
             <h3 class="fw-bolder text-white">{{ __('Action Required') }}: {{ __('Verify Your Email') }}</h3>

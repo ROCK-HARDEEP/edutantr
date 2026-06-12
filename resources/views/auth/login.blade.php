@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!--Responsive--Css-Link -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
 
     <style>
         .version-badge {
@@ -168,22 +169,14 @@
 
                             <!-- Logo -->
                             <div class="text-center mb-4">
-                                @if ($app_setting['logo'])
-                                    <img src="{{ $app_setting['logo'] }}" alt="Logo" class="img-fluid"
-                                        width="180">
-                                @else
-                                    <img src="{{ asset('assets/images/auth/logo.png') }}" alt="Logo"
-                                        class="img-fluid" width="180">
-                                @endif
+                                <x-brand-logo :href="url('/')" centered size="lg" />
                             </div>
 
                             <!-- Register Options -->
                             <div class="register-box p-3 mb-4 rounded-3">
-                                <p class="fw-bold fs-5 mb-1 text-dark">{{ __('Choose Your Path to Join Us') }}!</p>
-                                <p class="text-muted fs-6">
-                                    {{ __('Are you a Student, Instructor or an Organization?') }}</p>
+                                
 
-                                <div class="row g-2 mt-3">
+                                    {{--<div class="row g-2 mt-3">
                                     <div class="col-12 col-md-4">
                                         <a href="/register" target="_blank" class="option-card">
                                             {{ __('Student') }}
@@ -194,13 +187,13 @@
                                             class="option-card">
                                             {{ __('Instructor') }}
                                         </a>
-                                    </div>
+                                    </div>--}}
                                     {{--<div class="col-12 col-md-4">
                                         <a href="{{ route('org.register') }}" target="_blank" class="option-card">
                                             {{ __('Organization') }}
                                         </a>
                                     </div>--}}
-                                </div>
+                                    {{--</div>--}}
                             </div>
 
                             <!-- Login Form -->

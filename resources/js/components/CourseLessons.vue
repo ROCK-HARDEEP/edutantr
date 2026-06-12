@@ -144,6 +144,29 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-if="$route.path.includes('/play') && ((chapter.exams && chapter.exams.length) || (chapter.quizzes && chapter.quizzes.length))"
+                                class="chapter-assessments px-3 pb-3 border-top border-light">
+                                <p class="small text-primary fw-semibold mt-3 mb-2">
+                                    <i class="bi bi-patch-question-fill"></i> {{ $t('Exam & Quiz') }}
+                                </p>
+                                <div v-for="exam in (chapter.exams || [])" :key="'exam-' + exam.id" class="mb-2">
+                                    <button v-if="course?.is_enrolled" type="button"
+                                        class="btn btn-primary btn-sm w-100 text-white"
+                                        @click="startExam(exam.id)">
+                                        <FontAwesomeIcon :icon="faGraduationCap" class="me-1" />
+                                        {{ exam.title }}
+                                    </button>
+                                </div>
+                                <div v-for="quiz in (chapter.quizzes || [])" :key="'quiz-' + quiz.id" class="mb-2">
+                                    <button v-if="course?.is_enrolled" type="button"
+                                        class="btn btn-warning btn-sm w-100 text-white"
+                                        @click="startQuiz(quiz.id)">
+                                        <FontAwesomeIcon :icon="faLightbulb" class="me-1" />
+                                        {{ quiz.title }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,9 +188,9 @@
             </a>
         </div>
 
-        <!-- exam & quiz start section -->
+        <!-- course-level exam & quiz section -->
 
-        <div v-if="$route.path.includes('/play')">
+        <div v-if="$route.path.includes('/play') && ((exams && exams.length) || (quizes && quizes.length))">
             <div class="text-center mt-3" style="cursor: pointer">
                 <p class="text-decoration-none text-primary">
                     <i class="bi bi-patch-question-fill fs-5"></i> {{ $t('Exam & Quiz') }}
@@ -194,8 +217,9 @@
                                         <div v-for="(exam, index) in exams" :key="index">
                                             <button v-if="course?.is_enrolled"
                                                 class="btn btn-primary w-100 text-white my-2"
-                                                @click="startExam(exam.id)">{{ $t('Start') }}
-                                                {{ $t('Exam') }} #{{ index + 1 }}</button>
+                                                @click="startExam(exam.id)">
+                                                {{ exam.title || ($t('Start') + ' ' + $t('Exam') + ' #' + (index + 1)) }}
+                                            </button>
                                         </div>
                                     </div>
                                     <p v-else class="text-muted">{{ $t('No exams available at the moment') }}.</p>
@@ -207,8 +231,9 @@
                                     <div v-if="quizes?.length > 0">
                                         <div v-for="(quiz, index) in quizes" :key="index">
                                             <button v-if="course?.is_enrolled" @click="startQuiz(quiz.id)"
-                                                class="btn btn-warning w-100 text-white my-2">{{ $t('Start') }}
-                                                {{ $t('Quiz') }} #{{ index + 1 }}</button>
+                                                class="btn btn-warning w-100 text-white my-2">
+                                                {{ quiz.title || ($t('Start') + ' ' + $t('Quiz') + ' #' + (index + 1)) }}
+                                            </button>
                                         </div>
                                     </div>
                                     <p v-else class="text-muted">{{ $t('No quizzes available at the moment') }}.</p>

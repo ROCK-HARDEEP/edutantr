@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class QuizStoreRequest extends FormRequest
 {
@@ -26,6 +27,10 @@ class QuizStoreRequest extends FormRequest
             'duration_per_question' => 'required|integer',
             'mark_per_question' => 'required|integer',
             'course_id' => 'required|exists:courses,id',
+            'chapter_id' => [
+                'nullable',
+                Rule::exists('chapters', 'id')->where(fn ($query) => $query->where('course_id', $this->input('course_id'))),
+            ],
 
             'questions' => 'required|array|min:1',
             'questions.*.question_text' => 'required|string|max:500',

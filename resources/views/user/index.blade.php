@@ -153,6 +153,18 @@
                                                                         class="fa-solid fa-pen-to-square me-1 text-warning"></i>
                                                                     <span class="tooltip-text">{{ __('Edit User') }}</span>
                                                                 </a>
+                                                                <button type="button"
+                                                                    class="drop-item tooltip-custom border-0 bg-transparent open-certificate-modal"
+                                                                    data-user-id="{{ $user->id }}"
+                                                                    data-user-name="{{ $user->name }}">
+                                                                    <i class="bi bi-award me-1 text-success"></i>
+                                                                    <span class="tooltip-text">
+                                                                        {{ __('Certificates') }}
+                                                                        @if ($user->student_certificates_count)
+                                                                            ({{ $user->student_certificates_count }})
+                                                                        @endif
+                                                                    </span>
+                                                                </button>
                                                                 @if (!$user->is_admin && !$user->instructor)
                                                                     <a class="drop-item tooltip-custom"
                                                                         href="{{ route('user.edit', $user->id) }}"
@@ -253,6 +265,8 @@
             </div>
         </div>
     </div>
+
+    @include('user.partials.certificate-modal')
 
     @if (session('import_errors') || $errors->has('file'))
         @push('scripts')

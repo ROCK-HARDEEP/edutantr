@@ -48,6 +48,7 @@
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
     <!--Style--Css-Link -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
     <!--Responsive--Css-Link -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 

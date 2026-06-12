@@ -210,6 +210,10 @@
                             </div>
                         </div>
 
+                        @if (!$user->is_admin)
+                            @include('user.partials.student-enrollment-fields')
+                        @endif
+
                         <!-- Permissions -->
                         <div class="mt-5">
                             <h6 class="fw-bold mb-3">{{ __('Permissions') }}</h6>

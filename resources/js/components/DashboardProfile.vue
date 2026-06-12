@@ -46,6 +46,13 @@
                         <p v-if="errors?.email" class="my-1 text-danger">{{ errors?.email[0] }}</p>
                     </div>
 
+                    <div class="col-md-12">
+                        <label class="form-label fs-6">{{ $t('College / Institution Name') }}</label>
+                        <input type="text" class="form-control bg-light border" v-model="form.college_name"
+                            :placeholder="$t('College / Institution Name')" />
+                        <p v-if="errors?.college_name" class="my-1 text-danger">{{ errors?.college_name[0] }}</p>
+                    </div>
+
                     <!-- Password Section -->
                     <div class="col-md-6">
                         <label class="form-label fs-6">{{ $t('Current Password') }}</label>
@@ -94,7 +101,7 @@
 
 <script setup>
 import { useAuthStore } from "@/stores/auth";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Swal from "sweetalert2";
 
 // validation errors
@@ -105,13 +112,33 @@ let current_passwordError = ref("");
 
 // Initialize form data
 const form = ref({
-    name: authStore.userData.name,
-    phone: authStore.userData.phone,
-    email: authStore.userData.email,
+    name: authStore.userData?.name ?? "",
+    phone: authStore.userData?.phone ?? "",
+    email: authStore.userData?.email ?? "",
+    college_name: authStore.userData?.college_name ?? "",
     current_password: null,
     password: null,
     password_confirmation: null,
     profile_picture: null,
+});
+
+const authHeaders = {
+    Accept: "application/json",
+    Authorization: "Bearer " + authStore.authToken,
+};
+
+onMounted(async () => {
+    try {
+        const response = await axios.get("/profile", { headers: authHeaders });
+        const user = response.data.data.user;
+
+        form.value.name = user.name ?? "";
+        form.value.phone = user.phone ?? "";
+        form.value.email = user.email ?? "";
+        form.value.college_name = user.college_name ?? "";
+    } catch (error) {
+        //
+    }
 });
 
 watch(
@@ -139,6 +166,14 @@ watch(
     }
 );
 watch(
+    () => form.value.college_name,
+    (newCollegeName) => {
+        if (newCollegeName) {
+            errors.value.college_name = "";
+        }
+    }
+);
+watch(
     () => form.value.password,
     (newPassword) => {
         if (newPassword) {
@@ -161,6 +196,7 @@ const updateProfile = async () => {
         let formData = new FormData();
         formData.append("name", form.value.name);
         formData.append("phone", form.value.phone);
+        formData.append("college_name", form.value.college_name ?? "");
 
         if (form.value.profile_picture)
             formData.append("profile_picture", form.value.profile_picture);
@@ -181,10 +217,7 @@ const updateProfile = async () => {
 
         // API request to update the profile
         const response = await axios.post(`/profile/update`, formData, {
-            headers: {
-                Accept: "application/json",
-                Authorization: "Bearer " + authStore.authToken,
-            },
+            headers: authHeaders,
         });
 
         // Update user data in state

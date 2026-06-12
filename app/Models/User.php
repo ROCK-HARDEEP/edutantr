@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -67,14 +67,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function profilePicturePath(): Attribute
     {
-        $profilePicture = asset('assets/images/profile/demo-profile.png');
-
-        if ($this->profilePicture && Storage::exists($this->profilePicture->src)) {
-            $profilePicture = Storage::url($this->profilePicture->src);
-        }
-
         return Attribute::make(
-            get: fn() => $profilePicture,
+            get: fn () => MediaStorage::urlOrDefault($this->profilePicture, asset('assets/images/profile/demo-profile.png')),
         );
     }
 
@@ -180,14 +174,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function signaturePath(): Attribute
     {
-        $signature = asset('enrollment/upload.png');
-
-        if ($this->signature && Storage::exists($this->signature->src)) {
-            $signature = Storage::url($this->signature->src);
-        }
-
         return Attribute::make(
-            get: fn() => $signature,
+            get: fn () => MediaStorage::urlOrDefault($this->signature, asset('enrollment/upload.png')),
         );
+    }
+
+    public function studentCertificates(): HasMany
+    {
+        return $this->hasMany(StudentCertificate::class);
     }
 }

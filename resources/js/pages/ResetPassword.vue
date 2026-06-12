@@ -3,7 +3,7 @@
         <section class="login-wizard bg-white col-12 col-lg-8 theme-shadow">
             <div class="row">
                 <div class="col-12 col-lg-6 px-5 py-4">
-                    <img :src="masterStore?.masterData?.logo" class="object-fit-cover" alt="Login" height="50px" />
+                    <BrandLogo to="/" class="mb-3" />
                     <div class="d-flex h-100">
                         <div class="my-auto w-100">
                             <h3 class="fw-bold mb-3">{{ $t('Recover Password') }}</h3>
@@ -45,6 +45,7 @@
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Swal from "sweetalert2";

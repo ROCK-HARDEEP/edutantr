@@ -127,9 +127,18 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        $course = CourseRepository::find($id);
+        $course = CourseRepository::query()
+            ->with([
+                'chapters.contents',
+                'chapters.quizzes.questions',
+                'chapters.exams.questions',
+                'quizzes.questions',
+                'exams.questions',
+                'reviews',
+            ])
+            ->find($id);
 
-        if (!$course->is_active) {
+        if (!$course || !$course->is_active) {
             return $this->json('Course not found', null, 404);
         }
 
@@ -138,14 +147,14 @@ class CourseController extends Controller
             'view_count' => $course->view_count + 1
         ]);
 
-        return $this->json($course ? 'Course found' : 'Course not found',  !$course ? null : [
+        return $this->json('Course found', [
             'course' => CourseResource::make($course),
             'description' => CourseDescriptionResource::collection(collect(json_decode($course->description))),
             'chapters' => ChapterResource::collection($course->chapters),
-            'quizzes' => QuizResource::collection($course->quizzes),
-            'exams' => ExamResource::collection($course->exams),
+            'quizzes' => QuizResource::collection($course->quizzes->whereNull('chapter_id')->values()),
+            'exams' => ExamResource::collection($course->exams->whereNull('chapter_id')->values()),
             'reviews' => ReviewResource::collection($course->reviews),
-        ], $course ? 200 : 404);
+        ], 200);
     }
 
     // public function viewContent(Content $content)

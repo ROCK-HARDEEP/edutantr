@@ -22,6 +22,7 @@ class ExamRepository extends Repository
             'mark_per_question' => $request->mark_per_question,
             'pass_marks' => $request->pass_marks,
             'course_id' => $request->course_id,
+            'chapter_id' => $request->chapter_id,
         ]);
 
         foreach ($request->questions as $requestQuestion) {
@@ -55,6 +56,7 @@ class ExamRepository extends Repository
             'mark_per_question' => $request->mark_per_question ?? $exam->mark_per_question,
             'pass_marks' => $request->pass_marks ?? $exam->pass_marks,
             'course_id' => $request->course_id,
+            'chapter_id' => $request->chapter_id,
         ]);
 
         // Delete removed question

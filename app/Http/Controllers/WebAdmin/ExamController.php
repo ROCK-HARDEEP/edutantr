@@ -50,9 +50,11 @@ class ExamController extends Controller
     {
         $search = $request->cat_search ? strtolower($request->cat_search) : null;
 
-        $exams = ExamRepository::query()->when($search, function ($query) use ($search) {
-            $query->where('title', 'like', '%' . $search . '%');
-        })
+        $exams = ExamRepository::query()
+            ->with('chapter')
+            ->when($search, function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%');
+            })
             ->where('course_id', '=', $course->id)
             ->latest('id')
             ->paginate(8)->withQueryString();
@@ -67,6 +69,7 @@ class ExamController extends Controller
     {
         $user = auth()->user();
         $courses = CourseRepository::query()
+            ->with('chapters')
             ->when($user->hasRole('instructor'), function ($query) use ($user) {
                 $query->where('instructor_id', $user->instructor?->id);
             })
@@ -76,6 +79,13 @@ class ExamController extends Controller
         return view('exam.create', [
             'selectedCourse' => $course,
             'courses' => $courses,
+            'chapters' => $course->chapters,
+            'chaptersByCourse' => $courses->mapWithKeys(fn ($item) => [
+                $item->id => $item->chapters->map(fn ($chapter) => [
+                    'id' => $chapter->id,
+                    'title' => $chapter->title,
+                ])->values(),
+            ]),
         ]);
     }
 
@@ -96,16 +106,23 @@ class ExamController extends Controller
 
         $user = auth()->user();
         $courses = CourseRepository::query()
+            ->with('chapters')
             ->when($user->hasRole('instructor'), function ($query) use ($user) {
                 $query->where('instructor_id', $user->instructor?->id);
             })
             ->latest('id')
             ->get();
 
-
         return view('exam.edit', [
-            'exam' => $exam,
+            'exam' => $exam->load('chapter'),
             'courses' => $courses,
+            'chapters' => $exam->course->chapters,
+            'chaptersByCourse' => $courses->mapWithKeys(fn ($item) => [
+                $item->id => $item->chapters->map(fn ($chapter) => [
+                    'id' => $chapter->id,
+                    'title' => $chapter->title,
+                ])->values(),
+            ]),
         ]);
     }
 

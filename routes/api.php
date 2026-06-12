@@ -150,6 +150,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/certificate/list', [CertificateController::class, 'index']);
     Route::get('/certificate/show/{id}', [CertificateController::class, 'show']);
 
+    Route::get('/student-certificate/list', [App\Http\Controllers\StudentCertificateController::class, 'index']);
+    Route::get('/student-certificate/show/{studentCertificate}', [App\Http\Controllers\StudentCertificateController::class, 'show']);
+
     Route::get('/quiz/start/{quiz}', [QuizController::class, 'start']);
     Route::post('/quiz/submit/{quizSession}', [QuizController::class, 'submit']);
 

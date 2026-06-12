@@ -1,19 +1,22 @@
 <template>
-    <section class="landing-stats py-5">
-        <div class="container">
-            <div class="colleges-section">
-                <div class="colleges-header text-center mb-4 mb-lg-5">
-                    <span class="colleges-eyebrow">
-                        <i class="bi bi-mortarboard-fill me-1"></i>
-                        {{ $t('Academic Network') }}
-                    </span>
-                    <h3 class="colleges-title fw-bold fs-1 mt-3 mb-2">
-                        {{ $t('Colleges') }}
-                        <span class="colleges-title-accent">{{ $t('Partnered') }}</span>
-                    </h3>
-                    <p class="colleges-subtitle mb-0">{{ $t('Trusted by leading academic institutions nationwide') }}</p>
-                </div>
+    <section class="landing-stats">
+        <div class="colleges-section">
+            <div class="colleges-section__glow colleges-section__glow--left" aria-hidden="true"></div>
+            <div class="colleges-section__glow colleges-section__glow--right" aria-hidden="true"></div>
 
+            <div class="colleges-header text-center">
+                <span class="colleges-eyebrow">
+                    <i class="bi bi-mortarboard-fill me-1"></i>
+                    {{ $t('Academic Network') }}
+                </span>
+                <h3 class="colleges-title fw-bold fs-1 mt-3 mb-2">
+                    {{ $t('Colleges') }}
+                    <span class="colleges-title-accent">{{ $t('Partnered') }}</span>
+                </h3>
+                <p class="colleges-subtitle mb-0">{{ $t('Trusted by leading academic institutions nationwide') }}</p>
+            </div>
+
+            <div class="colleges-slider">
                 <HomeCardSlider :items="colleges" :empty-text="$t('Partner colleges coming soon.')">
                     <template #default="{ item }">
                         <div class="college-card h-100">
@@ -43,7 +46,9 @@
                     </template>
                 </HomeCardSlider>
             </div>
+        </div>
 
+        <div class="container landing-stats__container">
             <div v-if="showPlacements" class="placements-section">
                 <div class="placements-header text-center mb-4 mb-lg-5">
                     <span class="placements-eyebrow">
@@ -107,39 +112,92 @@
                 </HomeCardSlider>
             </div>
         </div>
-
-        <PartnerLogosSection attached />
     </section>
 </template>
 
 <style lang="scss" scoped>
 .landing-stats {
     background: #f8fafc;
-    padding-bottom: 0;
+    padding: 0;
 }
 
-.colleges-section,
+.landing-stats__container {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+}
+
 .placements-section {
-    margin-bottom: 3.5rem;
+    margin-bottom: 0;
 }
 
 .colleges-section {
-    padding: 2.5rem 1.5rem 3rem;
-    border-radius: 24px;
-    margin-bottom: 0;
-    background:
-        radial-gradient(ellipse 55% 70% at 0% 50%, rgba(255, 200, 190, 0.45) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 60% at 100% 40%, rgba(180, 230, 210, 0.35) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 50% at 85% 80%, rgba(190, 220, 255, 0.35) 0%, transparent 50%),
-        linear-gradient(180deg, #2cab4d 0%, #f7fff6 100%);
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
     overflow: hidden;
+    background: linear-gradient(135deg, #052e16 0%, #0b3d2e 38%, #14532d 72%, #166534 100%);
 }
 
-.placements-section {
-    margin-bottom: 0;
+.colleges-section__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+
+    &--left {
+        width: 420px;
+        height: 420px;
+        top: -120px;
+        left: -80px;
+        background: rgba(74, 222, 128, 0.22);
+    }
+
+    &--right {
+        width: 380px;
+        height: 380px;
+        bottom: -100px;
+        right: -60px;
+        background: rgba(34, 197, 94, 0.18);
+    }
 }
 
-.colleges-eyebrow,
+.colleges-header {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 0 2rem;
+    margin: 0;
+}
+
+.colleges-slider {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 2.5rem;
+
+    :deep(.text-muted) {
+        color: rgba(255, 255, 255, 0.55) !important;
+    }
+}
+
+.colleges-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(134, 239, 172, 0.25);
+    color: #86efac;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
 .placements-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -155,12 +213,20 @@
     text-transform: uppercase;
 }
 
-.colleges-title,
+.colleges-title {
+    color: #fff;
+}
+
 .placements-title {
     color: #0f172a;
 }
 
-.colleges-title-accent,
+.colleges-title-accent {
+    color: #81e5a9;
+    -webkit-text-fill-color: #81e5a9;
+    background: none;
+}
+
 .placements-title-accent {
     background: linear-gradient(90deg, #15803d, #22c55e, #4ade80);
     -webkit-background-clip: text;
@@ -168,7 +234,15 @@
     -webkit-text-fill-color: transparent;
 }
 
-.colleges-subtitle,
+.colleges-subtitle {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 1.05rem;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
 .placements-subtitle {
     color: #64748b;
     font-size: 1.05rem;
@@ -224,13 +298,22 @@
     }
 }
 
-.colleges-section :deep(.swiper-pagination-bullet),
+.colleges-section :deep(.swiper-pagination-bullet) {
+    background: rgba(255, 255, 255, 0.35);
+    opacity: 1;
+}
+
+.colleges-section :deep(.swiper-pagination-bullet-active) {
+    width: 22px;
+    border-radius: 4px;
+    background: #81e5a9;
+}
+
 .placements-section :deep(.swiper-pagination-bullet) {
     background: #cbd5e1;
     opacity: 1;
 }
 
-.colleges-section :deep(.swiper-pagination-bullet-active),
 .placements-section :deep(.swiper-pagination-bullet-active) {
     width: 22px;
     border-radius: 4px;
@@ -558,6 +641,14 @@
 }
 
 @media (max-width: 575px) {
+    .colleges-header {
+        padding: 2.25rem 0 1.5rem;
+    }
+
+    .colleges-slider {
+        margin-bottom: 2rem;
+    }
+
     .colleges-title,
     .placements-title {
         font-size: 1.75rem !important;
@@ -577,7 +668,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import HomeCardSlider from "./HomeCardSlider.vue";
-import PartnerLogosSection from "./PartnerLogosSection.vue";
 
 const colleges = ref([]);
 const placements = ref([]);

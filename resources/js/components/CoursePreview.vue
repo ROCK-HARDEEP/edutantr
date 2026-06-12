@@ -5,7 +5,11 @@
                 <i class="bi bi-play-fill"></i>
             </span>
         </div>
-        <video v-if="showVideo" :src="course?.video" width="100%" height="100%" controls autoplay></video>
+        <CourseVideoPlayer
+            v-if="showVideo"
+            :src="course?.video"
+            autoplay
+        />
         <div class="p-3 rounded-3 mb-4 theme-shadow" style="background: #F1F5F9;">
             <div class="d-inline-block mb-4 me-2">
                 <span class="bg-white px-2 py-2 text-muted rounded">{{ $t('Lifetime Course Access') }}</span>
@@ -134,6 +138,7 @@ import { onMounted, ref } from "vue";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
+import CourseVideoPlayer from "@/components/CourseVideoPlayer.vue";
 
 const authStore = useAuthStore();
 const masterStore = useMasterStore();

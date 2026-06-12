@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Category extends Model
 {
@@ -29,14 +29,8 @@ class Category extends Model
 
     public function imagePath(): Attribute
     {
-        $image = 'https://placehold.co/512x512';
-
-        if ($this->image && Storage::exists($this->image->src)) {
-            $image = Storage::url($this->image->src);
-        }
-
         return Attribute::make(
-            get: fn() => $image,
+            get: fn () => MediaStorage::urlOrDefault($this->image, 'https://placehold.co/512x512'),
         );
     }
 

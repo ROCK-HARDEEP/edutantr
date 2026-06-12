@@ -12,7 +12,7 @@
 
                         <!-- Logo / Brand -->
                         <div class="mb-4 text-center">
-                            <img :src="masterStore?.masterData?.logo" width="220" height="auto">
+                            <BrandLogo to="/" centered size="lg" />
                         </div>
 
                         <!-- Contact Form -->
@@ -98,6 +98,7 @@
 
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { ref, onMounted } from "vue";
 import Swal from "sweetalert2";
 import { useMasterStore } from "@/stores/master";

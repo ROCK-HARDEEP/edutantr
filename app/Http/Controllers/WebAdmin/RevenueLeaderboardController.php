@@ -27,6 +27,7 @@ class RevenueLeaderboardController extends Controller
             'period' => $period,
             'reportDate' => $reportDate,
             'data' => $data,
+            'displayMode' => $request->boolean('display'),
         ]);
     }
 

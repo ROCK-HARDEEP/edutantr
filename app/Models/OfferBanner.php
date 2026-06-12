@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class OfferBanner extends Model
 {
@@ -31,14 +31,8 @@ class OfferBanner extends Model
 
     public function thumbnail(): Attribute
     {
-        $media = asset('media/demoimage.png');
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
         return Attribute::make(
-            get: fn() => $media,
+            get: fn () => MediaStorage::urlOrDefault($this->media, asset('media/demoimage.png')),
         );
     }
 }

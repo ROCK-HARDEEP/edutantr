@@ -1,6 +1,55 @@
 <template>
-    <section class="landing-hero position-relative">
-        <div class="hero-bg">
+    <section class="landing-hero position-relative" :class="{ 'landing-hero--partners': hasPartnerBg }">
+        <!-- Cinematic 5-column partner background (reference layout) -->
+        <div v-if="hasPartnerBg" class="hero-bg hero-bg--cinematic">
+            <div class="hero-columns" aria-hidden="true">
+                <div
+                    v-for="(item, index) in partnerTiles"
+                    :key="`hero-col-${index}`"
+                    class="hero-columns__panel"
+                >
+                    <img
+                        :src="item.logo"
+                        :alt="item.name"
+                        class="hero-columns__img"
+                        loading="eager"
+                    />
+                    <div class="hero-columns__shade"></div>
+                </div>
+            </div>
+
+            <div class="hero-cinematic-overlay" aria-hidden="true"></div>
+
+            <div class="container hero-content hero-content--cinematic">
+                <div class="hero-cinematic-copy text-center">
+                    <span class="hero-badge hero-badge--light">
+                        {{ $t('Welcome To Online School') }}
+                    </span>
+
+                    <h1 class="hero-heading hero-heading--cinematic">
+                        {{ $t('From beginner to skilled—starting in') }}
+                        <em class="hero-heading-accent">{{ $t('minutes') }}</em>.
+                    </h1>
+
+                    <p class="hero-cinematic-subtitle">
+                        {{ $t('Fueling the Next Generation of Entrepreneurs') }}
+                    </p>
+
+                    <div class="hero-actions hero-actions--center">
+                        <router-link :to="heroPrimaryLink" class="hero-cta-orange">
+                            {{ heroPrimaryLabel }}
+                        </router-link>
+                        <router-link v-if="!isLoggedIn" to="/courses" class="hero-cta-ghost text-decoration-none">
+                            <i class="bi bi-play-circle me-2"></i>
+                            {{ $t('Check Our Courses') }}
+                        </router-link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Default hero (no partners) -->
+        <div v-else class="hero-bg hero-bg--classic">
             <div class="container position-relative hero-content">
                 <div class="row align-items-center g-4 g-lg-5">
                     <div class="col-lg-6 text-center text-lg-start">
@@ -14,8 +63,8 @@
                         </h1>
 
                         <div class="hero-actions d-flex flex-wrap align-items-center gap-3 justify-content-center justify-content-lg-start">
-                            <router-link :to="applyLink" class="hero-btn hero-btn--primary">
-                                <span>{{ $t('Get Started') }}</span>
+                            <router-link :to="heroPrimaryLink" class="hero-btn hero-btn--primary">
+                                <span>{{ heroPrimaryLabel }}</span>
                                 <span class="hero-btn__arrow" aria-hidden="true">
                                     <i class="bi bi-arrow-right"></i>
                                 </span>
@@ -78,8 +127,6 @@
                         </div>
                     </div>
                 </div>
-
-                
             </div>
         </div>
     </section>
@@ -90,10 +137,153 @@
     margin-bottom: 0;
 }
 
-.hero-bg {
+/* ─── Cinematic partner background (5 portrait columns) ─── */
+.hero-bg--cinematic {
+    position: relative;
+    min-height: clamp(520px, 72vh, 720px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #0a0a0a;
+    padding: 4rem 1.5rem;
+}
+
+.hero-columns {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    z-index: 0;
+}
+
+.hero-columns__panel {
     position: relative;
     overflow: hidden;
-    padding: 1.5rem 6rem 0 6rem;
+    background: #111;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.hero-columns__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: grayscale(15%) contrast(1.05);
+    transform: scale(1.02);
+}
+
+.hero-columns__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.45) 100%);
+    pointer-events: none;
+}
+
+.hero-cinematic-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.72) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.65) 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.hero-content--cinematic {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero-cinematic-copy {
+    padding: 1rem 0;
+}
+
+.hero-badge--light {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+}
+
+.hero-heading--cinematic {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-weight: 400;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 820px;
+}
+
+.hero-heading-accent {
+    font-style: italic;
+    color: #f97316;
+    font-weight: 400;
+}
+
+.hero-cinematic-subtitle {
+    margin: 0 auto 2rem;
+    max-width: 520px;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.hero-actions--center {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 1.25rem;
+}
+
+.hero-cta-orange {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 2.25rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 8px 28px rgba(234, 88, 12, 0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(234, 88, 12, 0.55);
+    }
+}
+
+.hero-cta-ghost {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+/* ─── Classic hero (fallback) ─── */
+.hero-bg--classic {
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem 6rem 2rem;
     background:
         radial-gradient(ellipse 55% 70% at 0% 50%, rgba(255, 200, 190, 0.45) 0%, transparent 60%),
         radial-gradient(ellipse 50% 60% at 100% 40%, rgba(180, 230, 210, 0.35) 0%, transparent 55%),
@@ -119,7 +309,7 @@
 }
 
 .hero-heading {
-    color: #111827;
+    color: #81e5a9;
     font-size: clamp(2rem, 4.5vw, 3.25rem);
     line-height: 1.15;
     letter-spacing: -0.02em;
@@ -276,6 +466,7 @@
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
+    animation-name: hero-float-center;
 }
 
 .hero-float-card__avatars {
@@ -289,8 +480,6 @@
     border-radius: 50%;
     border: 2px solid #fff;
     margin-left: -8px;
-    background-size: cover;
-    background-position: center;
 
     &:first-child {
         margin-left: 0;
@@ -415,10 +604,6 @@
     }
 }
 
-.hero-float-card--enroll {
-    animation-name: hero-float-center;
-}
-
 @keyframes hero-float-center {
     0%,
     100% {
@@ -429,18 +614,22 @@
     }
 }
 
-.hero-trust-bar {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    color: #9ca3af;
-    font-size: 0.88rem;
-    font-weight: 500;
-    line-height: 1.5;
-}
-
 @media (max-width: 991px) {
-    .hero-bg {
-        padding: 1.5rem 1.5rem 0;
+    .hero-bg--classic {
+        padding: 1.5rem;
+    }
+
+    .hero-bg--cinematic {
+        min-height: 580px;
+        padding: 3rem 1rem;
+    }
+
+    .hero-columns {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero-columns__panel:nth-child(n + 4) {
+        display: none;
     }
 
     .hero-heading {
@@ -459,14 +648,30 @@
 }
 
 @media (max-width: 575px) {
+    .hero-bg--cinematic {
+        min-height: 520px;
+    }
+
+    .hero-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-columns__panel:nth-child(n + 3) {
+        display: none;
+    }
+
     .hero-actions {
         flex-direction: column;
         align-items: stretch !important;
     }
 
     .hero-btn--primary,
-    .hero-btn--video {
+    .hero-btn--video,
+    .hero-cta-orange {
         justify-content: center;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
     }
 
     .hero-visual {
@@ -478,24 +683,63 @@
         height: 38px;
         font-size: 1rem;
     }
-
-    .hero-trust-bar {
-        font-size: 0.8rem;
-        margin-top: 2rem;
-    }
 }
 </style>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
+
+const { t } = useI18n();
+const authStore = useAuthStore();
+
+const MAX_PARTNERS = 5;
 
 const masterStore = useMasterStore();
 const programs = ref([]);
+const partners = ref([]);
 const activeIndex = ref(0);
 
+const hasPartnerBg = computed(() => partners.value.length > 0);
+
+const partnerTiles = computed(() => {
+    const items = partners.value;
+    if (!items.length) {
+        return [];
+    }
+
+    const tiles = [...items];
+    while (tiles.length < MAX_PARTNERS) {
+        tiles.push(items[tiles.length % items.length]);
+    }
+
+    return tiles.slice(0, MAX_PARTNERS);
+});
+
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
-const applyLink = computed(() => activeProgram.value?.cta_url || "/register");
+const isLoggedIn = computed(() => Boolean(authStore.authToken));
+
+const heroPrimaryLink = computed(() => {
+    if (isLoggedIn.value) {
+        return "/courses";
+    }
+
+    return activeProgram.value?.cta_url || "/register";
+});
+
+const heroPrimaryLabel = computed(() => {
+    if (isLoggedIn.value) {
+        return t("Browse Courses");
+    }
+
+    if (hasPartnerBg.value) {
+        return activeProgram.value?.cta_label || t("Explore Programs");
+    }
+
+    return t("Get Started");
+});
 
 const heroImage = computed(
     () => activeProgram.value?.image ?? masterStore?.masterData?.hero_thumbnail ?? "/assets/website/banner-hero.png"
@@ -511,10 +755,21 @@ const enrollCount = computed(() => {
 
 onMounted(async () => {
     try {
-        const response = await axios.get("/home/programs");
-        programs.value = response.data.data.programs ?? [];
+        const [programsRes, partnersRes] = await Promise.all([
+            axios.get("/home/programs"),
+            axios.get("/home/partner-logos"),
+        ]);
+
+        programs.value = programsRes.data.data.programs ?? [];
+
+        const logos = (partnersRes.data.data.logos ?? []).sort(
+            (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+        );
+
+        const companyPartners = logos.filter((item) => item.partner_type === "company");
+        partners.value = (companyPartners.length ? companyPartners : logos).slice(0, MAX_PARTNERS);
     } catch (error) {
-        console.error("Error fetching home programs:", error);
+        console.error("Error fetching landing hero data:", error);
     }
 });
 </script>

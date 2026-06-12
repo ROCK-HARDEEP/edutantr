@@ -46,13 +46,17 @@ Route::prefix('admin')->middleware(['auth', 'restrict_sales_counselor', 'adminau
     
     // Admin Users
     Route::get('/root/sup-admin/list', [App\Http\Controllers\WebAdmin\UserController::class, 'admin'])->name('index');
+    Route::get('/root/sup-admin/create', [App\Http\Controllers\WebAdmin\UserController::class, 'createSuperAdmin'])->name('sup-admin.create');
+    Route::post('/root/sup-admin', [App\Http\Controllers\WebAdmin\UserController::class, 'storeSuperAdmin'])->name('sup-admin.store');
     Route::get('/root/assistant-admin/list', [App\Http\Controllers\WebAdmin\UserController::class, 'subAdmin'])->name('assistant.index');
+    Route::get('/root/assistant-admin/create', [App\Http\Controllers\WebAdmin\UserController::class, 'createAssistantAdmin'])->name('assistant.create');
+    Route::post('/root/assistant-admin', [App\Http\Controllers\WebAdmin\UserController::class, 'storeAssistantAdmin'])->name('assistant.store');
     Route::get('/admin-users/create', [App\Http\Controllers\WebAdmin\UserController::class, 'create'])->name('create');
     Route::post('/admin-users', [App\Http\Controllers\WebAdmin\UserController::class, 'store'])->name('store');
     
     // Organizations Management
+    Route::get('/organizations/subscribers', [App\Http\Controllers\WebAdmin\AdminOrgManagementController::class, 'subscribers'])->name('organizations.subscribers');
     Route::resource('organizations', App\Http\Controllers\WebAdmin\AdminOrgManagementController::class);
-    Route::get('/organizations/{organization}/subscribers', [App\Http\Controllers\WebAdmin\AdminOrgManagementController::class, 'subscribers'])->name('organizations.subscribers');
     Route::resource('organizations/plan', App\Http\Controllers\WebAdmin\PlanController::class)->names([
         'index' => 'organizations.plan.index',
         'create' => 'organizations.plan.create',
@@ -185,6 +189,10 @@ Route::middleware(['auth', 'restrict_sales_counselor'])->group(function () {
         'destroy' => 'course.destroy'
     ]);
     
+    // R2 Video Storage (Cloudflare)
+    Route::get('/storage/videos', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'index'])->name('storage.videos.index');
+    Route::post('/storage/videos', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'store'])->name('storage.videos.store');
+
     // Chapters
     Route::get('/chapter/select-course', [App\Http\Controllers\WebAdmin\ChapterController::class, 'selectCourse'])->name('chapter.select_course');
     Route::get('/chapter/course/{course}', [App\Http\Controllers\WebAdmin\ChapterController::class, 'index'])->name('chapter.index');
@@ -206,6 +214,9 @@ Route::middleware(['auth', 'restrict_sales_counselor'])->group(function () {
     // Users
     Route::get('/user/import/sample', [App\Http\Controllers\WebAdmin\UserController::class, 'downloadImportSample'])->name('user.import.sample');
     Route::post('/user/import', [App\Http\Controllers\WebAdmin\UserController::class, 'import'])->name('user.import');
+    Route::get('/user/{user}/certificates', [App\Http\Controllers\WebAdmin\StudentCertificateController::class, 'index'])->name('user.certificates.index');
+    Route::post('/user/{user}/certificates', [App\Http\Controllers\WebAdmin\StudentCertificateController::class, 'store'])->name('user.certificates.store');
+    Route::delete('/student-certificates/{studentCertificate}', [App\Http\Controllers\WebAdmin\StudentCertificateController::class, 'destroy'])->name('user.certificates.destroy');
     Route::resource('user', App\Http\Controllers\WebAdmin\UserController::class);
     
     // Enrollments

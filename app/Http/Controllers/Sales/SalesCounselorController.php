@@ -11,7 +11,7 @@ use App\Services\SalesLeaderboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class SalesCounselorController extends Controller
 {
@@ -130,8 +130,8 @@ class SalesCounselorController extends Controller
             MediaTypeEnum::IMAGE
         );
 
-        if ($profilePicture && $user->profilePicture && Storage::exists($user->profilePicture->src)) {
-            Storage::delete($user->profilePicture->src);
+        if ($profilePicture && $user->profilePicture) {
+            MediaStorage::delete($user->profilePicture);
         }
 
         $user->media_id = $profilePicture ? $profilePicture->id : $user->media_id;

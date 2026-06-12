@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Article extends Model
 {
@@ -29,14 +29,8 @@ class Article extends Model
 
     public function mediaPath(): Attribute
     {
-        $media = asset('media/dummy-image.jpg');
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
         return Attribute::make(
-            get: fn () => $media,
+            get: fn () => MediaStorage::urlOrDefault($this->media, asset('media/dummy-image.jpg')),
         );
     }
 }

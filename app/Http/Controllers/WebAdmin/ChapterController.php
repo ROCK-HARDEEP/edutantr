@@ -11,6 +11,7 @@ use App\Models\Chapter;
 use App\Models\Course;
 use App\Repositories\ChapterRepository;
 use App\Repositories\CourseRepository;
+use App\Support\MediaStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,6 +77,7 @@ class ChapterController extends Controller
         return view('chapter.create', [
             'selectedCourse' => $course,
             'courses' => $courses,
+            'r2Configured' => MediaStorage::isR2Configured(),
         ]);
     }
 

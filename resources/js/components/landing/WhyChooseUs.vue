@@ -18,7 +18,7 @@
 
                     <div class="why-card">
                         <h3 class="why-card-title">
-                            {{ $t('Why Choose {name}?', { name: masterStore?.masterData?.name ?? 'LMS' }) }}
+                            {{ $t('Why Choose Edutantr?', { name: masterStore?.masterData?.name ?? 'LMS' }) }}
                         </h3>
 
                         <ul class="why-features">

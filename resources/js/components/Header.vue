@@ -4,14 +4,7 @@
         :class="{ 'navbar-modern--scrolled': isScrolled }"
     >
         <div class="container navbar-modern__inner">
-            <router-link to="/" class="navbar-brand brand-logo" aria-label="Edutantr Home">
-                <span class="brand-logo__icon" aria-hidden="true">
-                    <i class="bi bi-mortarboard-fill"></i>
-                </span>
-                <span class="brand-logo__wordmark">
-                    <span class="brand-logo__edu">Edu</span><span class="brand-logo__tantr">tantr</span>
-                </span>
-            </router-link>
+            <BrandLogo to="/" class="navbar-brand" />
 
             <button
                 class="navbar-toggler navbar-toggler-modern"
@@ -76,6 +69,15 @@
                         >
                             <i class="bi bi-envelope"></i>
                             {{ $t('Contact Us') }}
+                        </router-link>
+                    </li>
+                    <li
+                        v-if="!authStore.authToken"
+                        class="nav-item nav-item-login d-flex align-items-center ms-lg-2"
+                    >
+                        <router-link to="/login" class="login-btn">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            {{ $t('Login') }}
                         </router-link>
                     </li>
                     <li
@@ -166,61 +168,6 @@
     }
 }
 
-.brand-logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0;
-    text-decoration: none;
-    transition: transform 0.25s ease;
-
-    &:hover {
-        transform: translateY(-1px);
-        text-decoration: none;
-
-        .brand-logo__icon {
-            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
-        }
-
-        .brand-logo__tantr {
-            filter: brightness(1.08);
-        }
-    }
-}
-
-.brand-logo__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    color: #fff;
-    font-size: 1.15rem;
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
-    transition: box-shadow 0.25s ease;
-}
-
-.brand-logo__wordmark {
-    font-size: 1.65rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
-}
-
-.brand-logo__edu {
-    color: #14532d;
-}
-
-.brand-logo__tantr {
-    color: #22c55e;
-    background: linear-gradient(135deg, #15803d 0%, #22c55e 50%, #4ade80 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
 @media (min-width: 992px) {
     #navbarContent {
         display: flex !important;
@@ -309,6 +256,34 @@
     line-height: 1;
 }
 
+.login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.15rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #fff !important;
+    text-decoration: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    border: 1px solid transparent;
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
+    transition: all 0.25s ease;
+
+    i {
+        font-size: 0.95rem;
+    }
+
+    &:hover {
+        color: #fff !important;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+        background: linear-gradient(135deg, #166534, #16a34a);
+    }
+}
+
 .profile-btn {
     position: relative;
     display: flex;
@@ -371,16 +346,6 @@
 }
 
 @media (max-width: 991.98px) {
-    .brand-logo__wordmark {
-        font-size: 1.45rem;
-    }
-
-    .brand-logo__icon {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-
     .navbar-modern__inner {
         padding-top: 0.75rem;
         padding-bottom: 0.75rem;
@@ -428,15 +393,25 @@
         }
     }
 
+    .nav-item-login,
     .nav-item-profile {
         margin-top: 0.5rem;
         padding-top: 0.5rem;
         border-top: 1px solid rgba(48, 108, 60, 0.1);
     }
+
+    .login-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.92rem;
+        border-radius: 12px;
+    }
 }
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { useAuthStore } from "@/stores/auth";
 import Swal from "sweetalert2";
 import { ref, onMounted, onUnmounted } from "vue";

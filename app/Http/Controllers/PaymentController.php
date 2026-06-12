@@ -326,6 +326,10 @@ class PaymentController extends Controller
     {
         $base = request()->getSchemeAndHttpHost();
 
+        if ($status === 'success') {
+            return redirect("{$base}/dashboard");
+        }
+
         if ($transaction?->subscriber_id) {
             return redirect("{$base}/plan_enroll_status?status={$status}");
         }

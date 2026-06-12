@@ -65,7 +65,8 @@ class HomePageController extends Controller
         $logos = PartnerLogoRepository::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
-            ->latest('id')
+            ->orderBy('id')
+            ->limit(5)
             ->get();
 
         return $this->json('partner logos', ['logos' => PartnerLogoResource::collection($logos)], 200);

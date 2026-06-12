@@ -32,15 +32,11 @@
     <div class="scrollbar-sidebar">
 
         <div class="branding-logo">
-            <a href="{{ auth()->user()->hasRole('admin') ? '/' : '/admin/dashboard"' }}" target="_blank">
-            <span>Edutantr</span>
-            </a>
+            <x-brand-logo :href="auth()->user()->hasRole('admin') ? url('/') : url('/admin/dashboard')" centered />
         </div>
 
-
         <div class="branding-logo-forMobile mb-4">
-            <a href="{{ auth()->user()->hasRole('admin') ? '/admin' : '/admin/dashboard"' }}" target="_blank"><img
-                    src="{{ $app_setting['logo'] }}" alt=""></a>
+            <x-brand-logo :href="url('/admin/dashboard')" icon-only />
         </div>
         <div class="app-sidebar-inner border-top">
             <ul class="vertical-nav-menu">
@@ -52,7 +48,7 @@
                         <span class="menu-title">{{ __('Dashboard') }}</span>
                     </li>
                     <li>
-                        <a class="menu {{ request()->is('admin') ? 'active' : '' }}" href="/admin">
+                        <a class="menu {{ request()->is('admin') ? 'active' : '' }}" href="/admin/dashboard">
                             <span>
                                 <img class="menu-icon" src="{{ asset('assets/images/menu/home-roof.svg') }}"
                                     alt="icon" loading="lazy" />
@@ -352,9 +348,9 @@
 
                 {{-- instructor start --}}
                 @canany(['instructor.index', 'instructor.create'])
-                    <li class="menu-divider">
+                    {{--<li class="menu-divider">
                         <span class="menu-title">{{ __('Instructor') }}</span>
-                    </li>
+                    </li>--}}
                     <li>
                         <a class="menu {{ request()->is('admin/instructor/*', 'organizations/instructor/*') ? 'active' : '' }}"
                             data-bs-toggle="collapse" href="#ordersInstructor">
@@ -459,16 +455,11 @@
                             'transaction.invoices',
                             'transaction.subscriptions',
                             'transaction.dns.plans',
-                            'revenue-leaderboard.index',
-                            'revenue-leaderboard.data',
-                            'sales-team.index',
-                            'sales-team.create',
-                            'sales-team.edit',
-                        ]) || request()->is('transaction', 'transaction/*', 'revenue-leaderboard*', 'sales-team*');
+                        ]) || request()->is('transaction', 'transaction/*');
                     @endphp
-                    <li class="menu-divider">
+                    {{--<li class="menu-divider">
                         <span class="menu-title">{{ __('Payment & Transactions') }}</span>
-                    </li>
+                    </li>--}}
                     <li>
                         <a class="menu {{ $isTransactionMenuActive ? 'active' : '' }}"
                             data-bs-toggle="collapse" href="#ordersTransaction"
@@ -508,6 +499,42 @@
                                     class="subMenu hasCount {{ request()->routeIs('transaction.dns.plans') ? 'active' : '' }}">
                                     {{ __('DNS Plan Wise Purchases') }}
                                 </a>--}}
+                            </div>
+                        </div>
+                    </li>
+                @endcanany
+
+                {{-- transaction end --}}
+
+                {{-- sales management start --}}
+                @canany(['revenue_leaderboard.index', 'sales_team.index'])
+                    @php
+                        $isSalesMenuActive = request()->routeIs([
+                            'revenue-leaderboard.index',
+                            'revenue-leaderboard.data',
+                            'sales-team.index',
+                            'sales-team.create',
+                            'sales-team.edit',
+                        ]) || request()->is('revenue-leaderboard*', 'sales-team*');
+                    @endphp
+                    {{--<li class="menu-divider">
+                        <span class="menu-title">{{ __('Sales Management') }}</span>
+                    </li>--}}
+                    <li>
+                        <a class="menu {{ $isSalesMenuActive ? 'active' : '' }}"
+                            data-bs-toggle="collapse" href="#salesManagementMenu"
+                            aria-expanded="{{ $isSalesMenuActive ? 'true' : 'false' }}">
+                            <span class="position-relative">
+                                <img class="menu-icon" src="{{ asset('assets/images/menu/medal.svg') }}"
+                                    alt="icon" loading="lazy" />
+                                {{ __('Sales Management') }}
+                            </span>
+                            <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
+                                class="downIcon" />
+                        </a>
+                        <div class="collapse dropdownMenuCollapse {{ $isSalesMenuActive ? 'show' : '' }}"
+                            id="salesManagementMenu">
+                            <div class="listBar">
                                 @can('revenue_leaderboard.index')
                                     <a href="{{ route('revenue-leaderboard.index') }}"
                                         class="subMenu hasCount {{ request()->routeIs('revenue-leaderboard.*') ? 'active' : '' }}">
@@ -524,28 +551,7 @@
                         </div>
                     </li>
                 @endcanany
-
-                {{-- transaction end --}}
-
-                <li class="menu-divider">
-                    <span class="menu-title">{{ __('Query & Profile Management') }}</span>
-                </li>
-
-                {{-- testimonial start --}}
-                @can('testimonial.index')
-                    <li>
-                        <a class="menu {{ request()->is('admin/testimonial/*', 'organizations/testimonial/*') ? 'active' : '' }}"
-                            href="{{ route('testimonial.index') }}">
-                            <span>
-                                <img class="menu-icon" src="{{ asset('assets/images/menu/testimonial.svg') }}"
-                                    alt="icon" loading="lazy" />
-                                {{ __('Testimonial') }}
-                            </span>
-                        </a>
-                    </li>
-                @endcan
-
-                {{-- testimonial end --}}
+                {{-- sales management end --}}
 
                 {{-- career portal start --}}
                 @canany(['job_category.index', 'job_post.index', 'job_application.index'])
@@ -586,6 +592,206 @@
                     </li>
                 @endcanany
                 {{-- career portal end --}}
+
+                {{-- super admin start --}}
+                @canany('admin.index')
+                    {{--<li>
+                        <a class="menu {{ request()->is('admin/root*') ? 'active' : '' }}"
+                            href="{{ route('admin.index') }}">
+                            <span>
+                                <img class="menu-icon" src="{{ asset('assets/images/menu/user-settings.svg') }}"
+                                    alt="icon" loading="lazy" />
+                                {{ __('Super Admin') }}
+                            </span>
+                        </a>
+                    </li>--}}
+                    <li>
+                        <a class="menu {{ request()->is('admin/root/*') ? 'active' : '' }}" data-bs-toggle="collapse"
+                            href="#adminManagement">
+                            <span>
+                                <img style="text-primary" class="menu-icon"
+                                    src="{{ asset('assets/images/menu/user-settings.svg') }}" alt="icon"
+                                    loading="lazy" />
+                                {{ __('Admin Management') }}
+                            </span>
+                            <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
+                                class="downIcon" />
+                        </a>
+                        <div class="collapse dropdownMenuCollapse {{ request()->is('admin/root*') ? 'show' : '' }}"
+                            id="adminManagement">
+                            <div class="listBar">
+                                <a href="{{ route('admin.index') }}"
+                                    class="subMenu hasCount {{ request()->is('admin/root/sup-admin/list') ? 'active' : '' }}">
+                                    {{ __('Super Admin') }}
+                                </a>
+                                <a href="{{ route('admin.assistant.index') }}"
+                                    class="subMenu hasCount {{ request()->is('admin/root/assistant-admin/list') ? 'active' : '' }}">
+                                    {{ __("Associate Admin's") }}
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                @endcanany
+                {{-- super admin end --}}
+
+                {{-- general setting start --}}
+                <li class="menu-divider">
+                    <span class="menu-title">{{ __('General Setting') }}</span>
+                </li>
+
+                <li>
+                    <a class="menu {{ request()->is('admin/setting*', 'admin/certificate/*', 'admin/permission&role/*', 'admin/language/*', 'organizations/setting/*', 'organizations/certificate/*', 'organizations/permission&role/*', 'organizations/language/*') || request()->routeIs('server.index', 'setting.home.page.setup', 'setting.smtp.setup', 'setting.social.media.setup') ? 'active' : '' }}"
+                        data-bs-toggle="collapse" href="#settingManagement">
+                        <span>
+                            <img style="text-primary" class="menu-icon"
+                                src="{{ asset('assets/images/menu/settings.svg') }}" alt="icon"
+                                loading="lazy" />
+                            {{ __('Settings Management') }}
+                        </span>
+                        <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
+                            class="downIcon" />
+                    </a>
+                    <div class="collapse dropdownMenuCollapse {{ request()->is('admin/setting*', 'admin/certificate/*', 'admin/permission&role/*', 'admin/language*', 'home-program*', 'home-statistic*', 'partner-college*', 'home-placement*', 'partner-logo*', 'college-gallery*', 'organizations/setting/*', 'organizations/certificate/*', 'organizations/permission&role/*', 'organizations/language*', 'admin/payment_gateway*', 'organizations/payment_gateway*') || request()->routeIs('admin.server.index', 'admin.setting.home.page.setup', 'admin.setting.smtp.setup', 'admin.setting.social.media.setup', 'home-program.*', 'home-statistic.*', 'partner-college.*', 'home-placement.*', 'partner-logo.*', 'college-gallery.*') ? 'show' : '' }}"
+                        id="settingManagement">
+                        <div class="listBar">
+                            @can('setting.index')
+                                <a href="{{ route('admin.setting.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.index') ? 'active' : '' }}">
+                                    {{ __('Business Settings') }}
+                                </a>
+                                <a href="{{ route('admin.setting.home.page.setup') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.home.page.setup') ? 'active' : '' }}">
+                                    {{ __('Site Settings') }}
+                                </a>
+                                <a href="{{ route('home-program.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('home-program.*') ? 'active' : '' }}">
+                                    {{ __('Hero Programs') }}
+                                </a>
+                                <a href="{{ route('home-statistic.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('home-statistic.*') ? 'active' : '' }}">
+                                    {{ __('Home Statistics') }}
+                                </a>
+                                <a href="{{ route('partner-college.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('partner-college.*') ? 'active' : '' }}">
+                                    {{ __('Partner Colleges') }}
+                                </a>
+                                <a href="{{ route('home-placement.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('home-placement.*') ? 'active' : '' }}">
+                                    {{ __('Placements') }}
+                                </a>
+                                <a href="{{ route('partner-logo.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('partner-logo.*') ? 'active' : '' }}">
+                                    {{ __('Partner Logos') }}
+                                </a>
+                                <a href="{{ route('college-gallery.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('college-gallery.*') ? 'active' : '' }}">
+                                    {{ __('College MOU & Gallery') }}
+                                </a>
+                                <a href="{{ route('admin.setting.smtp.setup') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.smtp.setup') ? 'active' : '' }}">
+                                    {{ __('SMTP Settings') }}
+                                </a>
+                                <a href="{{ route('admin.setting.social.media.setup') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.social.media.setup') ? 'active' : '' }}">
+                                    {{ __('Social Media Settings') }}
+                                </a>
+                            @endcan
+                            {{--@can('certificate.index')
+                                <a href="{{ route('certificate.index') }}"
+                                    class="subMenu hasCount {{ request()->is('admin/certificate*', 'organizations/certificate*') ? 'active' : '' }}">
+                                    {{ __('Certificate Configaration') }}
+                                </a>
+                            @endcan--}}
+                            @can('role.index')
+                                <a href="{{ route('role.index') }}"
+                                    class="subMenu hasCount {{ request()->is('admin/permission&role/*', 'organizations/permission&role/*') ? 'active' : '' }}">
+                                    {{ __('Role & Permission') }}
+                                </a>
+                            @endcan
+                            {{--<a href="{{ route('language.index') }}"
+                                class="subMenu hasCount {{ request()->is('admin/language*', 'organizations/language*') ? 'active' : '' }}">
+                                {{ __('Language') }}
+                            </a>
+                            @can('server.index')
+                                <a href="{{ route('admin.server.index') }}"
+                                    class="subMenu hasCount {{ request()->routeIs('admin.server.index') ? 'active' : '' }}">
+                                    {{ __('Server Configuration') }}
+                                </a>
+                            @endcan --}}
+
+                            @can('payment_gateway.index')
+                                <a href="{{ route('payment_gateway.index') }}"
+                                    class="subMenu hasCount {{ request()->is('admin/payment_gateway*', 'organizations/payment_gateway*') ? 'active' : '' }}">
+                                    {{ __('Payment Gateway') }}
+                                </a>
+                            @endcan
+                        </div>
+                    </div>
+                </li>
+                {{-- general setting end --}}
+
+                @can('invoice.index')
+                    <li>
+                        <a class="menu {{ request()->is('admin/invoice*') ? 'active' : '' }}" data-bs-toggle="collapse"
+                            href="#invoiceManagement">
+                            <span>
+                                <img style="text-primary" class="menu-icon"
+                                    src="{{ asset('assets/images/menu/invoice.svg') }}" alt="icon"
+                                    loading="lazy" />
+                                {{ __('Invoice Management') }}
+                            </span>
+                            <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
+                                class="downIcon" />
+                        </a>
+                        <div class="collapse dropdownMenuCollapse {{ request()->is('admin/invoices*') ? 'show' : '' }}"
+                            id="invoiceManagement">
+                            <div class="listBar">
+                                @can('invoice.index')
+                                    <a href="{{ route('invoice.index') }}"
+                                        class="subMenu hasCount {{ request()->is('admin/invoices/list', 'admin/invoices/edit') ? 'active' : '' }}">
+                                        {{ __('Invoices') }}
+                                    </a>
+                                @endcan
+                                @can('invoice.create')
+                                    <a href="{{ route('invoice.create') }}"
+                                        class="subMenu hasCount {{ request()->is('admin/invoices/create*') ? 'active' : '' }}">
+                                        {{ __('Generate New Invoice') }}
+                                    </a>
+                                @endcan
+                                @can('invoice.update')
+                                    <a href="{{ route('invoice.trash') }}"
+                                        class="subMenu hasCount {{ request()->is('admin/invoices/list/restore') ? 'active' : '' }}">
+                                        {{ __('Restore Invoices') }}
+                                    </a>
+                                @endcan
+                            </div>
+                        </div>
+                    </li>
+                @endcan
+
+                {{-- general setting end --}}
+
+                <li class="menu-divider">
+                    <span class="menu-title">{{ __('Query & Profile Management') }}</span>
+                </li>
+
+                {{-- testimonial start --}}
+                @can('testimonial.index')
+                    <li>
+                        <a class="menu {{ request()->is('admin/testimonial/*', 'organizations/testimonial/*') ? 'active' : '' }}"
+                            href="{{ route('testimonial.index') }}">
+                            <span>
+                                <img class="menu-icon" src="{{ asset('assets/images/menu/testimonial.svg') }}"
+                                    alt="icon" loading="lazy" />
+                                {{ __('Testimonial') }}
+                            </span>
+                        </a>
+                    </li>
+                @endcan
+
+                {{-- testimonial end --}}
+
+                
 
                 {{-- newsletter start --}}
                 @can('newslatter.index')
@@ -656,46 +862,7 @@
                 @endcan
                 {{-- contact us end --}}
 
-                {{-- super admin start --}}
-                @canany('admin.index')
-                    {{-- <li>
-                        <a class="menu {{ request()->is('admin/root*') ? 'active' : '' }}"
-                            href="{{ route('admin.index') }}">
-                            <span>
-                                <img class="menu-icon" src="{{ asset('assets/images/menu/user-settings.svg') }}"
-                                    alt="icon" loading="lazy" />
-                                {{ __('Super Admin') }}
-                            </span>
-                        </a>
-                    </li> --}}
-                    <li>
-                        <a class="menu {{ request()->is('admin/root/*') ? 'active' : '' }}" data-bs-toggle="collapse"
-                            href="#adminManagement">
-                            <span>
-                                <img style="text-primary" class="menu-icon"
-                                    src="{{ asset('assets/images/menu/user-settings.svg') }}" alt="icon"
-                                    loading="lazy" />
-                                {{ __('Admin Management') }}
-                            </span>
-                            <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
-                                class="downIcon" />
-                        </a>
-                        <div class="collapse dropdownMenuCollapse {{ request()->is('admin/root*') ? 'show' : '' }}"
-                            id="adminManagement">
-                            <div class="listBar">
-                                <a href="{{ route('admin.index') }}"
-                                    class="subMenu hasCount {{ request()->is('admin/root/sup-admin/list') ? 'active' : '' }}">
-                                    {{ __('Super Admin') }}
-                                </a>
-                                <a href="{{ route('admin.assistant.index') }}"
-                                    class="subMenu hasCount {{ request()->is('admin/root/assistant-admin/list') ? 'active' : '' }}">
-                                    {{ __("Associate Admin's") }}
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                @endcanany
-                {{-- super admin end --}}
+                
 
 
                 {{-- profile start --}}
@@ -730,142 +897,7 @@
                 @endif
                 {{-- Report End --}}
 
-                {{-- general setting start --}}
-                <li class="menu-divider">
-                    <span class="menu-title">{{ __('General Setting') }}</span>
-                </li>
-
-                <li>
-                    <a class="menu {{ request()->is('admin/setting*', 'admin/certificate/*', 'admin/permission&role/*', 'admin/language/*', 'organizations/setting/*', 'organizations/certificate/*', 'organizations/permission&role/*', 'organizations/language/*') || request()->routeIs('server.index', 'setting.home.page.setup', 'setting.smtp.setup', 'setting.social.media.setup') ? 'active' : '' }}"
-                        data-bs-toggle="collapse" href="#settingManagement">
-                        <span>
-                            <img style="text-primary" class="menu-icon"
-                                src="{{ asset('assets/images/menu/settings.svg') }}" alt="icon"
-                                loading="lazy" />
-                            {{ __('Settings Management') }}
-                        </span>
-                        <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
-                            class="downIcon" />
-                    </a>
-                    <div class="collapse dropdownMenuCollapse {{ request()->is('admin/setting*', 'admin/certificate/*', 'admin/permission&role/*', 'admin/language*', 'home-program*', 'home-statistic*', 'partner-college*', 'home-placement*', 'partner-logo*', 'college-gallery*', 'organizations/setting/*', 'organizations/certificate/*', 'organizations/permission&role/*', 'organizations/language*', 'admin/payment_gateway*', 'organizations/payment_gateway*') || request()->routeIs('admin.server.index', 'admin.setting.home.page.setup', 'admin.setting.smtp.setup', 'admin.setting.social.media.setup', 'home-program.*', 'home-statistic.*', 'partner-college.*', 'home-placement.*', 'partner-logo.*', 'college-gallery.*') ? 'show' : '' }}"
-                        id="settingManagement">
-                        <div class="listBar">
-                            @can('setting.index')
-                                <a href="{{ route('admin.setting.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.index') ? 'active' : '' }}">
-                                    {{ __('Business Settings') }}
-                                </a>
-                                <a href="{{ route('admin.setting.home.page.setup') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.home.page.setup') ? 'active' : '' }}">
-                                    {{ __('Site Settings') }}
-                                </a>
-                                <a href="{{ route('home-program.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('home-program.*') ? 'active' : '' }}">
-                                    {{ __('Hero Programs') }}
-                                </a>
-                                <a href="{{ route('home-statistic.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('home-statistic.*') ? 'active' : '' }}">
-                                    {{ __('Home Statistics') }}
-                                </a>
-                                <a href="{{ route('partner-college.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('partner-college.*') ? 'active' : '' }}">
-                                    {{ __('Partner Colleges') }}
-                                </a>
-                                <a href="{{ route('home-placement.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('home-placement.*') ? 'active' : '' }}">
-                                    {{ __('Placements') }}
-                                </a>
-                                <a href="{{ route('partner-logo.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('partner-logo.*') ? 'active' : '' }}">
-                                    {{ __('Partner Logos') }}
-                                </a>
-                                <a href="{{ route('college-gallery.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('college-gallery.*') ? 'active' : '' }}">
-                                    {{ __('College MOU & Gallery') }}
-                                </a>
-                                <a href="{{ route('admin.setting.smtp.setup') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.smtp.setup') ? 'active' : '' }}">
-                                    {{ __('SMTP Settings') }}
-                                </a>
-                                <a href="{{ route('admin.setting.social.media.setup') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('admin.setting.social.media.setup') ? 'active' : '' }}">
-                                    {{ __('Social Media Settings') }}
-                                </a>
-                            @endcan
-                            @can('certificate.index')
-                                <a href="{{ route('certificate.index') }}"
-                                    class="subMenu hasCount {{ request()->is('admin/certificate*', 'organizations/certificate*') ? 'active' : '' }}">
-                                    {{ __('Certificate Configaration') }}
-                                </a>
-                            @endcan
-                            @can('role.index')
-                                <a href="{{ route('role.index') }}"
-                                    class="subMenu hasCount {{ request()->is('admin/permission&role/*', 'organizations/permission&role/*') ? 'active' : '' }}">
-                                    {{ __('Role & Permission') }}
-                                </a>
-                            @endcan
-                            {{--<a href="{{ route('language.index') }}"
-                                class="subMenu hasCount {{ request()->is('admin/language*', 'organizations/language*') ? 'active' : '' }}">
-                                {{ __('Language') }}
-                            </a>
-                            @can('server.index')
-                                <a href="{{ route('admin.server.index') }}"
-                                    class="subMenu hasCount {{ request()->routeIs('admin.server.index') ? 'active' : '' }}">
-                                    {{ __('Server Configuration') }}
-                                </a>
-                            @endcan --}}
-
-                            @can('payment_gateway.index')
-                                <a href="{{ route('payment_gateway.index') }}"
-                                    class="subMenu hasCount {{ request()->is('admin/payment_gateway*', 'organizations/payment_gateway*') ? 'active' : '' }}">
-                                    {{ __('Payment Gateway') }}
-                                </a>
-                            @endcan
-                        </div>
-                    </div>
-                </li>
-                {{-- general setting end --}}
-
-                @can('invoice.index')
-                    <li>
-                        <a class="menu {{ request()->is('admin/invoice*') ? 'active' : '' }}" data-bs-toggle="collapse"
-                            href="#invoiceManagement">
-                            <span>
-                                <img style="text-primary" class="menu-icon"
-                                    src="{{ asset('assets/images/menu/invoice.svg') }}" alt="icon"
-                                    loading="lazy" />
-                                {{ __('Invoice Management') }}
-                            </span>
-                            <img src="{{ asset('assets/images/menu/angle-down-small.svg') }}" alt="icon"
-                                class="downIcon" />
-                        </a>
-                        <div class="collapse dropdownMenuCollapse {{ request()->is('admin/invoices*') ? 'show' : '' }}"
-                            id="invoiceManagement">
-                            <div class="listBar">
-                                @can('invoice.index')
-                                    <a href="{{ route('invoice.index') }}"
-                                        class="subMenu hasCount {{ request()->is('admin/invoices/list', 'admin/invoices/edit') ? 'active' : '' }}">
-                                        {{ __('Invoices') }}
-                                    </a>
-                                @endcan
-                                @can('invoice.create')
-                                    <a href="{{ route('invoice.create') }}"
-                                        class="subMenu hasCount {{ request()->is('admin/invoices/create*') ? 'active' : '' }}">
-                                        {{ __('Generate New Invoice') }}
-                                    </a>
-                                @endcan
-                                @can('invoice.update')
-                                    <a href="{{ route('invoice.trash') }}"
-                                        class="subMenu hasCount {{ request()->is('admin/invoices/list/restore') ? 'active' : '' }}">
-                                        {{ __('Restore Invoices') }}
-                                    </a>
-                                @endcan
-                            </div>
-                        </div>
-                    </li>
-                @endcan
-
-                {{-- general setting end --}}
+                
 
                 {{-- legal page start --}}
                 @canany(['page.index'])

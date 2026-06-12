@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Blog extends Model
 {
@@ -29,14 +29,8 @@ class Blog extends Model
 
     public function mediaPath(): Attribute
     {
-        $media = 'https://placehold.co/600x400';
-
-        if ($this->media && Storage::exists($this->media->src)) {
-            $media = Storage::url($this->media->src);
-        }
-
         return Attribute::make(
-            get: fn () => $media,
+            get: fn () => MediaStorage::urlOrDefault($this->media, 'https://placehold.co/600x400'),
         );
     }
 }

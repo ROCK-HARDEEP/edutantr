@@ -71,6 +71,21 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="chapterInput">{{ __('Chapter') }}</label>
+                                            <select id="chapterInput" class="form-select form-control" name="chapter_id">
+                                                <option value="">{{ __('None (course level)') }}</option>
+                                                @foreach ($chapters as $chapter)
+                                                    <option value="{{ $chapter->id }}"
+                                                        {{ (string) old('chapter_id', $exam->chapter_id) === (string) $chapter->id ? 'selected' : '' }}>
+                                                        {{ $chapter->title }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <small class="text-muted">{{ __('Shows at the end of this chapter in course play.') }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
                                         <div class="mb-3">
                                             <label for="titleInput" class="form-label">{{ __('Exam Title') }}</label>
                                             <input type="text" name="title" value="{{ $exam->title }}" required
@@ -410,6 +425,33 @@
 @endsection
 @push('scripts')
     <script>
+        const chaptersByCourse = @json($chaptersByCourse);
+        const chapterSelect = document.getElementById('chapterInput');
+        const courseSelect = document.getElementById('categoryInput');
+        const selectedChapterId = @json(old('chapter_id', $exam->chapter_id));
+
+        function updateChapterOptions(courseId, chapterId = '') {
+            if (!chapterSelect) return;
+            const chapters = chaptersByCourse[courseId] || [];
+            chapterSelect.innerHTML = '<option value="">{{ __('None (course level)') }}</option>';
+            chapters.forEach(function(chapter) {
+                const option = document.createElement('option');
+                option.value = chapter.id;
+                option.textContent = chapter.title;
+                if (String(chapterId) === String(chapter.id)) {
+                    option.selected = true;
+                }
+                chapterSelect.appendChild(option);
+            });
+        }
+
+        if (courseSelect) {
+            courseSelect.addEventListener('change', function() {
+                updateChapterOptions(this.value);
+            });
+            updateChapterOptions(courseSelect.value, selectedChapterId);
+        }
+
         var questionCounter = document.querySelectorAll('#questionsWrapper > div').length;
 
         function addMcqQuestionItem() {

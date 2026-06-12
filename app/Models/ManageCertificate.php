@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Support\MediaStorage;
 use Illuminate\Support\Facades\Storage;
 
 class ManageCertificate extends Model
@@ -27,14 +28,8 @@ class ManageCertificate extends Model
 
     public function siteLogoPath(): Attribute
     {
-        $siteLogo = asset('enrollment/logo.png');
-
-        if ($this->siteLogo && Storage::exists($this->siteLogo->src)) {
-            $siteLogo = Storage::url($this->siteLogo->src);
-        }
-
         return Attribute::make(
-            get: fn() => $siteLogo,
+            get: fn () => MediaStorage::urlOrDefault($this->siteLogo, asset('enrollment/logo.png')),
         );
     }
     public function subSiteLogo(): BelongsTo
@@ -44,14 +39,8 @@ class ManageCertificate extends Model
 
     public function subSiteLogoPath(): Attribute
     {
-        $subSiteLogo = asset('enrollment/logo.png');
-
-        if ($this->subSiteLogo && Storage::exists($this->subSiteLogo->src)) {
-            $subSiteLogo = Storage::url($this->subSiteLogo->src);
-        }
-
         return Attribute::make(
-            get: fn() => $subSiteLogo,
+            get: fn () => MediaStorage::urlOrDefault($this->subSiteLogo, asset('enrollment/logo.png')),
         );
     }
 
@@ -62,14 +51,8 @@ class ManageCertificate extends Model
 
     public function authSignaturePath(): Attribute
     {
-        $authSignature = asset('enrollment/signature.jpg');
-
-        if ($this->authSignature && Storage::exists($this->authSignature->src)) {
-            $authSignature = Storage::url($this->authSignature->src);
-        }
-
         return Attribute::make(
-            get: fn() => $authSignature,
+            get: fn () => MediaStorage::urlOrDefault($this->authSignature, asset('enrollment/signature.jpg')),
         );
     }
 

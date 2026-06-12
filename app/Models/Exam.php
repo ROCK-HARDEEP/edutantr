@@ -18,6 +18,11 @@ class Exam extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function chapter(): BelongsTo
+    {
+        return $this->belongsTo(Chapter::class);
+    }
+
     public function examSessions(): HasMany
     {
         return $this->hasMany(ExamSession::class);

@@ -116,6 +116,8 @@
                             </div>
                         </div>
 
+                        @include('user.partials.student-enrollment-fields')
+
                         <!-- Permissions -->
                         <div class="mt-5">
                             <h6 class="fw-bold mb-3">{{ __('Permissions') }}</h6>

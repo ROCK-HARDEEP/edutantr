@@ -17,9 +17,18 @@ class MediaStorage
             && ! empty(config('filesystems.disks.r2.endpoint'));
     }
 
+    public static function usesR2(?MediaTypeEnum $type): bool
+    {
+        if (! $type || ! self::isR2Configured()) {
+            return false;
+        }
+
+        return in_array($type, [MediaTypeEnum::VIDEO, MediaTypeEnum::IMAGE], true);
+    }
+
     public static function diskName(?MediaTypeEnum $type = null): string
     {
-        if ($type === MediaTypeEnum::VIDEO && self::isR2Configured()) {
+        if (self::usesR2($type)) {
             return 'r2';
         }
 
@@ -30,6 +39,10 @@ class MediaStorage
     {
         if ($media?->disk) {
             return $media->disk;
+        }
+
+        if ($media?->id) {
+            return config('filesystems.default', 'local');
         }
 
         return self::diskName($type ?? $media?->type);
@@ -47,6 +60,15 @@ class MediaStorage
         }
 
         return self::disk($media)->url($media->src);
+    }
+
+    public static function urlOrDefault(?Media $media, string $default): string
+    {
+        if ($media && self::exists($media)) {
+            return self::url($media) ?? $default;
+        }
+
+        return $default;
     }
 
     public static function exists(?Media $media): bool

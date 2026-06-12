@@ -36,8 +36,12 @@ class UserUpdateRequest extends FormRequest
             'email' => ['required', 'email', new MailRules(), 'unique:users,email,' . $userId],
             'password' => 'min:8|nullable|confirmed',
             'name' => 'required|string|max:255',
+            'college_name' => 'nullable|string|max:255',
             'profile_picture' => 'image|mimes:jpeg,png,jpg|max:2048',
             'company_name' => 'nullable|string|max:255',
+            'course_id' => 'nullable|exists:courses,id',
+            'sales_team_id' => 'nullable|exists:sales_teams,id',
+            'payment_status' => 'nullable|in:paid,unpaid',
         ];
     }
 }

@@ -12,7 +12,9 @@ class PaymentService
         if ($gateway->is_active == 0) {
             return redirect()->back()->with('error', 'Payment gateway is not active');
         }
-        $config = json_decode($gateway->config, true);
+        $config = is_array($gateway->config)
+            ? $gateway->config
+            : json_decode($gateway->config ?? '{}', true) ?? [];
         switch ($gateway->name) {
             case 'paypal':
                 return (new PaypalPayment())->processPayment($amount, $data, $config);

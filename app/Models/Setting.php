@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class Setting extends Model
 {
@@ -27,14 +27,8 @@ class Setting extends Model
 
     public function logoPath(): Attribute
     {
-        $logo = asset('assets/images/logo-new.png');
-
-        if ($this->logo && Storage::exists($this->logo->src)) {
-            $logo = Storage::url($this->logo->src);
-        }
-
         return Attribute::make(
-            get: fn() => $logo,
+            get: fn () => MediaStorage::urlOrDefault($this->logo, asset('assets/images/logo-new.png')),
         );
     }
 
@@ -42,16 +36,11 @@ class Setting extends Model
     {
         return $this->belongsTo(Media::class, 'footerlogo_id');
     }
+
     public function footerPath(): Attribute
     {
-        $footer = asset('assets/images/logo-new.png');
-
-        if ($this->footer && Storage::exists($this->footer->src)) {
-            $footer = Storage::url($this->footer->src);
-        }
-
         return Attribute::make(
-            get: fn() => $footer,
+            get: fn () => MediaStorage::urlOrDefault($this->footer, asset('assets/images/logo-new.png')),
         );
     }
 
@@ -62,14 +51,8 @@ class Setting extends Model
 
     public function faviconPath(): Attribute
     {
-        $favicon = asset('assets/images/favicon.ico');
-
-        if ($this->favicon && Storage::exists($this->favicon->src)) {
-            $favicon = Storage::url($this->favicon->src);
-        }
-
         return Attribute::make(
-            get: fn() => $favicon,
+            get: fn () => MediaStorage::urlOrDefault($this->favicon, asset('assets/images/favicon.ico')),
         );
     }
 
@@ -80,16 +63,11 @@ class Setting extends Model
 
     public function heroPath(): Attribute
     {
-        $path = asset('assets/website/banner-hero.png');
-
-        if ($this->hero && Storage::exists($this->hero->src)) {
-            $path = Storage::url($this->hero->src);
-        }
-
         return Attribute::make(
-            get: fn() => $path,
+            get: fn () => MediaStorage::urlOrDefault($this->hero, asset('assets/website/banner-hero.png')),
         );
     }
+
     public function about(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'about_thumbnail_id');
@@ -97,14 +75,8 @@ class Setting extends Model
 
     public function aboutPath(): Attribute
     {
-        $path = asset('assets/images/website/about-us.png');
-
-        if ($this->about && Storage::exists($this->about->src)) {
-            $path = Storage::url($this->about->src);
-        }
-
         return Attribute::make(
-            get: fn() => $path,
+            get: fn () => MediaStorage::urlOrDefault($this->about, asset('assets/images/website/about-us.png')),
         );
     }
 
@@ -115,14 +87,8 @@ class Setting extends Model
 
     public function footerBGPath(): Attribute
     {
-        $path = asset('assets/website/footer-bg-2.png');
-
-        if ($this->footerBG && Storage::exists($this->footerBG->src)) {
-            $path = Storage::url($this->footerBG->src);
-        }
-
         return Attribute::make(
-            get: fn() => $path,
+            get: fn () => MediaStorage::urlOrDefault($this->footerBG, asset('assets/website/footer-bg-2.png')),
         );
     }
 
@@ -133,14 +99,8 @@ class Setting extends Model
 
     public function scanerPath(): Attribute
     {
-        $scaner = asset('assets/website/scaner/scan.png');
-
-        if ($this->scaner && Storage::exists($this->scaner->src)) {
-            $scaner = Storage::url($this->scaner->src);
-        }
-
         return Attribute::make(
-            get: fn() => $scaner,
+            get: fn () => MediaStorage::urlOrDefault($this->scaner, asset('assets/website/scaner/scan.png')),
         );
     }
 }

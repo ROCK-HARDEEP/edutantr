@@ -38,3 +38,5 @@ Desktop.ini
 *.log
 .env
 .env
+.env.example
+storage/logs/laravel.log

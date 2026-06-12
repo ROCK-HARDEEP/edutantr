@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class OrganizationSiteSetting extends Model
 {
     use HasFactory;
+
     protected $guarded = ['id'];
 
     public function logo(): BelongsTo
@@ -20,14 +21,8 @@ class OrganizationSiteSetting extends Model
 
     public function logoPath(): Attribute
     {
-        $logo = asset('assets/images/logo-new.png');
-
-        if ($this->logo && Storage::exists($this->logo->src)) {
-            $logo = Storage::url($this->logo->src);
-        }
-
         return Attribute::make(
-            get: fn() => $logo,
+            get: fn () => MediaStorage::urlOrDefault($this->logo, asset('assets/images/logo-new.png')),
         );
     }
 
@@ -35,16 +30,11 @@ class OrganizationSiteSetting extends Model
     {
         return $this->belongsTo(Media::class, 'footerlogo_id');
     }
+
     public function footerPath(): Attribute
     {
-        $footer = asset('assets/images/logo-new.png');
-
-        if ($this->footer && Storage::exists($this->footer->src)) {
-            $footer = Storage::url($this->footer->src);
-        }
-
         return Attribute::make(
-            get: fn() => $footer,
+            get: fn () => MediaStorage::urlOrDefault($this->footer, asset('assets/images/logo-new.png')),
         );
     }
 
@@ -55,14 +45,8 @@ class OrganizationSiteSetting extends Model
 
     public function faviconPath(): Attribute
     {
-        $favicon = asset('assets/images/favicon.ico');
-
-        if ($this->favicon && Storage::exists($this->favicon->src)) {
-            $favicon = Storage::url($this->favicon->src);
-        }
-
         return Attribute::make(
-            get: fn() => $favicon,
+            get: fn () => MediaStorage::urlOrDefault($this->favicon, asset('assets/images/favicon.ico')),
         );
     }
 
@@ -73,14 +57,8 @@ class OrganizationSiteSetting extends Model
 
     public function scanerPath(): Attribute
     {
-        $scaner = asset('assets/website/scaner/scan.png');
-
-        if ($this->scaner && Storage::exists($this->scaner->src)) {
-            $scaner = Storage::url($this->scaner->src);
-        }
-
         return Attribute::make(
-            get: fn() => $scaner,
+            get: fn () => MediaStorage::urlOrDefault($this->scaner, asset('assets/website/scaner/scan.png')),
         );
     }
 }

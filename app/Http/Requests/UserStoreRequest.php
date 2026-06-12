@@ -27,8 +27,11 @@ class UserStoreRequest extends FormRequest
             'phone' => ['required', 'unique:users,phone,',  new PhoneNumber()],
             'email' => ['required', 'email', new MailRules(), 'unique:users,email'],
             'password' => 'required|confirmed|min:8',
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'name' => 'required|string|max:255',
+            'course_id' => 'nullable|exists:courses,id',
+            'sales_team_id' => 'nullable|exists:sales_teams,id',
+            'payment_status' => 'nullable|in:paid,unpaid',
             'fcm_token' => 'string',
         ];
     }

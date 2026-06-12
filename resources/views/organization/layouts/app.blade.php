@@ -23,6 +23,7 @@
 
     <link rel="stylesheet" href="{{ asset('org_assets') }}/css/style.css">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/brand-logo.css') }}">
 
     @stack('styles')
 

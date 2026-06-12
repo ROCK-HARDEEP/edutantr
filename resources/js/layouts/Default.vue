@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" @contextmenu="handleContextMenu">
         <header class="site-header">
             <Header />
         </header>
@@ -32,10 +32,18 @@
 
 <script setup>
 import { useMasterStore } from "@/stores/master";
+import { useRoute } from "vue-router";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 
 const masterStore = useMasterStore();
+const route = useRoute();
+
+const handleContextMenu = (event) => {
+    if (route.path.startsWith("/play")) {
+        event.preventDefault();
+    }
+};
 </script>
 
 <style scoped>

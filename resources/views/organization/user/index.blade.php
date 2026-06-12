@@ -131,6 +131,15 @@
                                                                     <img src="{{ asset('assets/images/icon/edit.svg') }}"
                                                                         alt="icon">
                                                                 </a>
+                                                                <button type="button"
+                                                                    class="circleIcon border-0 bg-transparent open-certificate-modal"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                    data-bs-custom-class="custom-tooltip"
+                                                                    data-bs-title="{{ __('Certificates') }}"
+                                                                    data-user-id="{{ $user->id }}"
+                                                                    data-user-name="{{ $user->name }}">
+                                                                    <i class="bi bi-award text-success"></i>
+                                                                </button>
                                                                 @if ($user->id != Auth::user()->id && !$user->is_admin)
                                                                     <a class="circleIcon" data-bs-toggle="tooltip"
                                                                         data-bs-placement="top"
@@ -177,4 +186,6 @@
 
         <!-- ****End-Body-Section**** -->
     </div>
+
+    @include('user.partials.certificate-modal')
 @endsection

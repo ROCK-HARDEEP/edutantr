@@ -14,7 +14,7 @@
                 <div class="col-12 col-lg-6 col-xl-7">
                     <div class="row justify-content-xl-center">
                         <div class="col-12 col-xl-11">
-                            <h2 class="mb-3 fw-bold">{{ $t('Why Choose') }} <span class="text-primary fs-1">{{ masterStore?.masterData?.name }}</span>?</h2>
+                            <h2 class="mb-3 fw-bold">{{ $t('Why Choose') }} <span class="text-primary fs-1">Edutandr</span>?</h2>
                             <p class="lead fs-4 text-secondary mb-3">
                                 {{ $t('We help people to build incredible brands and superior products. Our perspective is to furnish outstanding captivating services') }}.
                             </p>

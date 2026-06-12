@@ -275,10 +275,118 @@
         .report-date-picker {
             max-width: 200px;
         }
+
+        body.leaderboard-display-mode {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body.leaderboard-display-mode .app-header,
+        body.leaderboard-display-mode .app-sidebar,
+        body.leaderboard-display-mode .app-wrapper-footer,
+        body.leaderboard-display-mode .w-100[style*="position: fixed"] {
+            display: none !important;
+        }
+
+        body.leaderboard-display-mode .app-main,
+        body.leaderboard-display-mode .app-main .app-main-outer,
+        body.leaderboard-display-mode .app-main .app-main-inner {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        body.leaderboard-display-mode .fixed-sidebar .app-main .app-main-outer,
+        body.leaderboard-display-mode .closed-sidebar.fixed-sidebar .app-main-outer {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        body.leaderboard-display-mode .app-main,
+        body.leaderboard-display-mode .fixed-header .app-main {
+            padding-top: 0 !important;
+        }
+
+        body.leaderboard-display-mode .hq-leaderboard {
+            min-height: 100vh;
+            border-radius: 0;
+            padding: 20px 24px 32px;
+        }
+
+        body.leaderboard-display-mode #btnLeaderboardDisplay,
+        body.leaderboard-display-mode .leaderboard-display-hide {
+            display: none !important;
+        }
+
+        body.leaderboard-display-mode #counselorLeaderboardSection {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        body.leaderboard-display-mode #leaderboardSidebar {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        body.leaderboard-display-mode #leaderboardSidebar .hq-card {
+            height: auto;
+        }
+
+        body.leaderboard-display-mode #counselorLeaderboardSection .hq-card {
+            min-height: auto;
+        }
+
+        body.leaderboard-display-mode #counselorLeaderboardSection .leaderboard-table th,
+        body.leaderboard-display-mode #counselorLeaderboardSection .leaderboard-table td {
+            font-size: 0.95rem;
+            padding: 12px 14px;
+        }
+
+        body.leaderboard-display-mode #counselorLeaderboardSection h5 {
+            font-size: 1.35rem;
+        }
+
+        body.leaderboard-display-mode #counselorLeaderboardSection .table-responsive {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .btn-leaderboard-exit {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 9999;
+            background: #1a3a6b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 16px rgba(26, 58, 107, 0.25);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-leaderboard-exit:hover {
+            background: #2b59a8;
+            color: #fff;
+        }
+
+        body.leaderboard-display-mode .btn-leaderboard-exit {
+            display: inline-flex;
+        }
     </style>
 @endpush
 
 @section('content')
+    <button type="button" id="btnExitLeaderboardDisplay" class="btn-leaderboard-exit" title="Exit full screen">
+        <i class="fa-solid fa-compress"></i> Exit Full Screen
+    </button>
+
     <div class="app-main-outer">
         <div class="app-main-inner p-0">
             <div class="hq-leaderboard" id="leaderboardApp"
@@ -294,12 +402,15 @@
                     <div class="d-flex flex-wrap gap-3 align-items-center">
                         <div class="filter-tabs">
                             @foreach (['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly', 'overall' => 'Overall'] as $key => $label)
-                                <a href="{{ route('revenue-leaderboard.index', ['period' => $key, 'report_date' => $reportDate]) }}"
+                                <a href="{{ route('revenue-leaderboard.index', array_filter(['period' => $key, 'report_date' => $reportDate, 'display' => $displayMode ? 1 : null])) }}"
                                     class="filter-tab {{ $period === $key ? 'active' : '' }}">{{ $label }}</a>
                             @endforeach
                         </div>
+                        <button type="button" id="btnLeaderboardDisplay" class="btn btn-sm btn-primary">
+                            <i class="fa-solid fa-expand"></i> Full Screen
+                        </button>
                         @can('sales_team.index')
-                            <a href="{{ route('sales-team.index') }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('sales-team.index') }}" class="btn btn-sm btn-outline-primary leaderboard-display-hide">
                                 <i class="fa-solid fa-users"></i> Manage Teams
                             </a>
                         @endcan
@@ -412,10 +523,10 @@
                     @endif
                 </div>
 
-                <div class="row g-4">
-                    <div class="col-lg-8">
+                <div class="row g-4" id="counselboardRow">
+                    <div class="col-lg-8" id="counselorLeaderboardSection">
                         <div class="hq-card">
-                            <h5 class="fw-bold text-primary mb-3">
+                            <h5 class="fw-bold text-primary mb-3" id="counselorLeaderboardTitle">
                                 Counselor Leaderboard — {{ ucfirst($period) }}
                             </h5>
                             <div class="table-responsive">
@@ -452,11 +563,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-4" id="leaderboardSidebar">
                         <div class="hq-card">
                             <h5 class="fw-bold text-primary mb-3">Daily Team Report</h5>
                             <form method="GET" action="{{ route('revenue-leaderboard.index') }}" class="mb-3">
                                 <input type="hidden" name="period" value="{{ $period }}">
+                                @if ($displayMode)
+                                    <input type="hidden" name="display" value="1">
+                                @endif
                                 <label class="form-label small">Select Date</label>
                                 <input type="date" name="report_date" class="form-control report-date-picker"
                                     value="{{ $reportDate }}" onchange="this.form.submit()">
@@ -507,6 +621,40 @@
             const fetchUrl = app.dataset.fetchUrl;
             const period = app.dataset.period;
             const reportDate = app.dataset.reportDate;
+            const displayModeOnLoad = @json($displayMode);
+
+            function setLeaderboardDisplayMode(enabled) {
+                document.body.classList.toggle('leaderboard-display-mode', enabled);
+
+                const url = new URL(window.location.href);
+                if (enabled) {
+                    url.searchParams.set('display', '1');
+                } else {
+                    url.searchParams.delete('display');
+                }
+                window.history.replaceState({}, '', url);
+            }
+
+            const btnDisplay = document.getElementById('btnLeaderboardDisplay');
+            const btnExit = document.getElementById('btnExitLeaderboardDisplay');
+
+            if (btnDisplay) {
+                btnDisplay.addEventListener('click', () => setLeaderboardDisplayMode(true));
+            }
+
+            if (btnExit) {
+                btnExit.addEventListener('click', () => setLeaderboardDisplayMode(false));
+            }
+
+            if (displayModeOnLoad) {
+                setLeaderboardDisplayMode(true);
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && document.body.classList.contains('leaderboard-display-mode')) {
+                    setLeaderboardDisplayMode(false);
+                }
+            });
 
             function formatCurrency(amount) {
                 return '₹' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 });

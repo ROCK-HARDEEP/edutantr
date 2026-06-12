@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Abedin\Maker\Repositories\Repository;
 use App\Enum\MediaTypeEnum;
+use App\Http\Requests\AdminUserStoreRequest;
 use App\Http\Requests\StudentRegisterRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -18,7 +19,7 @@ class UserRepository extends Repository
         return User::class;
     }
 
-    public static function storeByRequest(UserStoreRequest $request)
+    public static function storeByRequest(UserStoreRequest|AdminUserStoreRequest $request)
     {
         $profilePicture = $request->hasFile('profile_picture') ? MediaRepository::storeByRequest(
             $request->file('profile_picture'),
@@ -42,6 +43,7 @@ class UserRepository extends Repository
             'password' => Hash::make($request->password),
             'name'     => $request->name,
             'student_organization_id' => $request->student_organization_id ?? null,
+            'sales_team_id' => $request->sales_team_id ?? null,
             'media_id' => $profilePicture ? $profilePicture->id : null,
         ]);
     }
@@ -95,6 +97,7 @@ class UserRepository extends Repository
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'name'     => $request->name,
+            'college_name' => $request->college_name,
             'student_organization_id' => $request->student_organization_id ?? null,
             'sales_team_id' => $salesTeamId,
             'media_id' => $profilePicture ? $profilePicture->id : null,
@@ -165,6 +168,7 @@ class UserRepository extends Repository
             'email'    => $request->email ?? $user->email,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
             'name'     => $request->name ?? $user->name,
+            'college_name' => $request->has('college_name') ? $request->college_name : $user->college_name,
             'media_id' => $profilePicture ? $profilePicture->id : null,
             'signature_id' => $signature ? $signature->id : null,
             'is_active' => $isActive,

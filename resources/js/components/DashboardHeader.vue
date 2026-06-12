@@ -1,10 +1,7 @@
 <template>
     <header class="navbar navbar-expand-lg shadow-sm" :class="[{ 'bg-light-primary': $route.path === '/' }]">
         <section class="container-fluid">
-            <router-link to="/" class="navbar-brand">
-                <img :src="masterStore?.masterData?.logo" width="150px" height="50px" class="object-fit-contain"
-                    alt="LMS" />
-            </router-link>
+            <BrandLogo to="/" class="navbar-brand" />
             <div class="d-flex align-items-center gap-2">
                 <div v-if="authStore.authToken" class="dropdown d-lg-none">
                     <a href="#" class="text-decoration-none text-dark btn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -152,6 +149,7 @@
 </style>
 
 <script setup>
+import BrandLogo from "@/components/BrandLogo.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
 import Swal from "sweetalert2";
