@@ -427,7 +427,7 @@
                             </div>
                             <div class="congrats-box" id="congratsBox">
                                 @if ($data['top_performer'])
-                                    Congratulations <strong>{{ $data['top_performer']['counselor_name'] }}</strong>
+                                    Congratulations <strong>{{ $data['top_performer']['team_name'] }}</strong>
                                     on reaching the #1 spot with
                                     {{ app(\App\Services\SalesLeaderboardService::class)->formatCurrency($data['top_performer']['revenue']) }}.
                                     Keep pushing towards even greater targets.
@@ -448,7 +448,7 @@
                                 @endphp
                                 @foreach ($podiumOrder as $idx => $performer)
                                     <div class="podium-item">
-                                        <div class="podium-name">{{ $performer['counselor_name'] ?? '-' }}</div>
+                                        <div class="podium-name">{{ $performer['team_name'] ?? '-' }}</div>
                                         <div class="podium-block {{ $podiumClasses[$idx] }}">
                                             {{ $podiumLabels[$idx] }}
                                         </div>
@@ -668,7 +668,7 @@
                 .then(data => {
                     if (data.top_performer) {
                         document.getElementById('congratsBox').innerHTML =
-                            `Congratulations <strong>${data.top_performer.counselor_name}</strong> on reaching the #1 spot with ${formatCurrency(data.top_performer.revenue)}. Keep pushing towards even greater targets.`;
+                            `Congratulations <strong>${data.top_performer.team_name}</strong> on reaching the #1 spot with ${formatCurrency(data.top_performer.revenue)}. Keep pushing towards even greater targets.`;
                     }
 
                     const tbody = document.getElementById('leaderboardBody');
