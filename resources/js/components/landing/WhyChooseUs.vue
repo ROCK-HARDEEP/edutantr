@@ -1,11 +1,48 @@
 <template>
-    <section class="why-choose" :class="{ 'why-choose--embedded': embedded }">
+    <component :is="embedded ? 'div' : 'section'" class="why-choose" :class="{ 'why-choose--embedded': embedded }">
         <div v-if="!embedded" class="why-choose__bg" aria-hidden="true"></div>
         <div v-if="!embedded" class="why-choose__overlay" aria-hidden="true"></div>
 
-        <div :class="embedded ? 'position-relative' : 'container position-relative'">
-            <div class="row align-items-center g-4 g-lg-5">
-                <div :class="embedded ? 'col-12' : 'col-lg-6'">
+        <div :class="embedded ? 'why-choose__embedded-inner' : 'container position-relative'">
+            <div v-if="embedded" class="why-choose__content">
+                <span class="why-badge">
+                    <i class="bi bi-building"></i>
+                    {{ $t('Why Choose Us') }}
+                </span>
+
+                <h2 class="why-heading">
+                    {{ $t('Learn & Grow Your Skills') }}
+                    <span class="why-heading-accent">{{ $t('From Anywhere') }}</span>
+                </h2>
+
+                <div class="why-card">
+                    <h3 class="why-card-title">
+                        {{ $t('Why Choose Edutantr?', { name: masterStore?.masterData?.name ?? 'LMS' }) }}
+                    </h3>
+
+                    <ul class="why-features">
+                        <li v-for="feature in features" :key="feature.title" class="why-feature">
+                            <span class="why-feature-check" aria-hidden="true">
+                                <i class="bi bi-check-lg"></i>
+                            </span>
+                            <div>
+                                <h4 class="why-feature-title">{{ feature.title }}</h4>
+                                <p class="why-feature-desc">{{ feature.description }}</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <router-link to="/courses" class="why-cta">
+                        <span>{{ $t('Get Started') }}</span>
+                        <span class="why-cta-icon" aria-hidden="true">
+                            <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </router-link>
+                </div>
+            </div>
+
+            <div v-else class="row align-items-center g-4 g-lg-5">
+                <div class="col-lg-6">
                     <span class="why-badge">
                         <i class="bi bi-building"></i>
                         {{ $t('Why Choose Us') }}
@@ -42,7 +79,7 @@
                     </div>
                 </div>
 
-                <div v-if="!embedded" class="col-lg-6">
+                <div class="col-lg-6">
                     <div class="why-visual">
                         <div class="why-visual-frame">
                             <img
@@ -97,7 +134,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </component>
 </template>
 
 <style scoped lang="scss">
@@ -111,6 +148,15 @@
     padding: 0;
     overflow: visible;
     height: 100%;
+}
+
+.why-choose__embedded-inner {
+    position: relative;
+    min-width: 0;
+}
+
+.why-choose__content {
+    min-width: 0;
 }
 
 .why-choose__bg {

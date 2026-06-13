@@ -12,6 +12,7 @@
                         class="col-12 col-lg-7 px-2 px-lg-4 protected-lesson-media"
                         @contextmenu.prevent
                         @dragstart.prevent
+                        @keydown.capture="preventLessonMediaSpeedShortcut"
                     >
                         <CourseVideoPlayer
                             v-if="contentData.type == 'video' && contentData.media_id"
@@ -196,6 +197,7 @@ import CourseLessons from "../components/CourseLessons.vue";
 import CourseVideoPlayer from "../components/CourseVideoPlayer.vue";
 import ProtectedMediaEmbed from "../components/ProtectedMediaEmbed.vue";
 import ProtectedAudioPlayer from "../components/ProtectedAudioPlayer.vue";
+import { lockElementPlaybackRate, preventMediaSpeedShortcut } from "../composables/useProtectedMedia";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
@@ -218,6 +220,16 @@ let isPlayingAudio = ref(false);
 const videoElement = ref(null);
 const audioElement = ref(null);
 const subscriptionError = ref(false);
+
+const preventLessonMediaSpeedShortcut = (event) => {
+    preventMediaSpeedShortcut(event);
+
+    const media =
+        videoElement.value?.videoElement?.value ??
+        audioElement.value?.audioElement?.value;
+
+    lockElementPlaybackRate(media);
+};
 
 const onPlayVideo = () => {
     isPlayingVideo.value = true;

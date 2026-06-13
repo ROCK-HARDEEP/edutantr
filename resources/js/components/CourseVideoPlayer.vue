@@ -9,11 +9,12 @@
             class="course-video-player__video rounded w-100"
             :src="src"
             controls
-            controlslist="nodownload noplaybackrate"
+            controlslist="nodownload noplaybackrate noremoteplayback"
             disablepictureinpicture
             disableremoteplayback
             preload="metadata"
             :autoplay="autoplay"
+            @ratechange="onRateChange"
             @play="$emit('play')"
             @pause="$emit('pause')"
         ></video>
@@ -21,10 +22,10 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { attachNativeMediaProtection } from "@/composables/useProtectedMedia";
+import { onBeforeUnmount, onMounted, ref, watch, nextTick } from "vue";
+import { attachNativeMediaProtection, lockElementPlaybackRate } from "@/composables/useProtectedMedia";
 
-defineProps({
+const props = defineProps({
     src: {
         type: String,
         required: true,
@@ -40,6 +41,10 @@ defineEmits(["play", "pause"]);
 const videoRef = ref(null);
 let detachProtection = () => {};
 
+const onRateChange = () => {
+    lockElementPlaybackRate(videoRef.value);
+};
+
 const bindProtection = () => {
     detachProtection();
     detachProtection = attachNativeMediaProtection(videoRef.value);
@@ -51,6 +56,13 @@ watch(
     () => videoRef.value,
     () => {
         bindProtection();
+    }
+);
+
+watch(
+    () => props.src,
+    () => {
+        nextTick(bindProtection);
     }
 );
 

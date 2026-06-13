@@ -20,6 +20,27 @@ export function lockElementPlaybackRate(element) {
     }
 }
 
+function isMediaSpeedShortcut(event) {
+    if (event.key === "<" || event.key === ">") {
+        return true;
+    }
+
+    if (event.shiftKey && (event.key === "," || event.key === ".")) {
+        return true;
+    }
+
+    return false;
+}
+
+export function preventMediaSpeedShortcut(event) {
+    if (!isMediaSpeedShortcut(event)) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+}
+
 export function attachNativeMediaProtection(element) {
     if (!element) {
         return () => {};
@@ -28,18 +49,28 @@ export function attachNativeMediaProtection(element) {
     lockElementPlaybackRate(element);
 
     const onRateChange = () => lockElementPlaybackRate(element);
-    const onLoadedMetadata = () => lockElementPlaybackRate(element);
+    const rateEvents = ["ratechange", "loadedmetadata", "play", "playing", "seeked", "timeupdate"];
 
-    element.addEventListener("ratechange", onRateChange);
-    element.addEventListener("loadedmetadata", onLoadedMetadata);
+    rateEvents.forEach((eventName) => {
+        element.addEventListener(eventName, onRateChange);
+    });
+
     element.addEventListener("contextmenu", preventMediaContextMenu);
     element.addEventListener("dragstart", preventMediaDrag);
+    element.addEventListener("keydown", preventMediaSpeedShortcut, true);
+
+    const intervalId = window.setInterval(() => {
+        lockElementPlaybackRate(element);
+    }, 500);
 
     return () => {
-        element.removeEventListener("ratechange", onRateChange);
-        element.removeEventListener("loadedmetadata", onLoadedMetadata);
+        rateEvents.forEach((eventName) => {
+            element.removeEventListener(eventName, onRateChange);
+        });
         element.removeEventListener("contextmenu", preventMediaContextMenu);
         element.removeEventListener("dragstart", preventMediaDrag);
+        element.removeEventListener("keydown", preventMediaSpeedShortcut, true);
+        window.clearInterval(intervalId);
     };
 }
 
@@ -67,7 +98,7 @@ export function processEmbedHtml(html) {
         video.classList.add("protected-media-embed__video");
         video.setAttribute("controls", "");
         video.setAttribute("playsinline", "");
-        video.setAttribute("controlsList", "nodownload");
+        video.setAttribute("controlsList", "nodownload noplaybackrate");
 
         return template.innerHTML;
     }

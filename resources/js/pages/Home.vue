@@ -16,26 +16,23 @@
             <MentorsSection />
         </section>
 
-        <section class="home-section home-section--feedback-why">
+        <div class="home-section home-section--why">
+            <WhyChooseUs />
+        </div>
+
+        <section class="home-section home-section--feedback">
             <div class="container">
-                <div class="row g-4 g-xl-5 align-items-start">
-                    <div class="col-lg-5">
-                        <WhyChooseUs embedded />
-                    </div>
-                    <div class="col-lg-7">
-                        <SectionHeader
-                            :eyebrow="$t('Student Feedback')"
-                            icon="bi bi-chat-quote-fill"
-                            :subtitle="$t('Real stories from learners who transformed their careers with us.')"
-                        >
-                            <template #title>
-                                {{ $t('Hear from Our') }}
-                                <span class="accent">{{ $t('Students & Instructors') }}</span>
-                            </template>
-                        </SectionHeader>
-                        <Testimonials />
-                    </div>
-                </div>
+                <SectionHeader
+                    :eyebrow="$t('Student Feedback')"
+                    icon="bi bi-chat-quote-fill"
+                    :subtitle="$t('Real stories from learners who transformed their careers with us.')"
+                >
+                    <template #title>
+                        {{ $t('Hear from Our') }}
+                        <span class="accent">{{ $t('Students & Instructors') }}</span>
+                    </template>
+                </SectionHeader>
+                <Testimonials />
             </div>
         </section>
 
@@ -73,22 +70,27 @@
     background: #fff;
 }
 
-.home-section--feedback-why {
-    background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f8fafc 100%);
+.home-section--why {
+    padding: 0;
+    background: #fff;
+}
+
+.home-section--feedback {
+    background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 100%);
     position: relative;
 }
 
-.home-section--feedback-why::before {
+.home-section--feedback::before {
     content: "";
     position: absolute;
     inset: 0;
     background: url("/public/assets/website/pricing-bg.png") no-repeat center;
     background-size: cover;
-    opacity: 0.35;
+    opacity: 0.2;
     pointer-events: none;
 }
 
-.home-section--feedback-why .container {
+.home-section--feedback .container {
     position: relative;
     z-index: 1;
 }

@@ -1,7 +1,7 @@
 <template>
-    <div class="testimonials-wrap position-relative">
+    <div class="testimonials-wrap position-relative" :class="{ 'testimonials-wrap--compact': compact }">
         <swiper
-            :slides-per-view="3"
+            :slides-per-view="compact ? 1 : 3"
             :space-between="24"
             :breakpoints="swiperOptions.breakpoints"
             @swiper="onSwiper"
@@ -46,6 +46,17 @@
 <style scoped lang="scss">
 .testimonials-wrap {
     padding: 0 0.5rem;
+}
+
+.testimonials-wrap--compact {
+    padding: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.testimonials-wrap--compact :deep(.swiper) {
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .testimonial-card {
@@ -173,8 +184,12 @@
 </style>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
+
+const props = defineProps({
+    compact: { type: Boolean, default: false },
+});
 
 const swiperInstance = ref();
 
@@ -190,13 +205,19 @@ const swiperPrevSlide = () => {
     swiperInstance.value.slidePrev();
 };
 
-const swiperOptions = {
-    breakpoints: {
-        320: { slidesPerView: 1, spaceBetween: 16 },
-        768: { slidesPerView: 2, spaceBetween: 20 },
-        1200: { slidesPerView: 3, spaceBetween: 24 },
-    },
-};
+const swiperOptions = computed(() => ({
+    breakpoints: props.compact
+        ? {
+              320: { slidesPerView: 1, spaceBetween: 16 },
+              1200: { slidesPerView: 1, spaceBetween: 20 },
+              1400: { slidesPerView: 2, spaceBetween: 24 },
+          }
+        : {
+              320: { slidesPerView: 1, spaceBetween: 16 },
+              768: { slidesPerView: 2, spaceBetween: 20 },
+              1200: { slidesPerView: 3, spaceBetween: 24 },
+          },
+}));
 
 const testimonials = ref([]);
 
