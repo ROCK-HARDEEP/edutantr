@@ -31,9 +31,13 @@ class CourseResource extends JsonResource
                 ? $this->favouriteGuests->contains('unique_id', $request->input('guest_id'))
                 : false);
 
-        $isEnrolled = $loggedInUser
-            ? $this->enrollments->contains('user_id', $loggedInUser?->id)
-            : false;
+        $userEnrollment = $loggedInUser
+            ? $this->enrollments->where('user_id', $loggedInUser?->id)->first()
+            : null;
+
+        $isEnrolled = $userEnrollment && ($userEnrollment->enrollment_type ?? 'full') === 'full';
+
+        $isPreCourseEnrolled = $userEnrollment && $userEnrollment->enrollment_type === 'pre_course';
 
 
         // for subscription check
@@ -93,6 +97,9 @@ class CourseResource extends JsonResource
             'view_count' => $this->view_count,
             'regular_price' => $this->regular_price,
             'price' => $this->price,
+            'pre_course_enabled' => (bool) $this->pre_course_enabled,
+            'pre_course_price' => $this->pre_course_price,
+            'pre_course_description' => $this->pre_course_description,
             'instructor' => InstructorResource::make($this->instructor),
             'published_at' => $this->published_at,
             'total_duration' => $contents->sum('duration'),
@@ -109,6 +116,7 @@ class CourseResource extends JsonResource
             'submitted_review' => ReviewResource::make($submittedReview),
             'is_favourite' => $isFavourite,
             'is_enrolled' => $isEnrolled,
+            'is_pre_course_enrolled' => $isPreCourseEnrolled,
             'check_subscription' => $checkSubscription,
             'plan_id' => $subscriber ? $subscriber->plan_id : null,
             'is_completed' => $isCompleted,

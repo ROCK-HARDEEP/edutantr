@@ -201,6 +201,48 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
+                                            <div class="col-md-12 mt-4">
+                                                <div class="border rounded-3 p-3 bg-light">
+                                                    <div class="form-check mb-3">
+                                                        <input id="preCourseEnabled" name="pre_course_enabled"
+                                                            class="form-check-input" type="checkbox" value="1"
+                                                            {{ old('pre_course_enabled', $course->pre_course_enabled ?? false) ? 'checked' : '' }}
+                                                            onchange="togglePreCourseFields(this.checked)">
+                                                        <label for="preCourseEnabled" class="form-check-label fw-semibold">
+                                                            {{ __('Enable Pre-Course Registration') }}
+                                                        </label>
+                                                    </div>
+                                                    <div id="preCourseFields">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="preCoursePrice" class="form-label">
+                                                                    {{ __('Pre-Course Registration Price') }}
+                                                                    <span class="text-danger fw-bold">*</span>
+                                                                </label>
+                                                                <input type="text" class="form-control" id="preCoursePrice"
+                                                                    name="pre_course_price"
+                                                                    value="{{ old('pre_course_price', $course->pre_course_price ?? '') }}"
+                                                                    placeholder="{{ __('Enter pre-course registration fee') }}" />
+                                                                @error('pre_course_price')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <label for="preCourseDescription" class="form-label">
+                                                                    {{ __('Pre-Course Description') }}
+                                                                    <span class="text-danger fw-bold">*</span>
+                                                                </label>
+                                                                <textarea class="form-control" id="preCourseDescription"
+                                                                    name="pre_course_description" rows="3"
+                                                                    placeholder="{{ __('Short description for pre-course registration') }}">{{ old('pre_course_description', $course->pre_course_description ?? '') }}</textarea>
+                                                                @error('pre_course_description')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -381,6 +423,20 @@
             }
             // Attach the event listener to update count in real time
             titleInput.addEventListener('input', countCourseTitleChar);
+        });
+
+        function togglePreCourseFields(enabled) {
+            const fields = document.getElementById('preCourseFields');
+            if (fields) {
+                fields.style.display = enabled ? 'block' : 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const preCourseCheckbox = document.getElementById('preCourseEnabled');
+            if (preCourseCheckbox) {
+                togglePreCourseFields(preCourseCheckbox.checked);
+            }
         });
     </script>
 @endpush

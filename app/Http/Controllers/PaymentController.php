@@ -265,6 +265,12 @@ class PaymentController extends Controller
                 'organization_plan_subscription_id' => $orgPlanSubscription->id
             ]);
         } else {
+            $enrollmentType = $transaction->enrollment_type ?? 'full';
+
+            $coursePrice = $enrollmentType === 'pre_course'
+                ? ($transaction->course->pre_course_price ?? $transaction->payment_amount)
+                : ($transaction->course->price ? $transaction->course->price : $transaction->course->regular_price);
+
             $enrollment = EnrollmentRepository::query()->updateOrCreate(
                 [
                     'user_id' => $transaction->user->id,
@@ -272,10 +278,11 @@ class PaymentController extends Controller
                 ],
                 [
                     'coupon_id' => $transaction->coupon?->id,
-                    'course_price' => $transaction->course->price ? $transaction->course->price : $transaction->course->regular_price,
+                    'course_price' => $coursePrice,
                     'discount_amount' => $transaction->coupon ? $transaction->coupon->discount : 0,
                     'class_mode' => $transaction->class_mode ?? 'online',
                     'authorization_name' => $transaction->user->name,
+                    'enrollment_type' => $enrollmentType,
                 ]
             );
         }

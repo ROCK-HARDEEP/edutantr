@@ -17,6 +17,9 @@
                                 <h5 class="mt-4 mt-lg-0">
                                     {{ course?.title }}
                                 </h5>
+                                <span v-if="enrollmentType === 'pre_course'" class="badge bg-warning text-dark mb-2">
+                                    {{ $t('Pre-Course Registration') }}
+                                </span>
                                 <div class="d-flex mt-3 pb-3">
                                     <img :src="course?.instructor
                                         ?.profile_picture
@@ -50,28 +53,63 @@
 
                     <div class="border rounded-3 p-2 p-lg-4">
                         <h5 class="mb-4">{{ $t('Order Details') }}</h5>
+
+                        <div v-if="showEnrollmentTypeSelector" class="enrollment-type-section mb-4">
+                            <div class="enrollment-type-header">
+                                <i class="bi bi-ui-checks-grid me-2"></i>
+                                <span>{{ $t('Choose Enrollment Type') }}</span>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <div @click="setEnrollmentType('full')"
+                                        :class="['enrollment-option', 'enrollment-option--full', enrollmentType === 'full' ? 'selected' : '']">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="enrollment-option-icon">
+                                                <i class="bi bi-mortarboard-fill"></i>
+                                            </div>
+                                            <input class="form-check-input mt-1" type="radio"
+                                                :checked="enrollmentType === 'full'">
+                                        </div>
+                                        <strong class="d-block mt-2">{{ $t('Full Course') }}</strong>
+                                        <small class="text-muted d-block mb-2">{{ $t('Complete access to all lessons') }}</small>
+                                        <div class="enrollment-option-price">
+                                            <span class="price-label">{{ $t('Course Fee') }}</span>
+                                            <span class="price-value">{{ formatPrice(fullCoursePrice) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div @click="setEnrollmentType('pre_course')"
+                                        :class="['enrollment-option', 'enrollment-option--pre', enrollmentType === 'pre_course' ? 'selected' : '']">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="enrollment-option-icon">
+                                                <i class="bi bi-bookmark-star-fill"></i>
+                                            </div>
+                                            <input class="form-check-input mt-1" type="radio"
+                                                :checked="enrollmentType === 'pre_course'">
+                                        </div>
+                                        <strong class="d-block mt-2">{{ $t('Pre-Course Register') }}</strong>
+                                        <small class="text-muted d-block mb-2">{{ course?.pre_course_description }}</small>
+                                        <div class="enrollment-option-price enrollment-option-price--pre">
+                                            <span class="price-label">{{ $t('Pre-Course Fee') }}</span>
+                                            <span class="price-value">{{ formatPrice(course?.pre_course_price) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="bg-light rounded-3 p-4">
                             <div class="price-breakdown mb-3">
-                                <div class="d-flex justify-content-between mb-4" v-if="course?.price">
-                                    <span>{{ $t('Course Price') }}</span>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span>{{ enrollmentType === 'pre_course' ? $t('Pre-Course Fee') : $t('Course Price') }}</span>
                                     <strong>{{
                                         masterStore?.masterData
                                             ?.currency_symbol
                                     }}{{
                                             course?.is_free
                                                 ? 0
-                                                : course?.price
-                                        }}</strong>
-                                </div>
-                                <div class="d-flex justify-content-between mb-4" v-else>
-                                    <span>{{ $t('Course Price') }}</span>
-                                    <strong>{{
-                                        masterStore?.masterData
-                                            ?.currency_symbol
-                                    }}{{
-                                            course?.is_free
-                                                ? 0
-                                                : course?.regular_price
+                                                : selectedBasePrice
                                         }}</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-4 text-danger">
@@ -228,9 +266,15 @@
 
                     <div class="mt-auto border-top p-4" v-if="!course?.is_enrolled">
                         <button @click="handleButtonClick" class="btn btn-primary rounded-pill fw-bold w-100">
-                            {{ $t('Pay') }} {{ masterStore?.masterData?.currency_symbol
+                            {{ enrollmentType === 'pre_course' ? $t('Pre-Register') : $t('Pay') }}
+                            {{ masterStore?.masterData?.currency_symbol
                             }}{{ grandTotal.toFixed(2) }}
                             <i class="bi bi-arrow-right float-end"></i>
+                        </button>
+                    </div>
+                    <div class="mt-auto border-top p-4" v-else-if="course?.is_pre_course_enrolled">
+                        <button disabled class="btn btn-info rounded-pill fw-bold w-100">
+                            {{ $t('Already Pre-Registered') }}
                         </button>
                     </div>
                     <div class="mt-auto border-top p-4" v-else>
@@ -302,6 +346,117 @@
 .payment-card.selected {
     border-color: #306c3c !important;
 }
+
+.enrollment-type-section {
+    background: linear-gradient(135deg, #f0f7f2 0%, #fff9eb 100%);
+    border: 2px solid #306c3c;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 20px rgba(48, 108, 60, 0.1);
+}
+
+.enrollment-type-header {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #306c3c;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px dashed rgba(48, 108, 60, 0.25);
+}
+
+.enrollment-option {
+    cursor: pointer;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.875rem;
+    padding: 1rem 1.125rem;
+    background: #fff;
+    height: 100%;
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    &.selected {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.enrollment-option--full {
+    &:hover,
+    &.selected {
+        border-color: #306c3c;
+        background: #f8fdf9;
+    }
+
+    &.selected .enrollment-option-icon {
+        background: #306c3c;
+        color: #fff;
+    }
+}
+
+.enrollment-option--pre {
+    &:hover,
+    &.selected {
+        border-color: #e6a817;
+        background: #fffdf5;
+    }
+
+    &.selected .enrollment-option-icon {
+        background: #e6a817;
+        color: #fff;
+    }
+}
+
+.enrollment-option-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.enrollment-option-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    background: #f0f7f2;
+    border: 1px solid rgba(48, 108, 60, 0.15);
+
+    .price-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+    .price-value {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #306c3c;
+    }
+}
+
+.enrollment-option-price--pre {
+    background: #fff8e6;
+    border-color: rgba(230, 168, 23, 0.25);
+
+    .price-value {
+        color: #b8860b;
+    }
+}
 </style>
 
 <script setup>
@@ -319,6 +474,7 @@ const route = useRoute();
 const router = useRouter();
 
 const course_id = route.params.id;
+const enrollmentType = ref(route.query.type === 'pre_course' ? 'pre_course' : 'full');
 const selectedClassMode = ref("online");
 const selectedPaymentMethod = ref("");
 
@@ -351,18 +507,83 @@ const onLoginSuccess = () => {
     fetchCourseData();
 };
 
+const showEnrollmentTypeSelector = computed(() => {
+    return course.value?.pre_course_enabled
+        && course.value?.pre_course_price
+        && !course.value?.is_enrolled
+        && !course.value?.is_pre_course_enrolled;
+});
+
+const selectedBasePrice = computed(() => {
+    if (course.value?.is_free) {
+        return 0;
+    }
+
+    if (enrollmentType.value === 'pre_course') {
+        return course.value?.pre_course_price ?? 0;
+    }
+
+    if (course.value?.price) {
+        return course.value.price;
+    }
+
+    return course.value?.regular_price ?? 0;
+});
+
+const fullCoursePrice = computed(() => {
+    if (course.value?.is_free) {
+        return 0;
+    }
+
+    if (course.value?.price) {
+        return course.value.price;
+    }
+
+    return course.value?.regular_price ?? 0;
+});
+
+const formatPrice = (amount) => {
+    const symbol = masterStore?.masterData?.currency_symbol ?? '';
+    const value = Number(amount ?? 0).toFixed(2);
+
+    if (masterStore?.masterData?.currency_position === 'Left') {
+        return `${symbol}${value}`;
+    }
+
+    return `${value}${symbol}`;
+};
+
+const recalculateGrandTotal = () => {
+    if (course.value?.is_free) {
+        grandTotal.value = 0;
+        return;
+    }
+
+    if (enrollmentType.value === 'pre_course') {
+        grandTotal.value = Math.max((course.value?.pre_course_price ?? 0) - discountAmount.value, 0);
+        return;
+    }
+
+    if (course.value?.regular_price && !course.value?.price) {
+        grandTotal.value = course.value.regular_price - discountAmount.value;
+    } else {
+        grandTotal.value = (course.value?.price ?? 0) - discountAmount.value;
+    }
+};
+
+const setEnrollmentType = (type) => {
+    enrollmentType.value = type;
+    recalculateGrandTotal();
+};
+
 watch(
     () => discountAmount.value,
-    () => {
-        if (course.value.is_free) {
-            grandTotal.value = 0;
-        } else if (course.value.regular_price && !course.value.price) {
-            grandTotal.value =
-                course.value.regular_price - discountAmount.value;
-        } else {
-            grandTotal.value = course.value.price - discountAmount.value;
-        }
-    }
+    () => recalculateGrandTotal()
+);
+
+watch(
+    () => enrollmentType.value,
+    () => recalculateGrandTotal()
 );
 
 const selectDefaultPaymentMethod = () => {
@@ -474,16 +695,14 @@ const fetchCourseData = async () => {
             },
         });
         course.value = response.data.data.course;
-        // grandtotal measurement start
-        if (course.value.is_free) {
-            grandTotal.value = 0;
-        } else if (course.value.regular_price && !course.value.price) {
-            grandTotal.value =
-                course.value.regular_price - discountAmount.value;
-        } else {
-            grandTotal.value = course.value.price - discountAmount.value;
+
+        if (route.query.type === 'pre_course' && course.value?.pre_course_enabled) {
+            enrollmentType.value = 'pre_course';
+        } else if (course.value?.is_pre_course_enrolled && !course.value?.is_enrolled) {
+            enrollmentType.value = 'full';
         }
-        // grandtotal measurement end
+
+        recalculateGrandTotal();
     } catch (error) {
         console.error("Error fetching course data:", error);
     }
@@ -526,12 +745,10 @@ const handleButtonClick = () => {
 }
 
 const initiateTransaction = async () => {
+    recalculateGrandTotal();
+
     if (course.value.is_free) {
         grandTotal.value = 0;
-    } else if (course.value.regular_price && !course.value.price) {
-        grandTotal.value = course.value.regular_price - discountAmount.value;
-    } else {
-        grandTotal.value = course.value.price - discountAmount.value;
     }
 
 
@@ -592,6 +809,7 @@ const initiateTransaction = async () => {
                 team_code: teamValidated.value ? teamCode.value : undefined,
                 sales_team_member_id: selectedCounselorId.value || undefined,
                 total_amount: grandTotal.value,
+                enrollment_type: enrollmentType.value,
             },
         });
 

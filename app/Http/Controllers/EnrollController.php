@@ -145,12 +145,31 @@ class EnrollController extends Controller
                 return $this->json($message, null, 400);
             }
         } else {
-            $alreadyEnrolled = EnrollmentRepository::query()
+            $enrollmentType = in_array($request->enrollment_type, ['full', 'pre_course'], true)
+                ? $request->enrollment_type
+                : 'full';
+
+            if ($enrollmentType === 'pre_course') {
+                if (!$course->pre_course_enabled || !$course->pre_course_price) {
+                    return $this->json('Pre-course registration is not available for this course', null, 400);
+                }
+            }
+
+            $existingEnrollment = EnrollmentRepository::query()
                 ->where('user_id', $user?->id ?? $authUser->id)
                 ->where('course_id', $course->id)
-                ->exists();
-            if ($alreadyEnrolled) {
-                return $this->json('Already enrolled in: ' . $course->title, null, 400);
+                ->first();
+
+            if ($existingEnrollment) {
+                $existingType = $existingEnrollment->enrollment_type ?? 'full';
+
+                if ($existingType === 'full') {
+                    return $this->json('Already enrolled in: ' . $course->title, null, 400);
+                }
+
+                if ($enrollmentType === 'pre_course') {
+                    return $this->json('Already pre-registered for: ' . $course->title, null, 400);
+                }
             }
         }
 
@@ -177,15 +196,25 @@ class EnrollController extends Controller
 
         $transactionIdentifier = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)), 0, 16);
 
+        $enrollmentType = in_array($request->enrollment_type, ['full', 'pre_course'], true)
+            ? $request->enrollment_type
+            : 'full';
+
+        $courseTitle = $course ? $course->title : $title;
+        if ($course && $enrollmentType === 'pre_course') {
+            $courseTitle = 'Pre-Register: ' . $course->title;
+        }
+
         $transaction = TransactionRepository::create([
             'identifier' => $transactionIdentifier,
             'course_id' => $course?->id ?? null,
+            'enrollment_type' => $enrollmentType,
             'invoice_id' => $generateInvoice?->id ?? null,
             'user_id' => $user?->id ?? $authUser->id,
             'coupon_id' => $coupon?->id,
             'sales_team_id' => $teamData['sales_team_id'] ?? null,
             'sales_team_member_id' => $teamData['sales_team_member_id'] ?? null,
-            'course_title' => $course ? $course->title : $title,
+            'course_title' => $courseTitle,
             'user_phone' => auth()->user()->phone ?? UserRepository::getAll()->random()->phone,
             'payment_amount' => $amount,
             'payment_method' => $request->payment_gateway,

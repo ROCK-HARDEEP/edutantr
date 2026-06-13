@@ -49,6 +49,9 @@ class CourseRepository extends Repository
             'description' => json_encode($request->description),
             'regular_price' => $request->regular_price,
             'price' => $request->price,
+            'pre_course_enabled' => $request->boolean('pre_course_enabled'),
+            'pre_course_price' => $request->pre_course_enabled ? $request->pre_course_price : null,
+            'pre_course_description' => $request->pre_course_enabled ? $request->pre_course_description : null,
             'instructor_id' => $request->instructor_id,
             'organization_id' => $organization->id ?? $authenticatedOrganization->id ?? null,
             'is_active' => $isActive,
@@ -137,6 +140,15 @@ class CourseRepository extends Repository
             'description' => json_encode($request->description) ?? $course->description,
             'regular_price' => $request->regular_price ?? null,
             'price' => $request->price,
+            'pre_course_enabled' => $request->has('pre_course_enabled')
+                ? $request->boolean('pre_course_enabled')
+                : $course->pre_course_enabled,
+            'pre_course_price' => ($request->has('pre_course_enabled') ? $request->boolean('pre_course_enabled') : $course->pre_course_enabled)
+                ? $request->pre_course_price
+                : null,
+            'pre_course_description' => ($request->has('pre_course_enabled') ? $request->boolean('pre_course_enabled') : $course->pre_course_enabled)
+                ? $request->pre_course_description
+                : null,
             'instructor_id' => $request->instructor_id ?? $course->instructor_id,
             'organization_id' => $organization ? $organization->id : $authenticatedOrganization->id ?? $course->organization_id,
             'is_active' => $isActive,

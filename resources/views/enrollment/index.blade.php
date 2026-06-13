@@ -86,6 +86,7 @@
                                             <th><strong>{{ __('Enroll ID') }}</strong></th>
                                             <th><strong>{{ __('Student') }}</strong></th>
                                             <th><strong>{{ __('Course Title') }}</strong></th>
+                                            <th><strong>{{ __('Enrollment Type') }}</strong></th>
                                             <th><strong>{{ __('Class Mode') }}</strong></th>
                                             <th style="width: 15%"><strong>{{ __('Progress') }}</strong></th>
                                             <th><strong>{{ __('Action') }}</strong></th>
@@ -117,6 +118,13 @@
                                                             @endif
                                                         </p>
                                                     </div>
+                                                </td>
+                                                <td class="tableId">
+                                                    @if (($enrollment->enrollment_type ?? 'full') === 'pre_course')
+                                                        <span class="badge bg-info text-dark">{{ __('Pre-Course') }}</span>
+                                                    @else
+                                                        <span class="badge bg-success">{{ __('Full Course') }}</span>
+                                                    @endif
                                                 </td>
                                                 <td class="tableId">
                                                     @if (($enrollment->class_mode ?? 'online') === 'offline')

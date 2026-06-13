@@ -41,6 +41,9 @@ class CourseUpdateRequest extends FormRequest
             ],
             'instructor_id' => 'exists:instructors,id',
             'is_active' => 'nullable',
+            'pre_course_enabled' => 'nullable|boolean',
+            'pre_course_price' => 'nullable|required_if:pre_course_enabled,1,true,on|numeric|min:1',
+            'pre_course_description' => 'nullable|required_if:pre_course_enabled,1,true,on|string|max:1000',
         ];
     }
     /**

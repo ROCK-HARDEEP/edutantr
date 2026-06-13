@@ -35,8 +35,12 @@ class EnrolledCourseResource extends JsonResource
                 : false);
 
         $isEnrolled = $loggedInUser
-            ? $course?->enrollments->contains('user_id', $loggedInUser->id)
+            ? $course?->enrollments
+                ->where('user_id', $loggedInUser->id)
+                ->contains(fn ($enrollment) => ($enrollment->enrollment_type ?? 'full') === 'full')
             : false;
+
+        $isPreCourseEnrolled = ($this->enrollment_type ?? 'full') === 'pre_course';
 
         $isReviewed = $loggedInUser
             ? $course?->reviews->contains('user_id', $loggedInUser->id)
@@ -70,6 +74,8 @@ class EnrolledCourseResource extends JsonResource
             'submitted_review' => ReviewResource::make($submittedReview),
             'is_favourite' => $isFavourite,
             'is_enrolled' => $isEnrolled,
+            'is_pre_course_enrolled' => $isPreCourseEnrolled,
+            'enrollment_type' => $this->enrollment_type ?? 'full',
             'progress' => $progress?->course_progress ?? 0,
             'is_reviewed' => $isReviewed,
             'can_review' => $canReview,

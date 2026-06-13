@@ -59,6 +59,7 @@
                                             <th><strong>#</strong></th>
                                             <th><strong>{{ __('Enrollment ID') }}</strong></th>
                                             <th><strong>{{ __('Course') }}</strong></th>
+                                            <th><strong>{{ __('Type') }}</strong></th>
                                             <th><strong>{{ __('Student Phone') }}</strong></th>
                                             <th><strong>{{ __('Payment Amount') }}</strong></th>
                                             <th><strong>{{ __('Payment Method') }}</strong></th>
@@ -76,6 +77,13 @@
                                                     {{ generateID($transaction->enrollment_id) }}
                                                 </td>
                                                 <td class="tableId py-3">{{ $transaction->course_title ?? 'N/A' }}</td>
+                                                <td class="tableId py-3">
+                                                    @if (($transaction->enrollment_type ?? 'full') === 'pre_course')
+                                                        <span class="badge bg-info text-dark">{{ __('Pre-Course') }}</span>
+                                                    @else
+                                                        <span class="badge bg-success">{{ __('Full Course') }}</span>
+                                                    @endif
+                                                </td>
                                                 <td class="tableId py-3">{{ $transaction->user_phone }}</td>
                                                 <td class="tableId py-3">
                                                     @if ($transaction->payment_amount != null || $transaction->payable_amount != null)

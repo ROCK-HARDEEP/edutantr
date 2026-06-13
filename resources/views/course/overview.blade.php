@@ -89,6 +89,26 @@
                         </div>
                     </div>
 
+                    @if ($course?->pre_course_enabled && $course?->pre_course_price)
+                        <div class="col-md-6 col-xl-3 mt-3 mt-xl-0">
+                            <div class="card widget-content bg-gray">
+                                <div class="widget-content-wrapper text-white">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading text-color-orange">
+                                            {{ currency($course->pre_course_price) }}
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center text-color-gray">
+                                            <div class="widget-subheading">{{ __('Pre-Course Registration') }}</div>
+                                            <div class="widget-icon">
+                                                <img src="{{ asset('assets/images/card/book-open-text.svg') }}" alt="icon">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
 
                     <div class="col-md-6 col-xl-3 mt-3 mt-xl-0">
                         <div class="card  widget-content bg-gray">

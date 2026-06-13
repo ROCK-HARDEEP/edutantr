@@ -68,11 +68,38 @@
                 </div>
             </div>
 
-            <router-link :to="'/checkout/' + course?.id" @click.prevent="handleRoute"
-                class="enroll-btn btn btn-primary py-3 w-100">Enroll Now<i
+            <router-link :to="'/checkout/' + course?.id" @click.prevent="handleRoute('full')"
+                class="enroll-btn btn btn-primary py-3 w-100">{{ $t('Enroll Now') }}<i
                     class="bi bi-arrow-right ms-2"></i></router-link>
         </div>
-        <router-link v-else :to="course?.check_subscription
+
+        <div v-if="course?.pre_course_enabled && course?.pre_course_price && !course?.is_enrolled && !course?.is_pre_course_enrolled"
+            class="pre-course-action border border-warning rounded-3 p-3 mt-3">
+            <div class="text-center mb-3">
+                <span class="badge bg-warning text-dark mb-2">{{ $t('Pre-Course Register') }}</span>
+                <p class="text-muted small mb-2">{{ course?.pre_course_description }}</p>
+                <strong v-if="masterStore?.masterData?.currency_position == 'Left'" class="fs-4">{{
+                    masterStore?.masterData?.currency_symbol }}{{ course?.pre_course_price }}</strong>
+                <strong v-else class="fs-4">{{ course?.pre_course_price }}{{
+                    masterStore?.masterData?.currency_symbol }}</strong>
+            </div>
+            <router-link :to="'/checkout/' + course?.id + '?type=pre_course'" @click.prevent="handleRoute('pre_course')"
+                class="btn btn-outline-warning w-100 py-2">
+                {{ $t('Pre-Register Now') }}<i class="bi bi-arrow-right ms-2"></i>
+            </router-link>
+        </div>
+
+        <div v-if="course?.is_pre_course_enrolled && !course?.is_enrolled"
+            class="pre-course-enrolled border border-info rounded-3 p-3 mt-3 text-center">
+            <span class="badge bg-info text-dark mb-2">{{ $t('Pre-Registered') }}</span>
+            <p class="text-muted small mb-3">{{ $t('You have pre-registered for this course. Complete full enrollment to access all lessons.') }}</p>
+            <router-link :to="'/checkout/' + course?.id" @click.prevent="handleRoute('full')"
+                class="btn btn-primary w-100 py-2">
+                {{ $t('Complete Full Enrollment') }}<i class="bi bi-arrow-right ms-2"></i>
+            </router-link>
+        </div>
+
+        <router-link v-else-if="course?.is_free || course?.is_enrolled" :to="course?.check_subscription
             ? '/dashboard/plan-renewal-history?plan_id=' + course?.current_plan_id
             : (course?.is_enrolled && !course?.check_subscription)
                 ? '/play/' + course?.id
@@ -131,6 +158,14 @@
         border-bottom-right-radius: 1rem;
     }
 }
+
+.pre-course-action {
+    background-color: #fffbf0;
+}
+
+.pre-course-enrolled {
+    background-color: #f0f9ff;
+}
 </style>
 
 <script setup>
@@ -156,8 +191,9 @@ function playVideo() {
     showVideo.value = true;
 }
 
-const handleRoute = () => {
-    router.push("/checkout/" + props.course?.id);
+const handleRoute = (type = 'full') => {
+    const query = type === 'pre_course' ? { type: 'pre_course' } : {};
+    router.push({ path: "/checkout/" + props.course?.id, query });
 };
 
 const handleWaring = () => {

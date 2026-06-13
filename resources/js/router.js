@@ -248,6 +248,14 @@ const router = createRouter({
             },
         },
         {
+            path: "/campus-ambassador",
+            name: "campus_ambassador",
+            component: () => import("./pages/CampusAmbassador.vue"),
+            meta: {
+                layout: defaultLayout,
+            },
+        },
+        {
             path: "/careers/:id",
             name: "career_detail",
             component: () => import("./pages/CareerDetail.vue"),

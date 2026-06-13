@@ -53,6 +53,9 @@
                                 }}</router-link>
                         </li>
                         <li class="mb-3">
+                            <router-link to="/campus-ambassador" class="text-decoration-none">{{ $t('Campus Ambassador') }}</router-link>
+                        </li>
+                        <li class="mb-3">
                             <router-link to="/faq" class="text-decoration-none">{{ $t('FAQ') }}</router-link>
                         </li>
                         <li class="mb-3">
