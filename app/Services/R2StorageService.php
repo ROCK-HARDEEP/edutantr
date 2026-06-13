@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enum\MediaTypeEnum;
+use App\Models\Media;
 use App\Repositories\MediaRepository;
 use App\Support\MediaStorage;
 use Illuminate\Http\UploadedFile;
@@ -61,6 +62,44 @@ class R2StorageService
         $disk = Storage::disk('r2');
 
         return self::formatVideoItem($disk, $media->src);
+    }
+
+    public static function deleteVideo(string $path): void
+    {
+        self::ensureConfigured();
+
+        $path = self::normalizePath($path);
+
+        if (! self::isVideoPath($path)) {
+            throw new RuntimeException('Invalid video path.');
+        }
+
+        $disk = Storage::disk('r2');
+
+        if (! $disk->exists($path)) {
+            throw new RuntimeException('Video not found.');
+        }
+
+        if (! $disk->delete($path)) {
+            throw new RuntimeException('Failed to delete video.');
+        }
+
+        Media::query()
+            ->where('src', $path)
+            ->where('disk', 'r2')
+            ->delete();
+    }
+
+    private static function normalizePath(string $path): string
+    {
+        $path = str_replace('\\', '/', trim($path));
+        $path = ltrim($path, '/');
+
+        if ($path === '' || str_contains($path, '..')) {
+            throw new RuntimeException('Invalid video path.');
+        }
+
+        return $path;
     }
 
     private static function formatVideoItem($disk, string $path): array

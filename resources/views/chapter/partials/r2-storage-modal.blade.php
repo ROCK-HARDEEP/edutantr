@@ -157,6 +157,7 @@
 
                 const listUrl = @json(route('storage.videos.index'));
                 const uploadUrl = @json(route('storage.videos.store'));
+                const deleteUrl = @json(route('storage.videos.destroy'));
                 const csrfToken = @json(csrf_token());
 
                 let allVideos = [];
@@ -238,13 +239,25 @@
                         urlBox.textContent = video.url;
                         urlBox.title = video.url;
 
+                        const actions = document.createElement('div');
+                        actions.className = 'd-flex gap-2';
+
                         const copyBtn = document.createElement('button');
                         copyBtn.type = 'button';
-                        copyBtn.className = 'btn btn-sm btn-outline-primary w-100';
+                        copyBtn.className = 'btn btn-sm btn-outline-primary flex-grow-1';
                         copyBtn.innerHTML = '<i class="fa-regular fa-copy me-1"></i> {{ __('Copy Link') }}';
                         copyBtn.addEventListener('click', () => copyLink(video.url, copyBtn));
 
-                        body.appendChild(copyBtn);
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.type = 'button';
+                        deleteBtn.className = 'btn btn-sm btn-outline-danger';
+                        deleteBtn.title = '{{ __('Delete video') }}';
+                        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                        deleteBtn.addEventListener('click', () => deleteVideo(video, deleteBtn));
+
+                        actions.appendChild(copyBtn);
+                        actions.appendChild(deleteBtn);
+                        body.appendChild(actions);
                         card.appendChild(preview);
                         card.appendChild(body);
                         col.appendChild(card);
@@ -302,6 +315,47 @@
                             showToast('error', '{{ __('Failed to load videos') }}');
                         })
                         .finally(() => setLoading(false));
+                }
+
+                function deleteVideo(video, btn) {
+                    Swal.fire({
+                        title: '{{ __('Delete video?') }}',
+                        html: `<p class="mb-2">{{ __('This will permanently remove the file from Cloudflare R2.') }}</p><strong>${escapeHtml(video.name)}</strong>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '{{ __('Yes, delete it') }}',
+                    }).then((result) => {
+                        if (!result.isConfirmed) return;
+
+                        btn.disabled = true;
+
+                        fetch(deleteUrl, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({ path: video.path }),
+                        })
+                            .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+                            .then(({ ok, data }) => {
+                                if (ok) {
+                                    allVideos = allVideos.filter((v) => v.path !== video.path);
+                                    filterVideos();
+                                    showToast('success', data.message || '{{ __('Video deleted') }}');
+                                } else {
+                                    showToast('error', data.message || '{{ __('Failed to delete video') }}');
+                                }
+                            })
+                            .catch(() => showToast('error', '{{ __('Failed to delete video') }}'))
+                            .finally(() => {
+                                btn.disabled = false;
+                            });
+                    });
                 }
 
                 function uploadVideo() {

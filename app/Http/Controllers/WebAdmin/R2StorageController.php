@@ -42,4 +42,19 @@ class R2StorageController extends Controller
             return $this->json($exception->getMessage(), [], 422);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'path' => ['required', 'string', 'max:1024'],
+        ]);
+
+        try {
+            R2StorageService::deleteVideo($request->input('path'));
+
+            return $this->json('Video deleted successfully');
+        } catch (RuntimeException $exception) {
+            return $this->json($exception->getMessage(), [], 422);
+        }
+    }
 }
