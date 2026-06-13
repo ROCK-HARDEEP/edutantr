@@ -33,6 +33,7 @@
 <script setup>
 import { useMasterStore } from "@/stores/master";
 import { useRoute } from "vue-router";
+import { onMounted } from "vue";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 
@@ -44,6 +45,24 @@ const handleContextMenu = (event) => {
         event.preventDefault();
     }
 };
+
+onMounted(async () => {
+    if (masterStore.masterData?.logo) {
+        return;
+    }
+
+    try {
+        const response = await axios.get("/master", {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        });
+        masterStore.setMasterData(response.data.data.master);
+    } catch (error) {
+        console.error("Error fetching master data:", error.response?.data?.message ?? error);
+    }
+});
 </script>
 
 <style scoped>

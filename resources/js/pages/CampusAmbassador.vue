@@ -2,7 +2,12 @@
     <div class="ambassador-page">
         <!-- Hero -->
         <section class="ambassador-hero">
-            <div class="ambassador-hero__bg" aria-hidden="true"></div>
+            <img
+                class="ambassador-hero__bg"
+                :src="heroBg"
+                alt=""
+                aria-hidden="true"
+            />
             <div class="ambassador-hero__overlay" aria-hidden="true"></div>
             <div class="container position-relative ambassador-hero__content">
                 <div class="row justify-content-center text-center">
@@ -60,7 +65,12 @@
 
         <!-- Perks & Benefits -->
         <section class="py-5 ambassador-perks">
-            <div class="ambassador-perks__bg" aria-hidden="true"></div>
+            <img
+                class="ambassador-perks__bg"
+                :src="perksBg"
+                alt=""
+                aria-hidden="true"
+            />
             <div class="ambassador-perks__overlay" aria-hidden="true"></div>
             <div class="container position-relative ambassador-perks__content">
                 <div class="text-center mb-5">
@@ -203,6 +213,21 @@ const { t } = useI18n();
 const masterStore = useMasterStore();
 const submitting = ref(false);
 
+function publicAsset(relativePath) {
+    const pathname = window.location.pathname;
+    const publicMarker = "/public/";
+    const markerIndex = pathname.indexOf(publicMarker);
+    const base =
+        markerIndex !== -1
+            ? pathname.slice(0, markerIndex + "/public".length)
+            : "";
+    const normalized = relativePath.replace(/^\//, "");
+    return `${base}/${normalized}`;
+}
+
+const heroBg = publicAsset("assets/images/profile/ambassador.jpg");
+const perksBg = publicAsset("assets/images/profile/ambassador1.jpg");
+
 const brandName = computed(() => masterStore?.masterData?.name || "Edutandr");
 
 const form = ref({
@@ -343,10 +368,10 @@ const submitForm = async () => {
     &__bg {
         position: absolute;
         inset: 0;
-        background-image: url("/assets/images/profile/ambassador.jpg");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     &__overlay {
@@ -466,10 +491,10 @@ const submitForm = async () => {
     &__bg {
         position: absolute;
         inset: 0;
-        background-image: url("/assets/images/profile/ambassador1.jpg");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
 
     &__overlay {

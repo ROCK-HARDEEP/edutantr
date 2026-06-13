@@ -9,7 +9,12 @@
         <section class="container footer-container">
             <div class="row">
                 <div class="col-md-8 col-lg-4 mb-5 mb-lg-0 mx-0">
-                    <BrandLogo to="/" variant="light" class="mb-3" />
+                    <BrandLogo
+                        to="/"
+                        variant="light"
+                        class="mb-3"
+                        :src="masterStore?.masterData?.footer || masterStore?.masterData?.logo"
+                    />
                     <p class="small text-light col-xl-8">
                         {{ masterStore?.masterData?.footer_description }}
                     </p>

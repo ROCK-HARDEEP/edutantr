@@ -7,20 +7,31 @@
             `brand-logo--${size}`,
             `brand-logo--${variant}`,
             { 'brand-logo--centered': centered },
+            { 'brand-logo--has-image': !!logoSrc },
         ]"
-        aria-label="Edutantr Home"
+        :aria-label="logoAlt"
     >
-        <span class="brand-logo__icon" aria-hidden="true">
-            <i class="bi bi-mortarboard-fill"></i>
-        </span>
-        <span v-if="!iconOnly" class="brand-logo__wordmark">
-            <span class="brand-logo__edu">Edu</span><span class="brand-logo__tantr">tantr</span>
-        </span>
+        <img
+            v-if="logoSrc"
+            :src="logoSrc"
+            :alt="logoAlt"
+            class="brand-logo__image"
+            :class="{ 'brand-logo__image--icon-only': iconOnly }"
+        />
+        <template v-else>
+            <span class="brand-logo__icon" aria-hidden="true">
+                <i class="bi bi-mortarboard-fill"></i>
+            </span>
+            <span v-if="!iconOnly" class="brand-logo__wordmark">
+                <span class="brand-logo__edu">Edu</span><span class="brand-logo__tantr">tantr</span>
+            </span>
+        </template>
     </component>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { useMasterStore } from "@/stores/master";
 
 const props = defineProps({
     to: {
@@ -28,6 +39,14 @@ const props = defineProps({
         default: "",
     },
     href: {
+        type: String,
+        default: "",
+    },
+    src: {
+        type: String,
+        default: "",
+    },
+    alt: {
         type: String,
         default: "",
     },
@@ -48,6 +67,11 @@ const props = defineProps({
         default: false,
     },
 });
+
+const masterStore = useMasterStore();
+
+const logoSrc = computed(() => props.src || masterStore?.masterData?.logo || "");
+const logoAlt = computed(() => props.alt || masterStore?.masterData?.name || "Home");
 
 const wrapperTag = computed(() => {
     if (props.to) {
@@ -99,6 +123,23 @@ const wrapperAttrs = computed(() => {
     &--centered {
         justify-content: center;
     }
+
+    &--has-image:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.brand-logo__image {
+    display: block;
+    max-height: 44px;
+    width: auto;
+    max-width: 190px;
+    object-fit: contain;
+
+    &--icon-only {
+        max-height: 40px;
+        max-width: 40px;
+    }
 }
 
 .brand-logo__icon {
@@ -148,6 +189,11 @@ const wrapperAttrs = computed(() => {
     .brand-logo__wordmark {
         font-size: 1.35rem;
     }
+
+    .brand-logo__image {
+        max-height: 36px;
+        max-width: 160px;
+    }
 }
 
 .brand-logo--lg {
@@ -162,6 +208,11 @@ const wrapperAttrs = computed(() => {
 
     .brand-logo__wordmark {
         font-size: 2rem;
+    }
+
+    .brand-logo__image {
+        max-height: 56px;
+        max-width: 220px;
     }
 }
 

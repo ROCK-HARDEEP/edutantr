@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CollegeGalleryItemResource;
 use App\Http\Resources\HomePlacementResource;
 use App\Http\Resources\HomeProgramResource;
 use App\Http\Resources\HomeStatisticResource;
 use App\Http\Resources\PartnerCollegeResource;
 use App\Http\Resources\PartnerLogoResource;
+use App\Enum\MediaTypeEnum;
+use App\Repositories\CollegeGalleryItemRepository;
 use App\Repositories\HomePlacementRepository;
 use App\Repositories\HomeProgramRepository;
 use App\Repositories\HomeStatisticRepository;
@@ -47,6 +50,22 @@ class HomePageController extends Controller
             ->get();
 
         return $this->json('partner colleges', ['colleges' => PartnerCollegeResource::collection($colleges)], 200);
+    }
+
+    public function partnerCollegeGallery()
+    {
+        $items = CollegeGalleryItemRepository::query()
+            ->with(['college.media', 'media'])
+            ->where('is_active', true)
+            ->whereHas('media', fn ($query) => $query->where('type', MediaTypeEnum::IMAGE))
+            ->orderBy('sort_order')
+            ->latest('id')
+            ->limit(30)
+            ->get();
+
+        return $this->json('partner college gallery', [
+            'slides' => CollegeGalleryItemResource::collection($items),
+        ], 200);
     }
 
     public function placements()
