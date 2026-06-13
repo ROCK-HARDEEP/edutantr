@@ -28,7 +28,7 @@
             <div class="hero-cinematic-overlay" aria-hidden="true"></div>
 
             <div class="container hero-content hero-content--cinematic">
-                <div class="hero-cinematic-copy text-center hero-entrance">
+                <div class="hero-cinematic-copy text-center">
                     <span class="hero-badge hero-badge--light">
                         {{ $t('Welcome To Online School') }}
                     </span>
@@ -59,7 +59,7 @@
         <div v-else class="hero-bg hero-bg--classic">
             <div class="container position-relative hero-content">
                 <div class="row align-items-center g-4 g-lg-5">
-                    <div class="col-lg-6 text-center text-lg-start hero-entrance hero-entrance--left">
+                    <div class="col-lg-6 text-center text-lg-start">
                         <span class="hero-badge">
                             {{ $t('Welcome To Online School') }}
                         </span>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-6 hero-entrance hero-entrance--right">
+                    <div class="col-lg-6">
                         <div class="hero-visual">
                             <div class="hero-visual__shape" aria-hidden="true">
                                 <span class="hero-visual__arc hero-visual__arc--orange"></span>
@@ -143,87 +143,6 @@
 .landing-hero {
     margin-bottom: 0;
     min-height: 100vh;
-}
-
-/* ─── Hero entrance (page load) ─── */
-.hero-entrance {
-    .hero-badge,
-    .hero-heading,
-    .hero-cinematic-subtitle,
-    .hero-actions {
-        opacity: 0;
-        animation: hero-enter-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .hero-badge {
-        animation-delay: 0.1s;
-    }
-
-    .hero-heading {
-        animation-delay: 0.25s;
-    }
-
-    .hero-cinematic-subtitle {
-        animation-delay: 0.4s;
-    }
-
-    .hero-actions {
-        animation-delay: 0.55s;
-    }
-}
-
-.hero-entrance--left {
-    .hero-badge {
-        animation-delay: 0.1s;
-    }
-
-    .hero-heading {
-        animation-delay: 0.22s;
-    }
-
-    .hero-actions {
-        animation-delay: 0.38s;
-    }
-}
-
-.hero-entrance--right .hero-visual {
-    opacity: 0;
-    animation: hero-enter-right 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
-}
-
-@keyframes hero-enter-up {
-    from {
-        opacity: 0;
-        transform: translateY(28px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes hero-enter-right {
-    from {
-        opacity: 0;
-        transform: translateX(36px) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .hero-entrance .hero-badge,
-    .hero-entrance .hero-heading,
-    .hero-entrance .hero-cinematic-subtitle,
-    .hero-entrance .hero-actions,
-    .hero-entrance--right .hero-visual {
-        opacity: 1;
-        animation: none;
-    }
 }
 
 /* ─── Cinematic partner background (auto-scrolling logos) ─── */
@@ -501,7 +420,6 @@
     width: 88%;
     aspect-ratio: 1;
     z-index: 0;
-    animation: hero-shape-spin 20s linear infinite;
 }
 
 .hero-visual__arc {
@@ -708,22 +626,6 @@
     }
     50% {
         transform: translateX(-50%) translateY(-8px);
-    }
-}
-
-@keyframes hero-shape-spin {
-    from {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .hero-visual__shape {
-        animation: none;
     }
 }
 

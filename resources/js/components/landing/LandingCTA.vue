@@ -57,28 +57,25 @@
         position: absolute;
         font-size: clamp(3rem, 8vw, 6rem);
         color: rgba(255, 255, 255, 0.04);
-        animation: cta-icon-float 6s ease-in-out infinite;
     }
 
     i:nth-child(1) {
         top: 10%;
         right: 8%;
-        --cta-rotate: 12deg;
+        transform: rotate(12deg);
     }
 
     i:nth-child(2) {
         bottom: 10%;
         left: 5%;
-        --cta-rotate: -8deg;
-        animation-delay: 1.5s;
+        transform: rotate(-8deg);
     }
 
     i:nth-child(3) {
         top: 40%;
         left: 40%;
-        --cta-rotate: 6deg;
+        transform: rotate(6deg);
         color: rgba(251, 191, 36, 0.08);
-        animation-delay: 3s;
     }
 }
 
@@ -92,38 +89,6 @@
     background: radial-gradient(circle, rgba(52, 211, 153, 0.25) 0%, transparent 70%);
     filter: blur(60px);
     pointer-events: none;
-    animation: cta-glow-pulse 4s ease-in-out infinite;
-}
-
-@keyframes cta-glow-pulse {
-    0%,
-    100% {
-        opacity: 0.7;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.08);
-    }
-}
-
-@keyframes cta-icon-float {
-    0%,
-    100% {
-        transform: translateY(0) rotate(var(--cta-rotate, 0deg));
-    }
-
-    50% {
-        transform: translateY(-6px) rotate(var(--cta-rotate, 0deg));
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .cta-glow,
-    .cta-bg-pattern i {
-        animation: none;
-    }
 }
 
 .cta-title {

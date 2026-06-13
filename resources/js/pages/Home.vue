@@ -6,21 +6,21 @@
 
         <LandingStatistics />
 
-        <section v-reveal="{ delay: 100 }" class="home-section home-section--courses">
+        <section class="home-section home-section--courses">
             <div class="container">
                 <PopularCourses />
             </div>
         </section>
 
-        <section v-reveal:fadeInLeft class="home-section home-section--mentors">
+        <section class="home-section home-section--mentors">
             <MentorsSection />
         </section>
 
-        <div v-reveal:fadeInRight class="home-section home-section--why">
+        <div class="home-section home-section--why">
             <WhyChooseUs />
         </div>
 
-        <section v-reveal="{ delay: 150 }" class="home-section home-section--feedback">
+        <section class="home-section home-section--feedback">
             <div class="container">
                 <SectionHeader
                     :eyebrow="$t('Student Feedback')"
@@ -36,9 +36,9 @@
             </div>
         </section>
 
-        <LandingCTA v-reveal:zoomIn />
+        <LandingCTA />
 
-        <section v-reveal class="home-section home-section--faq">
+        <section class="home-section home-section--faq">
             <div class="container">
                 <FAQ />
             </div>

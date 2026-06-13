@@ -2,57 +2,92 @@
     <section class="landing-stats">
         <div class="colleges-banner">
             <swiper
-                v-if="slides.length"
-                :modules="[Navigation, Pagination, Autoplay, EffectFade]"
+                v-if="colleges.length"
+                :modules="[Navigation, Pagination, Autoplay]"
                 :slides-per-view="1"
                 :space-between="0"
-                :speed="800"
-                :autoplay="{ delay: 5000, disableOnInteraction: false }"
-                :loop="slides.length > 1"
-                effect="fade"
-                :fade-effect="{ crossFade: true }"
                 navigation
                 pagination
+                autoplay
+                loop
                 class="colleges-banner__swiper"
             >
-                <swiper-slide v-for="slide in slides" :key="slide.id">
-                    <div class="colleges-banner__slide">
-                        <img
-                            v-if="slide.isLogo"
-                            :src="slide.image"
-                            :alt="slide.title"
-                            class="colleges-banner__image colleges-banner__image--blur"
-                            aria-hidden="true"
-                        />
-                        <img
-                            :src="slide.image"
-                            :alt="slide.title"
-                            class="colleges-banner__image"
-                            :class="{ 'colleges-banner__image--logo': slide.isLogo }"
-                            loading="lazy"
-                        />
-                        <div class="colleges-banner__overlay" aria-hidden="true"></div>
-                        <div class="colleges-banner__caption">
-                            <span class="colleges-banner__eyebrow">
-                                <i class="bi bi-mortarboard-fill me-1"></i>
-                                {{ slide.eyebrow }}
-                            </span>
-                            <h3 class="colleges-banner__title">{{ slide.title }}</h3>
-                            <p v-if="slide.subtitle" class="colleges-banner__subtitle">{{ slide.subtitle }}</p>
-                        </div>
-                    </div>
+                <swiper-slide v-for="college in colleges" :key="college.id">
+                    <img
+                        :src="college.logo"
+                        :alt="college.name"
+                        class="colleges-banner__image"
+                        loading="lazy"
+                    />
                 </swiper-slide>
             </swiper>
+            <p v-else class="colleges-banner__empty text-center text-muted py-5 mb-0">
+                {{ $t('Partner colleges coming soon.') }}
+            </p>
+        </div>
 
-            <div v-else-if="loading" class="colleges-banner__loading">
-                <div class="spinner-border text-light" role="status">
-                    <span class="visually-hidden">{{ $t('Loading') }}</span>
+        <div class="container landing-stats__container">
+            <div v-if="showPlacements" class="placements-section">
+                <div class="placements-header text-center mb-4 mb-lg-5">
+                    <span class="placements-eyebrow">
+                        <i class="bi bi-rocket-takeoff-fill me-1"></i>
+                        {{ $t('Career Success') }}
+                    </span>
+                    <h3 class="placements-title fw-bold fs-1 mt-3 mb-2">
+                        {{ $t('Placements') }} <span class="placements-title-accent">{{ $t('Achieved') }}</span>
+                    </h3>
+                    <p class="placements-subtitle mb-3">{{ $t('Success stories from our alumni') }}</p>
+                    <p class="placements-motivation">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        {{ $t('Your dream career is closer than you think — join them!') }}
+                    </p>
                 </div>
-            </div>
 
-            <div v-else class="colleges-banner__empty">
-                <i class="bi bi-images colleges-banner__empty-icon"></i>
-                <p class="text-muted mb-0">{{ $t('Partner colleges coming soon.') }}</p>
+                <HomeCardSlider
+                    :items="placements"
+                    :empty-text="$t('Placement highlights coming soon.')"
+                    :breakpoints="placementBreakpoints"
+                >
+                    <template #default="{ item }">
+                        <div class="placement-card h-100">
+                            <div class="placement-card-accent" aria-hidden="true"></div>
+                            <div class="placement-photo-hero">
+                                <div class="placement-photo-ring" aria-hidden="true"></div>
+                                <img
+                                    :src="item.image"
+                                    :alt="item.student_name"
+                                    class="placement-photo"
+                                    loading="lazy"
+                                />
+                                <div class="placement-photo-overlay" aria-hidden="true"></div>
+                                <span class="placement-status placement-status--hero">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    {{ $t('Placed') }}
+                                </span>
+                                <span class="placement-trophy" aria-hidden="true">
+                                    <i class="bi bi-trophy-fill"></i>
+                                </span>
+                            </div>
+                            <div class="placement-card-content">
+                                <h4 class="placement-name">{{ item.student_name }}</h4>
+                                <div class="placement-company">
+                                    <span class="placement-company-icon">
+                                        <i class="bi bi-building-fill"></i>
+                                    </span>
+                                    <span>{{ item.company_name }}</span>
+                                </div>
+                                <p v-if="item.role" class="placement-role">
+                                    <i class="bi bi-briefcase-fill"></i>
+                                    {{ item.role }}
+                                </p>
+                                <div class="placement-footer">
+                                    <i class="bi bi-patch-check-fill"></i>
+                                    {{ $t('Successfully Placed') }}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </HomeCardSlider>
             </div>
         </div>
     </section>
@@ -60,254 +95,400 @@
 
 <style lang="scss" scoped>
 .landing-stats {
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    background: #f8fafc;
     padding: 0;
-    overflow: hidden;
-    background: #0f172a;
+}
+
+.landing-stats__container {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+}
+
+.placements-section {
+    margin-bottom: 0;
 }
 
 .colleges-banner {
     width: 100%;
-    height: 100%;
     overflow: hidden;
     background: #0f172a;
 }
 
 .colleges-banner__swiper {
     width: 100%;
-    height: 100%;
-}
-
-.colleges-banner__swiper :deep(.swiper-wrapper),
-.colleges-banner__swiper :deep(.swiper-slide) {
-    height: 100%;
-}
-
-.colleges-banner__slide {
-    position: relative;
-    width: 100%;
-    height: 100%;
 }
 
 .colleges-banner__image {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-.colleges-banner__image--blur {
-    position: absolute;
-    inset: 0;
-    filter: blur(28px) brightness(0.55);
-    transform: scale(1.08);
+    height: clamp(220px, 32vw, 420px);
     object-fit: cover;
 }
 
-.colleges-banner__image--logo {
-    position: relative;
-    z-index: 1;
-    width: auto;
-    max-width: min(420px, 80vw);
-    max-height: min(280px, 45vh);
-    margin: auto;
-    object-fit: contain;
-    padding: 2rem;
-}
-
-.colleges-banner__slide:has(.colleges-banner__image--logo) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0f172a;
-}
-
-.colleges-banner__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(15, 23, 42, 0.1) 0%,
-        rgba(15, 23, 42, 0.35) 55%,
-        rgba(15, 23, 42, 0.78) 100%
-    );
-    pointer-events: none;
-}
-
-.colleges-banner__caption {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    padding: 2rem clamp(1.25rem, 4vw, 3rem) clamp(4.5rem, 8vw, 6rem);
-    color: #fff;
-}
-
-.colleges-banner__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 0.95rem;
-    border-radius: 50px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(8px);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 0.85rem;
-}
-
-.colleges-banner__title {
-    margin: 0;
-    max-width: 720px;
-    font-size: clamp(1.5rem, 4vw, 2.75rem);
-    font-weight: 700;
-    line-height: 1.2;
-    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-}
-
-.colleges-banner__subtitle {
-    margin: 0.65rem 0 0;
-    max-width: 560px;
-    font-size: clamp(0.95rem, 2vw, 1.1rem);
-    color: rgba(255, 255, 255, 0.82);
-    line-height: 1.5;
-}
-
-.colleges-banner__loading,
 .colleges-banner__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-    height: 100%;
     background: #f1f5f9;
-}
-
-.colleges-banner__empty-icon {
-    font-size: 2.5rem;
-    color: #94a3b8;
 }
 
 .colleges-banner :deep(.swiper-button-next),
 .colleges-banner :deep(.swiper-button-prev) {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid rgba(255, 255, 255, 0.4);
     color: #15803d;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
-    transition: transform 0.25s ease, background 0.25s ease;
 
     &::after {
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+}
+
+.colleges-banner :deep(.swiper-pagination-bullet) {
+    background: rgba(255, 255, 255, 0.45);
+    opacity: 1;
+}
+
+.colleges-banner :deep(.swiper-pagination-bullet-active) {
+    width: 22px;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.placements-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    background: linear-gradient(135deg, rgba(48, 108, 60, 0.1), rgba(34, 197, 94, 0.08));
+    border: 1px solid rgba(48, 108, 60, 0.15);
+    color: #15803d;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.placements-title {
+    color: #0f172a;
+}
+
+.placements-title-accent {
+    background: linear-gradient(90deg, #15803d, #22c55e, #4ade80);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.placements-subtitle {
+    color: #64748b;
+    font-size: 1.05rem;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.placements-motivation {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    padding: 0.5rem 1.15rem;
+    border-radius: 50px;
+    background: #ecfdf5;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #166534;
+    font-size: 0.88rem;
+    font-weight: 600;
+    max-width: 90%;
+    line-height: 1.4;
+
+    i {
+        color: #22c55e;
         font-size: 1rem;
+        flex-shrink: 0;
+    }
+}
+
+.placements-section :deep(.swiper-button-next),
+.placements-section :deep(.swiper-button-prev) {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #15803d;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    transition: all 0.25s ease;
+
+    &::after {
+        font-size: 0.95rem;
         font-weight: 700;
     }
 
     &:hover {
-        transform: scale(1.06);
-        background: #fff;
+        background: #f0fdf4;
+        border-color: rgba(34, 197, 94, 0.3);
     }
 }
 
-.colleges-banner :deep(.swiper-button-prev) {
-    left: clamp(0.75rem, 2vw, 1.5rem);
-}
-
-.colleges-banner :deep(.swiper-button-next) {
-    right: clamp(0.75rem, 2vw, 1.5rem);
-}
-
-.colleges-banner :deep(.swiper-pagination) {
-    bottom: clamp(1.25rem, 3vw, 2rem);
-}
-
-.colleges-banner :deep(.swiper-pagination-bullet) {
-    width: 10px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.45);
+.placements-section :deep(.swiper-pagination-bullet) {
+    background: #cbd5e1;
     opacity: 1;
-    transition: width 0.25s ease, background 0.25s ease;
 }
 
-.colleges-banner :deep(.swiper-pagination-bullet-active) {
-    width: 28px;
-    border-radius: 6px;
+.placements-section :deep(.swiper-pagination-bullet-active) {
+    width: 22px;
+    border-radius: 4px;
+    background: #22c55e;
+}
+
+.placement-card {
+    position: relative;
+    overflow: hidden;
     background: #fff;
-}
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
 
-@media (max-width: 767px) {
-    .colleges-banner :deep(.swiper-button-next),
-    .colleges-banner :deep(.swiper-button-prev) {
-        width: 40px;
-        height: 40px;
+    &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 24px 56px rgba(15, 23, 42, 0.14);
+        border-color: rgba(34, 197, 94, 0.3);
 
-        &::after {
-            font-size: 0.85rem;
+        .placement-photo {
+            transform: scale(1.04);
+        }
+
+        .placement-photo-ring {
+            opacity: 1;
         }
     }
+}
 
-    .colleges-banner__caption {
-        padding-bottom: 4.25rem;
+.placement-card-accent {
+    height: 4px;
+    background: linear-gradient(90deg, #15803d, #22c55e, #4ade80, #22c55e, #15803d);
+    background-size: 200% 100%;
+    animation: placement-accent-shimmer 4s linear infinite;
+}
+
+@keyframes placement-accent-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.placement-photo-hero {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 100%);
+}
+
+.placement-photo-ring {
+    position: absolute;
+    inset: 12px;
+    border-radius: 20px;
+    border: 2px solid rgba(34, 197, 94, 0.35);
+    opacity: 0.6;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.placement-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.5s ease;
+}
+
+.placement-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(15, 23, 42, 0.55) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.placement-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.placement-status--hero {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 3;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    color: #fff;
+    background: rgba(21, 128, 61, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(134, 239, 172, 0.4);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
+
+    i {
+        font-size: 0.85rem;
+    }
+}
+
+.placement-trophy {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    font-size: 1.1rem;
+    border: 3px solid #fff;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.placement-card-content {
+    padding: 1.35rem 1.35rem 1.25rem;
+    text-align: center;
+}
+
+.placement-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.65rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+.placement-company {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.55rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.placement-company-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #15803d;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.placement-role {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0 0 1rem;
+    line-height: 1.4;
+
+    i {
+        color: #22c55e;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+}
+
+.placement-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #15803d;
+
+    i {
+        color: #22c55e;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .placements-title {
+        font-size: 1.75rem !important;
+    }
+
+    .placement-photo-hero {
+        height: 240px;
+    }
+
+    .placements-motivation {
+        font-size: 0.82rem;
+        padding: 0.5rem 1rem;
     }
 }
 </style>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import HomeCardSlider from "./HomeCardSlider.vue";
 
-const { t } = useI18n();
-
-const loading = ref(true);
-const galleryItems = ref([]);
 const colleges = ref([]);
+const placements = ref([]);
+const showPlacements = false;
 
-const slides = computed(() => {
-    if (galleryItems.value.length) {
-        return galleryItems.value.map((item) => ({
-            id: `gallery-${item.id}`,
-            image: item.media_url,
-            title: item.title || item.college?.name || t("Partner College"),
-            subtitle: item.college?.name && item.title ? item.college.name : item.description || item.college?.location || "",
-            eyebrow: item.section_label || t("Partner College"),
-            isLogo: false,
-        }));
-    }
-
-    return colleges.value.map((college) => ({
-        id: `college-${college.id}`,
-        image: college.logo,
-        title: college.name,
-        subtitle: college.location || college.description || "",
-        eyebrow: t("Partner College"),
-        isLogo: true,
-    }));
-});
+const placementBreakpoints = {
+    320: { slidesPerView: 1, spaceBetween: 16 },
+    576: { slidesPerView: 1, spaceBetween: 20 },
+    768: { slidesPerView: 2, spaceBetween: 24 },
+    1200: { slidesPerView: 3, spaceBetween: 28 },
+};
 
 onMounted(async () => {
     try {
-        const [galleryRes, collegesRes] = await Promise.all([
-            axios.get("/home/partner-college-gallery"),
-            axios.get("/home/partner-colleges"),
-        ]);
-
-        galleryItems.value = galleryRes.data.data.slides ?? [];
+        const collegesRes = await axios.get("/home/partner-colleges");
         colleges.value = collegesRes.data.data.colleges ?? [];
+
+        if (showPlacements) {
+            const placementsRes = await axios.get("/home/placements");
+            placements.value = placementsRes.data.data.placements ?? [];
+        }
     } catch (error) {
-        console.error("Error fetching partner college slider:", error);
-    } finally {
-        loading.value = false;
+        console.error("Error fetching landing statistics:", error);
     }
 });
 </script>

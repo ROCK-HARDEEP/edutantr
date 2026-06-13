@@ -6,7 +6,6 @@ import "/resources/style/app.scss";
 import "/resources/style/responsive.css";
 
 import VueAwesomePaginate from "vue-awesome-paginate";
-import { vReveal } from "./directives/reveal.js";
 import { createApp } from "vue";
 import App from "./App.vue";
 import localization from "./localization.js";
@@ -24,7 +23,6 @@ app.use(localization.i18n);
 app.use(router);
 pinia.use(piniaPersist);
 app.use(VueAwesomePaginate);
-app.directive("reveal", vReveal);
 
 // axios.interceptors.response.use(
 //     (response) => response,

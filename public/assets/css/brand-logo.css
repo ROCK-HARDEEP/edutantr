@@ -20,33 +20,6 @@
     filter: brightness(1.08);
 }
 
-.brand-logo--has-image:hover {
-    transform: translateY(-1px);
-}
-
-.brand-logo__image {
-    display: block;
-    max-height: 44px;
-    width: auto;
-    max-width: 190px;
-    object-fit: contain;
-}
-
-.brand-logo__image--icon-only {
-    max-height: 40px;
-    max-width: 40px;
-}
-
-.brand-logo--sm .brand-logo__image {
-    max-height: 36px;
-    max-width: 160px;
-}
-
-.brand-logo--lg .brand-logo__image {
-    max-height: 56px;
-    max-width: 220px;
-}
-
 .brand-logo--centered {
     justify-content: center;
 }
