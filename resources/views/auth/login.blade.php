@@ -169,7 +169,7 @@
 
                             <!-- Logo -->
                             <div class="text-center mb-4">
-                                <x-brand-logo :href="url('/')" centered size="lg" />
+                                <x-brand-logo :href="url('/')" centered size="sm" />
                             </div>
 
                             <!-- Register Options -->
