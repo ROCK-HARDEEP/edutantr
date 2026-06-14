@@ -734,6 +734,7 @@
             let title = document.querySelector("input[name='title']").value
             let serial_number = document.querySelector("input[name='serial_number']").value
 
+            formProcessData.append("_method", "PUT");
             formProcessData.append("course_id", course_id);
             formProcessData.append("title", title);
             formProcessData.append("serial_number", serial_number);
