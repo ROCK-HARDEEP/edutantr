@@ -19,18 +19,20 @@
         <div v-else-if="popularCourses.length" class="popular-courses__slider">
             <swiper
                 :key="swiperKey"
-                :modules="[Navigation, Autoplay]"
-                :slides-per-view="SLIDES_PER_VIEW"
+                :modules="[Navigation, Autoplay, Pagination]"
+                :slides-per-view="1"
                 :slides-per-group="1"
-                :space-between="28"
+                :space-between="16"
                 :speed="900"
-                :loop="true"
+                :loop="popularCourses.length > 1"
                 :loop-fill-group-with-blank="false"
-                :loop-additional-slides="SLIDES_PER_VIEW"
+                :loop-additional-slides="3"
                 :watch-slides-progress="true"
                 :breakpoints="swiperBreakpoints"
                 :autoplay="autoplayOptions"
                 navigation
+                pagination
+                class="popular-courses__swiper"
                 @swiper="onSwiper"
             >
                 <swiper-slide
@@ -50,6 +52,11 @@
 </template>
 
 <style lang="scss" scoped>
+.popular-courses {
+    width: 100%;
+    overflow: hidden;
+}
+
 .popular-courses__header {
     margin-bottom: 2rem;
 }
@@ -120,6 +127,7 @@
 .popular-courses__slider:not(.popular-courses__slider--loading) {
     :deep(.swiper) {
         overflow: hidden;
+        padding-bottom: 2.75rem;
     }
 
     :deep(.swiper-slide) {
@@ -134,10 +142,114 @@
         background: #fff;
         border: 1px solid #e2e8f0;
         color: #f97316;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 
         &::after {
             font-size: 0.95rem;
             font-weight: 700;
+        }
+    }
+
+    :deep(.swiper-pagination) {
+        bottom: 0 !important;
+    }
+
+    :deep(.swiper-pagination-bullet) {
+        width: 8px;
+        height: 8px;
+        background: #cbd5e1;
+        opacity: 1;
+        transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    :deep(.swiper-pagination-bullet-active) {
+        width: 22px;
+        border-radius: 4px;
+        background: #f97316;
+    }
+}
+
+@media (max-width: 991px) {
+    .popular-courses__header {
+        margin-bottom: 1.5rem;
+    }
+
+    .popular-courses__slider--loading {
+        min-height: 340px;
+    }
+
+    .popular-courses__loading-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .popular-courses__header {
+        margin-bottom: 1.25rem;
+        padding-inline: 0.25rem;
+    }
+
+    .popular-courses__badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .popular-courses__title {
+        font-size: clamp(1.25rem, 5.5vw, 1.65rem);
+        line-height: 1.3;
+        padding-inline: 0.35rem;
+    }
+
+    .popular-courses__slider--loading {
+        min-height: 300px;
+    }
+
+    .popular-courses__loading-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .popular-courses__skeleton {
+        min-height: 280px;
+    }
+
+    .popular-courses__slider:not(.popular-courses__slider--loading) {
+        :deep(.swiper) {
+            padding-bottom: 2.25rem;
+        }
+
+        :deep(.swiper-button-next),
+        :deep(.swiper-button-prev) {
+            width: 36px;
+            height: 36px;
+            top: 38%;
+
+            &::after {
+                font-size: 0.8rem;
+            }
+        }
+
+        :deep(.swiper-button-prev) {
+            left: 2px;
+        }
+
+        :deep(.swiper-button-next) {
+            right: 2px;
+        }
+    }
+
+    .course-card-premium:hover {
+        transform: none;
+    }
+}
+
+@media (max-width: 575px) {
+    .popular-courses__slider:not(.popular-courses__slider--loading) {
+        :deep(.swiper-button-next),
+        :deep(.swiper-button-prev) {
+            display: none;
         }
     }
 }
@@ -160,13 +272,13 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Autoplay } from "swiper/modules";
+import { Navigation, Autoplay, Pagination } from "swiper/modules";
 import CourseCard from "./CourseCard.vue";
 
 const popularCourses = ref([]);
 const isLoading = ref(true);
 
-const SLIDES_PER_VIEW = 3;
+const MAX_SLIDES_PER_VIEW = 3;
 
 const autoplayOptions = {
     delay: 3500,
@@ -175,10 +287,22 @@ const autoplayOptions = {
 };
 
 const swiperBreakpoints = {
-    320: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 16 },
-    576: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 20 },
-    768: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 24 },
-    992: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 28 },
+    480: {
+        slidesPerView: 1.08,
+        spaceBetween: 14,
+    },
+    640: {
+        slidesPerView: 1.15,
+        spaceBetween: 16,
+    },
+    768: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+    },
+    992: {
+        slidesPerView: MAX_SLIDES_PER_VIEW,
+        spaceBetween: 28,
+    },
 };
 
 const displayCourses = computed(() => {
@@ -187,7 +311,7 @@ const displayCourses = computed(() => {
         return [];
     }
 
-    const minForLoop = Math.max(SLIDES_PER_VIEW * 4, 12);
+    const minForLoop = Math.max(MAX_SLIDES_PER_VIEW * 4, 12);
     const result = [...courses];
 
     while (result.length < minForLoop) {

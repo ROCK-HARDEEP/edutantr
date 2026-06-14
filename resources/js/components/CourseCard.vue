@@ -263,6 +263,39 @@
     }
 }
 
+@media (max-width: 767px) {
+    .course-card--popular {
+        .popular-course-card__thumb {
+            height: 190px;
+        }
+
+        .popular-course-card__body {
+            padding: 1rem 1rem 0.85rem;
+        }
+
+        .popular-course-card__title {
+            font-size: 0.98rem;
+            min-height: auto;
+            margin-bottom: 0.65rem;
+        }
+
+        .popular-course-card__stats {
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            gap: 0.35rem 0.75rem;
+        }
+
+        .popular-course-card__category {
+            max-width: 42%;
+            font-size: 0.72rem;
+        }
+
+        .popular-course-card__footer {
+            padding: 0.85rem 1rem;
+        }
+    }
+}
+
 .header-metadata {
     height: 50px;
     overflow: hidden;

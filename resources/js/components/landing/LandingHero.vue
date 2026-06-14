@@ -10,7 +10,7 @@
                         :aria-hidden="stripIndex === 2 ? 'true' : undefined"
                     >
                         <div
-                            v-for="(item, index) in partners"
+                            v-for="(item, index) in heroCompanyPartners"
                             :key="`partner-${stripIndex}-${item.id ?? index}`"
                             class="hero-partners-cell"
                         >
@@ -81,6 +81,7 @@
 .landing-hero--partners {
     margin-top: 0;
     min-height: 100vh;
+    min-height: 100svh;
     overflow: hidden;
 }
 
@@ -99,6 +100,7 @@
 .hero-bg--cinematic {
     position: relative;
     min-height: 100vh;
+    min-height: 100svh;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -268,6 +270,8 @@
 .hero-heading--cinematic {
     font-family: Georgia, "Times New Roman", Times, serif;
     font-weight: 400;
+    font-size: clamp(1.65rem, 5vw, 3rem);
+    line-height: 1.2;
     margin-left: auto;
     margin-right: auto;
     max-width: 820px;
@@ -676,18 +680,32 @@
         padding: 0 1.5rem 2rem;
     }
 
+    .landing-hero--partners {
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
     .hero-bg--cinematic {
-        min-height: 580px;
-        padding-top: 4.5rem;
-        padding-bottom: 13rem;
+        min-height: 72svh;
+        padding: 4.5rem 0 7rem;
     }
 
     .hero-content--cinematic {
-        padding: 1.5rem 1rem 0.5rem;
+        padding: 1rem 1rem 0.5rem;
+    }
+
+    .hero-cinematic-subtitle {
+        margin-bottom: 1.5rem;
+        padding-inline: 0.5rem;
+    }
+
+    .three_column_section {
+        position: relative;
     }
 
     .three_column_section__panel {
-        padding: 1.5rem 0 1.75rem;
+        padding: 1.25rem 0 1.5rem;
     }
 
     .three_column_section__grid {
@@ -697,6 +715,16 @@
     .three_column_section__line {
         width: 36px;
         margin: 0.55rem auto 0.65rem;
+    }
+
+    .hero-partners-cell {
+        flex: 0 0 50vw;
+        min-width: 50vw;
+    }
+
+    .hero-partners-strip {
+        width: max-content;
+        min-width: 100vw;
     }
 
     .hero-columns {
@@ -722,19 +750,105 @@
     }
 }
 
+@media (max-width: 767px) {
+    .hero-bg--cinematic {
+        min-height: 68svh;
+        padding: 4rem 0 5.5rem;
+    }
+
+    .hero-heading--cinematic {
+        font-size: clamp(1.4rem, 6.5vw, 2rem);
+        padding-inline: 0.35rem;
+    }
+
+    .hero-cinematic-subtitle {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-cinematic-copy {
+        padding: 0.5rem 0;
+    }
+
+    .hero-cta-orange {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .hero-cta-ghost {
+        font-size: 0.88rem;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .hero-actions--center {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 300px;
+        margin-inline: auto;
+    }
+
+    .hero-partners-cell {
+        flex: 0 0 55vw;
+        min-width: 55vw;
+    }
+
+    .hero-partners-cell img {
+        object-fit: contain;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .three_column_section__value {
+        font-size: clamp(1.35rem, 5vw, 1.85rem);
+    }
+
+    .three_column_section__label {
+        font-size: 0.78rem;
+        line-height: 1.25;
+    }
+
+    .three_column_section__line {
+        width: 28px;
+        margin: 0.45rem auto 0.55rem;
+    }
+}
+
 @media (max-width: 575px) {
+    .hero-bg--cinematic {
+        min-height: 62svh;
+        padding: 3.75rem 0 4.5rem;
+    }
+
     .three_column_section__grid {
-        grid-template-columns: 1fr;
-        gap: 1.1rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.35rem;
     }
 
     .three_column_section__item:not(:last-child) {
-        padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding-bottom: 0;
+        border-bottom: none;
     }
 
-    .hero-bg--cinematic {
-        padding-bottom: 18rem;
+    .three_column_section__panel {
+        padding: 1rem 0 1.15rem;
+    }
+
+    .three_column_section__value {
+        font-size: 1.25rem;
+    }
+
+    .three_column_section__label {
+        font-size: 0.68rem;
+    }
+
+    .hero-partners-cell {
+        flex: 0 0 62vw;
+        min-width: 62vw;
     }
 
     .hero-actions {
@@ -747,8 +861,8 @@
     .hero-cta-orange {
         justify-content: center;
         width: 100%;
-        max-width: 280px;
-        margin: 0 auto;
+        max-width: 100%;
+        margin: 0;
     }
 
     .hero-visual {
@@ -791,15 +905,22 @@ const normalizeApiList = (payload) => {
 };
 
 const isCompanyPartner = (item) => {
-    const type = String(item?.partner_type ?? item?.type ?? "").toLowerCase();
+    const type = String(item?.partner_type ?? item?.type ?? "")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "_");
 
     return type === "company";
 };
 
-const hasPartnerBg = computed(() => partners.value.length > 0);
+const heroCompanyPartners = computed(() =>
+    partners.value.filter(isCompanyPartner)
+);
+
+const hasPartnerBg = computed(() => heroCompanyPartners.value.length > 0);
 
 const partnersScrollDuration = computed(() =>
-    Math.max(18, partners.value.length * 5)
+    Math.max(18, heroCompanyPartners.value.length * 5)
 );
 
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
@@ -868,10 +989,9 @@ const heroStats = computed(() => [
 
 onMounted(async () => {
     try {
-        const [programsRes, companyPartnersRes, allPartnersRes, collegesRes] = await Promise.all([
+        const [programsRes, companyPartnersRes, collegesRes] = await Promise.all([
             axios.get("/home/programs"),
-            axios.get("/home/partner-logos", { params: { partner_type: "company" } }),
-            axios.get("/home/partner-logos"),
+            axios.get("/home/company-partners"),
             axios.get("/home/partner-colleges"),
         ]);
 
@@ -881,10 +1001,8 @@ onMounted(async () => {
             .filter(isCompanyPartner)
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        const allLogos = normalizeApiList(allPartnersRes.data?.data?.logos);
         const colleges = normalizeApiList(collegesRes.data?.data?.colleges);
-        const collegeLogos = allLogos.filter((item) => item.partner_type === "college");
-        collegePartnerCount.value = Math.max(colleges.length, collegeLogos.length);
+        collegePartnerCount.value = colleges.length;
     } catch (error) {
         console.error("Error fetching landing hero data:", error);
     }
