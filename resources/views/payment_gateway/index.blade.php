@@ -45,7 +45,7 @@
 
                     <div class="row">
                         {{-- PayPal --}}
-                        {{--<div class="col-md-4 mb-4">
+                        <div class="col-md-4 mb-4">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <form action="{{ route('payment_gateway.update', $paypal->id) }}" method="POST"
@@ -114,11 +114,11 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>--}}
+                        </div>
 
                         {{-- Stripe --}}
 
-                        {{--<div class="col-md-4 mb-4">
+                        <div class="col-md-4 mb-4">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <form action="{{ route('payment_gateway.update', $stripe->id) }}" method="POST"
@@ -163,11 +163,11 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>--}}
+                        </div>
 
                         {{-- Aamarpay --}}
                         
-                        {{--<div class="col-md-4 mb-4">
+                        <div class="col-md-4 mb-4">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <form action="{{ route('payment_gateway.update', $aamarpay->id) }}" method="POST"
@@ -213,7 +213,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>--}}
+                        </div>
 
                         {{-- Razorpay --}}
                         <div class="col-md-4 mb-4">
@@ -264,7 +264,7 @@
                         </div>
 
                         {{-- 2Checkout --}}
-                        {{--<div class="col-md-4 mb-4">
+                        <div class="col-md-4 mb-4">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <form action="{{ route('payment_gateway.update', $twoCheckout->id) }}" method="POST"
@@ -300,7 +300,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>--}}
+                        </div>  
                     </div>
 
 

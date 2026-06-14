@@ -2,6 +2,10 @@
     <div class="home-page">
         <LandingHero />
 
+        <section class="home-section home-section--process">
+            <OurProcess />
+        </section>
+
         <LandingStatistics />
 
         <section class="home-section home-section--courses">
@@ -14,15 +18,12 @@
             <MentorsSection />
         </section>
 
-        <section class="home-section home-section--process">
-            <OurProcess />
-        </section>
-
         <section class="home-section home-section--industry">
             <IndustryPartnersSlider />
         </section>
 
-        <div class="home-section home-section--why">
+        <!-- Why Choose Us — hidden for now; set showWhyChooseUs to true to re-enable -->
+        <div v-if="showWhyChooseUs" class="home-section home-section--why">
             <WhyChooseUs />
         </div>
 
@@ -142,6 +143,7 @@ import OfferModal from "../components/OfferModal.vue";
 
 const masterStore = useMasterStore();
 const localeStore = useLocaleStore();
+const showWhyChooseUs = false;
 
 onMounted(async () => {
     await axios

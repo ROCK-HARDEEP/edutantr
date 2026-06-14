@@ -36,7 +36,8 @@ Desktop.ini
 
 # Logs
 *.log
-.env
-.env
-.env.example
 storage/logs/laravel.log
+
+# Private records
+storage/racord.txt
+racord.txt

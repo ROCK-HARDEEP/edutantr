@@ -21,7 +21,7 @@
             >
                 <template #title>
                     {{ $t('Our') }}
-                    <span class="accent">{{ $t('Process') }}</span>
+                    <AnimatedText :words="titleWords" />
                 </template>
             </SectionHeader>
 
@@ -139,7 +139,7 @@
 .our-process__timeline {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
     padding-top: 1.5rem;
 }
@@ -288,7 +288,7 @@
 }
 
 .process-step__title {
-    font-size: 0.92rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #0f172a;
     margin: 0 0 0.5rem;
@@ -296,9 +296,9 @@
 }
 
 .process-step__desc {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     color: #64748b;
-    line-height: 1.55;
+    line-height: 1.6;
     margin: 0;
 }
 
@@ -411,12 +411,12 @@
     }
 
     .process-step__title {
-        font-size: 1rem;
+        font-size: 1.08rem;
     }
 
     .process-step__desc {
-        font-size: 0.85rem;
-        line-height: 1.6;
+        font-size: 0.95rem;
+        line-height: 1.65;
     }
 }
 
@@ -573,14 +573,23 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import SectionHeader from "./SectionHeader.vue";
+import AnimatedText from "./AnimatedText.vue";
 
 const { t } = useI18n();
+
+const titleWords = computed(() => [
+    t("Process"),
+    t("Journey"),
+    t("Steps"),
+    t("Path"),
+    t("Success"),
+]);
 
 const steps = computed(() => [
     {
         label: t("Step 01"),
         title: t("Join or Purchase Course"),
-        description: t("Browse our catalog, pick the right course for your goals, and enroll in just a few clicks."),
+        description: t("Browse our catalog, choose the right course for your goals, and enroll in just a few clicks."),
         icon: "bi bi-cart-check",
     },
     {
@@ -591,21 +600,15 @@ const steps = computed(() => [
     },
     {
         label: t("Step 03"),
-        title: t("Do Project"),
-        description: t("Apply what you learn by building hands-on projects that strengthen your practical skills."),
+        title: t("Build Projects & Gain Practical Skills"),
+        description: t("Apply what you learn through hands-on projects and real-world exercises to strengthen your skills and portfolio."),
         icon: "bi bi-folder2-open",
     },
     {
         label: t("Step 04"),
-        title: t("Get Certified"),
-        description: t("Complete the course and earn a shareable certificate to showcase your achievement."),
+        title: t("Get Certified & Become Job Ready"),
+        description: t("Complete the course, earn a shareable certificate, and gain the in-demand skills needed for interviews and career opportunities."),
         icon: "bi bi-award",
-    },
-    {
-        label: t("Step 05"),
-        title: t("Get Job Ready Skills"),
-        description: t("Gain in-demand skills and portfolio work that prepare you for interviews and the workplace."),
-        icon: "bi bi-briefcase",
     },
 ]);
 </script>
