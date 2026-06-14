@@ -412,7 +412,29 @@ const defaultDescription = computed(() =>
 
 const activeCollege = computed(() => colleges.value[activeIndex.value] ?? {});
 
-const mapGallerySlides = (items = []) =>
+const defaultCollegeImage = "/assets/images/profile/demo-profile.png";
+
+const buildGalleryLookup = (items = []) => {
+    const byCollegeId = new Map();
+
+    items
+        .filter((item) => item.media_url && !item.is_video)
+        .forEach((item) => {
+            const collegeId = item.college?.id;
+            if (!collegeId || byCollegeId.has(collegeId)) {
+                return;
+            }
+
+            byCollegeId.set(collegeId, {
+                image: item.media_url,
+                description: item.description || "",
+            });
+        });
+
+    return byCollegeId;
+};
+
+const mapGalleryOnlySlides = (items = []) =>
     items
         .filter((item) => item.media_url && !item.is_video)
         .map((item) => ({
@@ -423,42 +445,51 @@ const mapGallerySlides = (items = []) =>
             description: item.description || "",
         }));
 
-const mergeCollegeSlides = (collegeItems = [], logos = []) => {
-    const slides = [];
-    const seenNames = new Set();
+const buildPartnerCollegeSlides = (collegeItems = [], galleryItems = [], logos = []) => {
+    const galleryLookup = buildGalleryLookup(galleryItems);
 
-    const addSlide = (slide) => {
-        const key = (slide.name || "").trim().toLowerCase();
-        if (!key || !slide.image || seenNames.has(key)) {
-            return;
-        }
-        seenNames.add(key);
-        slides.push(slide);
-    };
+    const slides = collegeItems.map((college) => {
+        const gallery = galleryLookup.get(college.id);
 
-    collegeItems.forEach((college) => {
-        addSlide({
+        return {
             id: `college-${college.id}`,
-            image: college.logo,
+            image: gallery?.image || college.logo || defaultCollegeImage,
             name: college.name,
             location: college.location || "",
-            description: college.description || "",
-        });
+            description: college.description || gallery?.description || "",
+        };
     });
 
-    logos
-        .filter((logo) => logo.partner_type === "college")
-        .forEach((logo) => {
-            addSlide({
+    if (slides.length) {
+        return slides;
+    }
+
+    const gallerySlides = mapGalleryOnlySlides(galleryItems);
+    if (gallerySlides.length) {
+        return gallerySlides;
+    }
+
+    const seenNames = new Set();
+
+    return logos
+        .filter((logo) => logo.partner_type === "college" && logo.logo)
+        .reduce((result, logo) => {
+            const key = (logo.name || "").trim().toLowerCase();
+            if (!key || seenNames.has(key)) {
+                return result;
+            }
+
+            seenNames.add(key);
+            result.push({
                 id: `logo-${logo.id}`,
                 image: logo.logo,
                 name: logo.name,
                 location: "",
                 description: "",
             });
-        });
 
-    return slides;
+            return result;
+        }, []);
 };
 
 const resetProgress = () => {
@@ -519,15 +550,10 @@ onMounted(async () => {
         ]);
 
         const galleryItems = galleryRes.data.data.items ?? [];
-        const gallerySlides = mapGallerySlides(galleryItems);
+        const collegeItems = collegesRes.data.data.colleges ?? [];
+        const logos = logosRes.data.data.logos ?? [];
 
-        if (gallerySlides.length) {
-            colleges.value = gallerySlides;
-        } else {
-            const collegeItems = collegesRes.data.data.colleges ?? [];
-            const logos = logosRes.data.data.logos ?? [];
-            colleges.value = mergeCollegeSlides(collegeItems, logos);
-        }
+        colleges.value = buildPartnerCollegeSlides(collegeItems, galleryItems, logos);
 
         resetProgress();
         startRotation();

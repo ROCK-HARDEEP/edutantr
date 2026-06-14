@@ -3,23 +3,23 @@
         <div class="hero-bg hero-bg--cinematic">
             <div v-if="hasPartnerBg" class="hero-partners-scroll" aria-hidden="true">
                 <div class="hero-partners-track" :style="{ '--partners-duration': `${partnersScrollDuration}s` }">
-                    <div class="hero-partners-strip">
-                        <img
+                    <div
+                        v-for="stripIndex in 2"
+                        :key="`partners-strip-${stripIndex}`"
+                        class="hero-partners-strip"
+                        :aria-hidden="stripIndex === 2 ? 'true' : undefined"
+                    >
+                        <div
                             v-for="(item, index) in partners"
-                            :key="`partner-a-${item.id ?? index}`"
-                            :src="item.logo"
-                            :alt="item.name"
-                            loading="eager"
-                        />
-                    </div>
-                    <div class="hero-partners-strip">
-                        <img
-                            v-for="(item, index) in partners"
-                            :key="`partner-b-${item.id ?? index}`"
-                            :src="item.logo"
-                            :alt="item.name"
-                            loading="eager"
-                        />
+                            :key="`partner-${stripIndex}-${item.id ?? index}`"
+                            class="hero-partners-cell"
+                        >
+                            <img
+                                :src="item.logo"
+                                :alt="item.name"
+                                loading="eager"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,22 +119,34 @@
     display: flex;
     height: 100%;
     width: max-content;
-    animation: hero-partners-marquee var(--partners-duration, 36s) linear infinite;
+    animation: hero-partners-marquee var(--partners-duration, 30s) linear infinite;
 }
 
 .hero-partners-strip {
     display: flex;
+    width: 100vw;
     height: 100%;
     flex-shrink: 0;
 }
 
-.hero-partners-strip img {
-    display: block;
+.hero-partners-cell {
+    flex: 1 1 0;
+    min-width: 0;
     height: 100%;
-    width: auto;
-    max-width: none;
-    flex-shrink: 0;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.hero-partners-cell img {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: center;
     filter: grayscale(10%) contrast(1.05);
 }
 
@@ -769,7 +781,7 @@ const activeIndex = ref(0);
 const hasPartnerBg = computed(() => partners.value.length > 0);
 
 const partnersScrollDuration = computed(() =>
-    Math.max(24, partners.value.length * 6)
+    Math.max(18, partners.value.length * 5)
 );
 
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
