@@ -2,13 +2,7 @@
     <section class="landing-hero position-relative landing-hero--partners">
         <div class="hero-bg hero-bg--cinematic">
             <div v-if="hasPartnerBg" class="hero-partners-scroll" aria-hidden="true">
-                <div
-                    class="hero-partners-track"
-                    :style="{
-                        '--partners-count': partners.length,
-                        '--partners-duration': `${partnersScrollDuration}s`,
-                    }"
-                >
+                <div class="hero-partners-track" :style="heroPartnersTrackStyle">
                     <div
                         v-for="stripIndex in 2"
                         :key="`partners-strip-${stripIndex}`"
@@ -130,17 +124,19 @@
 
 .hero-partners-strip {
     display: flex;
-    width: max(100vw, calc(var(--partners-count, 1) * 200px));
+    width: 100vw;
     height: 100%;
     flex-shrink: 0;
 }
 
 .hero-partners-cell {
-    flex: 1 1 0;
-    min-width: max(calc(100vw / var(--partners-count, 1)), 180px);
+    flex: 0 0 var(--partner-cell-width, calc(100vw / var(--partners-count, 1)));
+    width: var(--partner-cell-width, calc(100vw / var(--partners-count, 1)));
+    min-width: var(--partner-cell-width, calc(100vw / var(--partners-count, 1)));
     height: 100%;
     overflow: hidden;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
 
     &:last-child {
         border-right: none;
@@ -151,7 +147,8 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    padding: clamp(0.75rem, 2vw, 1.5rem);
+    object-fit: contain;
     object-position: center;
     filter: grayscale(10%) contrast(1.05);
 }
@@ -786,21 +783,20 @@ const activeIndex = ref(0);
 
 const hasPartnerBg = computed(() => partners.value.length > 0);
 
+const heroPartnersTrackStyle = computed(() => {
+    const count = Math.max(partners.value.length, 1);
+    const cellWidth = `calc(100vw / ${count})`;
+
+    return {
+        "--partners-count": String(count),
+        "--partner-cell-width": cellWidth,
+        "--partners-duration": `${partnersScrollDuration.value}s`,
+    };
+});
+
 const partnersScrollDuration = computed(() =>
-    Math.max(20, partners.value.length * 4)
+    Math.max(18, partners.value.length * 5)
 );
-
-const normalizeApiList = (payload) => {
-    if (Array.isArray(payload)) {
-        return payload;
-    }
-
-    if (payload && Array.isArray(payload.data)) {
-        return payload.data;
-    }
-
-    return [];
-};
 
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
 const isLoggedIn = computed(() => Boolean(authStore.authToken));
@@ -866,25 +862,42 @@ const heroStats = computed(() => [
     },
 ]);
 
+const normalizeApiList = (payload) => {
+    if (Array.isArray(payload)) {
+        return payload;
+    }
+
+    if (payload && Array.isArray(payload.data)) {
+        return payload.data;
+    }
+
+    return [];
+};
+
+const sortPartners = (items) =>
+    [...items].sort(
+        (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || (a.id ?? 0) - (b.id ?? 0)
+    );
+
 onMounted(async () => {
     try {
         const [programsRes, partnersRes, collegesRes] = await Promise.all([
             axios.get("/home/programs"),
-            axios.get("/home/partner-logos"),
+            axios.get("/home/partner-logos", {
+                params: { partner_type: "company" },
+            }),
             axios.get("/home/partner-colleges"),
         ]);
 
         programs.value = normalizeApiList(programsRes.data?.data?.programs);
 
-        const logos = normalizeApiList(partnersRes.data?.data?.logos)
-            .filter((item) => item.logo)
-            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+        partners.value = sortPartners(
+            normalizeApiList(partnersRes.data?.data?.logos).filter(
+                (item) => item.partner_type === "company" && item.logo
+            )
+        );
 
-        partners.value = logos;
-
-        const colleges = normalizeApiList(collegesRes.data?.data?.colleges);
-        const collegeLogos = logos.filter((item) => item.partner_type === "college");
-        collegePartnerCount.value = Math.max(colleges.length, collegeLogos.length);
+        collegePartnerCount.value = normalizeApiList(collegesRes.data?.data?.colleges).length;
     } catch (error) {
         console.error("Error fetching landing hero data:", error);
     }
