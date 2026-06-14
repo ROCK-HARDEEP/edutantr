@@ -5,6 +5,7 @@
 <select name="partner_type" class="form-control" required>
 <option value="college" {{ old('partner_type', $logo?->partner_type) === 'college' ? 'selected' : '' }}>{{ __('College') }}</option>
 <option value="company" {{ old('partner_type', $logo?->partner_type) === 'company' ? 'selected' : '' }}>{{ __('Company') }}</option>
+<option value="industry_logos" {{ old('partner_type', $logo?->partner_type) === 'industry_logos' ? 'selected' : '' }}>{{ __('Industry Logos') }}</option>
 </select></div>
 <div class="col-md-6 mb-3"><label class="form-label">{{ __('Website URL') }}</label><input type="url" name="website_url" class="form-control" value="{{ old('website_url', $logo?->website_url) }}"></div>
 <div class="col-md-6 mb-3"><label class="form-label">{{ __('Logo') }}</label><input type="file" name="logo" class="form-control"></div>

@@ -199,7 +199,7 @@ class CourseController extends Controller
         }
 
         return view('course.edit', [
-            'course' => $course,
+            'course' => $course->load('project.media'),
             'categories' => $categories,
             'instructors' => $instructors,
         ]);

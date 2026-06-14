@@ -23,6 +23,13 @@
                                     {{ $t('Lessons') }}
                                 </button>
                             </li>
+                            <li v-if="hasProject" class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-project-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-project" type="button" role="tab"
+                                    aria-controls="pills-project" aria-selected="false">
+                                    {{ $t('Project') }}
+                                </button>
+                            </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-reviews" type="button" role="tab"
@@ -43,6 +50,10 @@
                                     aria-labelledby="pills-lessons-tab" tabindex="0">
                                     <CourseLessons :chapters="courseData?.chapters" :courseId="courseData?.course?.id"
                                         :course="courseData?.course" />
+                                </div>
+                                <div v-if="hasProject" class="tab-pane fade" id="pills-project" role="tabpanel"
+                                    aria-labelledby="pills-project-tab" tabindex="0">
+                                    <CourseProject :project="courseData?.project" />
                                 </div>
                                 <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
                                     aria-labelledby="pills-reviews-tab" tabindex="0">
@@ -92,12 +103,13 @@
 </style>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import CourseAbout from "../components/CourseAbout.vue";
 import CourseLessons from "../components/CourseLessons.vue";
+import CourseProject from "../components/CourseProject.vue";
 import CourseMetadata from "../components/CourseMetadata.vue";
 import CoursePreview from "../components/CoursePreview.vue";
 import CourseReviews from "../components/CourseReviews.vue";
@@ -107,6 +119,18 @@ const route = useRoute();
 const course_id = route.params.id;
 
 const courseData = ref({});
+
+const hasProject = computed(() => {
+    const project = courseData.value?.project;
+
+    if (!project) {
+        return false;
+    }
+
+    const plainDescription = project.description?.replace(/<[^>]*>/g, "").trim() ?? "";
+
+    return Boolean(project.title || plainDescription || project.pdf_url);
+});
 
 // Fetch course data
 const fetchCourseData = async () => {

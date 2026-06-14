@@ -48,7 +48,7 @@ class R2StorageService
         return $videos;
     }
 
-    public static function uploadVideo(UploadedFile $file): array
+    public static function uploadVideo(UploadedFile $file, ?string $displayName = null): array
     {
         self::ensureConfigured();
 
@@ -56,12 +56,66 @@ class R2StorageService
             throw new RuntimeException('Only video files are allowed.');
         }
 
-        $path = self::videoPrefix();
-        $media = MediaRepository::storeByRequest($file, $path, MediaTypeEnum::VIDEO);
+        $disk = Storage::disk('r2');
+        $prefix = self::videoPrefix();
+        $extension = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'mp4');
+        $fileName = self::buildVideoFileName($displayName ?: $file->getClientOriginalName(), $extension);
+        $fileName = self::ensureUniqueFileName($disk, $prefix, $fileName);
+        $storedPath = trim($prefix, '/') . '/' . $fileName;
+
+        $uploadedPath = $disk->putFileAs(trim($prefix, '/'), $file, $fileName, 'public');
+
+        if (! $uploadedPath) {
+            throw new RuntimeException('Failed to upload video.');
+        }
+
+        MediaRepository::create([
+            'extension' => $extension,
+            'src' => $storedPath,
+            'path' => $prefix,
+            'type' => MediaTypeEnum::VIDEO,
+            'disk' => 'r2',
+        ]);
+
+        return self::formatVideoItem($disk, $storedPath);
+    }
+
+    public static function renameVideo(string $path, string $newName): array
+    {
+        self::ensureConfigured();
+
+        $path = self::normalizePath($path);
+
+        if (! self::isVideoPath($path)) {
+            throw new RuntimeException('Invalid video path.');
+        }
 
         $disk = Storage::disk('r2');
 
-        return self::formatVideoItem($disk, $media->src);
+        if (! $disk->exists($path)) {
+            throw new RuntimeException('Video not found.');
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $newFileName = self::buildVideoFileName($newName, $extension);
+        $directory = dirname($path);
+        $newPath = ($directory === '.' ? self::videoPrefix() : $directory) . '/' . $newFileName;
+        $newPath = self::normalizePath($newPath);
+
+        if ($newPath !== $path && $disk->exists($newPath)) {
+            throw new RuntimeException('A video with this name already exists.');
+        }
+
+        if ($newPath !== $path && ! $disk->move($path, $newPath)) {
+            throw new RuntimeException('Failed to rename video.');
+        }
+
+        Media::query()
+            ->where('src', $path)
+            ->where('disk', 'r2')
+            ->update(['src' => $newPath, 'extension' => $extension]);
+
+        return self::formatVideoItem($disk, $newPath);
     }
 
     public static function deleteVideo(string $path): void
@@ -149,5 +203,57 @@ class R2StorageService
         }
 
         return round($bytes / 1073741824, 2) . ' GB';
+    }
+
+    private static function buildVideoFileName(string $input, string $extension): string
+    {
+        $input = trim(str_replace('\\', '/', $input));
+        $input = basename($input);
+
+        $providedExtension = strtolower(pathinfo($input, PATHINFO_EXTENSION));
+
+        if ($providedExtension && in_array($providedExtension, self::VIDEO_EXTENSIONS, true)) {
+            $baseName = pathinfo($input, PATHINFO_FILENAME);
+            $extension = $providedExtension;
+        } else {
+            $baseName = pathinfo($input, PATHINFO_FILENAME) ?: $input;
+        }
+
+        $baseName = self::sanitizeBaseName($baseName);
+
+        if ($baseName === '') {
+            $baseName = 'video';
+        }
+
+        return $baseName . '.' . strtolower($extension);
+    }
+
+    private static function sanitizeBaseName(string $name): string
+    {
+        $name = preg_replace('/[<>:"\/\\\\|?*#]+/', '-', $name) ?? $name;
+        $name = preg_replace('/\s+/', ' ', $name) ?? $name;
+
+        return mb_substr(trim($name, " .-\t\n\r"), 0, 200);
+    }
+
+    private static function ensureUniqueFileName($disk, string $prefix, string $fileName): string
+    {
+        $path = trim($prefix, '/') . '/' . $fileName;
+
+        if (! $disk->exists($path)) {
+            return $fileName;
+        }
+
+        $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+        $counter = 1;
+
+        do {
+            $candidate = $baseName . ' (' . $counter . ').' . $extension;
+            $path = trim($prefix, '/') . '/' . $candidate;
+            $counter++;
+        } while ($disk->exists($path) && $counter < 1000);
+
+        return $candidate;
     }
 }

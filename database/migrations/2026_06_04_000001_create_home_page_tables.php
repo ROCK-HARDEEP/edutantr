@@ -68,7 +68,7 @@ return new class extends Migration
             $table->foreignIdFor(Organization::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('media_id')->nullable()->constrained('media')->nullOnDelete();
             $table->string('name');
-            $table->enum('partner_type', ['college', 'company'])->default('company');
+            $table->enum('partner_type', ['college', 'company', 'industry_logos'])->default('company');
             $table->string('website_url')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_active')->default(false);

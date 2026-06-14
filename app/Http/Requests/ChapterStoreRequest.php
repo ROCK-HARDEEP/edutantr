@@ -27,6 +27,7 @@ class ChapterStoreRequest extends FormRequest
             'course_id' => 'required|exists:courses,id',
             'title' => 'required|string|max:500',
             'serial_number' => 'required|integer',
+            'overview' => 'nullable|string',
             'contents' => 'required|array|min:1',
             'contents.*.media' => 'file|mimes:jpeg,png,jpg,mp4,mpeg,mp3,wav,webm,ogg,raw,pdf|max:1048576|required_without:contents.*.link',
             'contents.*.link' => [

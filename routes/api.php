@@ -71,6 +71,7 @@ Route::get('/home/statistics', [HomePageController::class, 'statistics']);
 Route::get('/home/partner-colleges', [HomePageController::class, 'partnerColleges']);
 Route::get('/home/placements', [HomePageController::class, 'placements']);
 Route::get('/home/partner-logos', [HomePageController::class, 'partnerLogos']);
+Route::get('/home/industry-partners', [HomePageController::class, 'industryPartners']);
 
 Route::get('/testimonial/list', [TestimonialController::class, 'index']);
 

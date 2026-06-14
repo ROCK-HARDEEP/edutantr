@@ -282,6 +282,29 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-12 mb-1">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="m-0 p-0">{{ __('Chapter Overview') }}</h6>
+                                <small class="text-muted">{{ __('A detailed summary of this chapter. This will always appear fixed at the end of the chapter for students.') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <label for="chapterOverviewEditor" class="form-label fw-semibold">{{ __('Overview Description') }}</label>
+                                <textarea class="form-control" id="chapterOverviewEditor" name="overview"
+                                    placeholder="{{ __('Write a full detailed description of this chapter...') }}">{{ old('overview') }}</textarea>
+                                @error('overview')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-12 mt-2">
                         <div class="card">
                             <div class="card-body">
@@ -307,7 +330,28 @@
 
 @endsection
 @push('scripts')
+    <script src="{{ asset('assets/scripts/ckeditor.js') }}"></script>
     <script>
+        let chapterOverviewEditor = null;
+
+        ClassicEditor
+            .create(document.querySelector('#chapterOverviewEditor'))
+            .then(editor => {
+                chapterOverviewEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        function getChapterOverviewValue() {
+            if (chapterOverviewEditor) {
+                return chapterOverviewEditor.getData();
+            }
+
+            const overviewField = document.querySelector('[name="overview"]');
+            return overviewField ? overviewField.value : '';
+        }
+
         var contentCounter = 2;
 
         function addContentItem() {
@@ -591,6 +635,7 @@
             formProcessData.append("course_id", course_id);
             formProcessData.append("title", title);
             formProcessData.append("serial_number", serial_number);
+            formProcessData.append("overview", getChapterOverviewValue());
             formProcessData.append(`contents[${index}][title]`, content.title);
             formProcessData.append(`contents[${index}][serial_number]`, content.serial_number);
             formProcessData.append(`contents[${index}][is_forwardable]`, content.is_forwardable);

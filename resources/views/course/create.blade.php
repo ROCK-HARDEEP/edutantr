@@ -250,6 +250,8 @@
                     </div>
                 </div>
 
+                @include('course.partials.project-section', ['project' => null])
+
                 <div class="row my-3">
                     <div class="col-md-12">
                         <div class="card">

@@ -28,9 +28,16 @@ class ChapterRepository extends Repository
                 'title' => $request->title,
                 'serial_number' => $request->serial_number,
                 'course_id' => $request->course_id,
+                'overview' => $request->overview,
             ]);
         } else {
             $chapter = self::query()->where('id', $chapterId)->first();
+
+            self::update($chapter, [
+                'title' => $request->title,
+                'serial_number' => $request->serial_number,
+                'overview' => $request->overview,
+            ]);
         }
 
         foreach ($request->contents ?? [] as $requestContent) {
@@ -85,7 +92,8 @@ class ChapterRepository extends Repository
     {
         self::update($chapter, [
             'title' => $request->title ?? $chapter->title,
-            'serial_number' => $request->serial_number ?? $chapter->serial_number
+            'serial_number' => $request->serial_number ?? $chapter->serial_number,
+            'overview' => $request->has('overview') ? $request->overview : $chapter->overview,
         ]);
 
         $newContent = false;

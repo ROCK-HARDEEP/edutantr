@@ -298,6 +298,19 @@
                                                                             </span>
                                                                         </div>
                                                                     @endforelse
+                                                                    @if ($chapter->overview && trim(strip_tags($chapter->overview)))
+                                                                        <div
+                                                                            class="accordion-body d-flex justify-content-between align-items-center border-top">
+                                                                            <div
+                                                                                class="d-flex gap-2 align-items-center text-capitalize">
+                                                                                <i class="bi bi-journal-text"></i>
+                                                                                <strong>{{ __('Chapter Overview') }}</strong>
+                                                                            </div>
+                                                                            <small class="me-2 text-muted chapter-duration">
+                                                                                {{ __('Summary') }}
+                                                                            </small>
+                                                                        </div>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         @empty

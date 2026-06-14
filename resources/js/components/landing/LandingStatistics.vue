@@ -1,29 +1,54 @@
 <template>
     <section class="landing-stats">
         <div class="colleges-banner">
+            <div class="container colleges-banner__inner">
+                <div class="colleges-banner__header text-center">
+                    <span class="colleges-banner__eyebrow">
+                        <i class="bi bi-building-fill"></i>
+                        {{ $t('Academic Network') }}
+                    </span>
+                    <h2 class="colleges-banner__heading">
+                        {{ $t('Our') }}
+                        <span class="colleges-banner__heading-accent">{{ $t('Partner Colleges') }}</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div v-if="loadingBanner" class="colleges-banner__loading" aria-hidden="true"></div>
+
             <swiper
-                v-if="colleges.length"
-                :modules="[Navigation, Pagination, Autoplay]"
+                v-else-if="collegeSlides.length"
+                :modules="[Navigation, Pagination, Autoplay, EffectFade]"
+                effect="fade"
+                :fade-effect="{ crossFade: true }"
                 :slides-per-view="1"
                 :space-between="0"
+                :speed="700"
+                :loop="collegeSlides.length > 1"
+                :autoplay="collegeSliderAutoplay"
                 navigation
                 pagination
-                autoplay
-                loop
                 class="colleges-banner__swiper"
+                @swiper="onCollegeSwiper"
             >
-                <swiper-slide v-for="college in colleges" :key="college.id">
-                    <img
-                        :src="college.logo"
-                        :alt="college.name"
-                        class="colleges-banner__image"
-                        loading="lazy"
-                    />
+                <swiper-slide v-for="slide in collegeSlides" :key="slide.id">
+                    <div class="colleges-banner__slide">
+                        <img
+                            :src="slide.image"
+                            :alt="slide.name"
+                            class="colleges-banner__image"
+                            loading="lazy"
+                        />
+                        <div class="colleges-banner__overlay" aria-hidden="true"></div>
+                        <div class="colleges-banner__caption">
+                            <h3 class="colleges-banner__name">{{ slide.name }}</h3>
+                            <p v-if="slide.location" class="colleges-banner__location">{{ slide.location }}</p>
+                        </div>
+                    </div>
                 </swiper-slide>
             </swiper>
-            <p v-else class="colleges-banner__empty text-center text-muted py-5 mb-0">
-                {{ $t('Partner colleges coming soon.') }}
-            </p>
+
+            
         </div>
 
         <div class="container landing-stats__container">
@@ -109,51 +134,187 @@
 }
 
 .colleges-banner {
+    position: relative;
     width: 100%;
     overflow: hidden;
-    background: #0f172a;
+    padding: 2.5rem 0 0;
+    background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 100%);
+}
+
+.colleges-banner__inner {
+    position: relative;
+    margin-bottom: 1.75rem;
+}
+
+.colleges-banner__header {
+    margin-bottom: 0;
+}
+
+.colleges-banner__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(21, 128, 61, 0.08));
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #15803d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+}
+
+.colleges-banner__heading {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+.colleges-banner__heading-accent {
+    background: linear-gradient(90deg, #15803d, #22c55e, #4ade80);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.colleges-banner__loading {
+    width: 100%;
+    height: clamp(260px, 38vw, 460px);
+    background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+    background-size: 200% 100%;
+    animation: colleges-banner-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes colleges-banner-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 .colleges-banner__swiper {
     width: 100%;
 }
 
+.colleges-banner__slide {
+    position: relative;
+    width: 100%;
+    height: clamp(260px, 38vw, 460px);
+    overflow: hidden;
+}
+
 .colleges-banner__image {
     display: block;
     width: 100%;
-    height: clamp(220px, 32vw, 420px);
+    height: 100%;
     object-fit: cover;
+    object-position: center;
+}
+
+.colleges-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.1) 0%,
+        rgba(15, 23, 42, 0.45) 100%
+    );
+    pointer-events: none;
+}
+
+.colleges-banner__caption {
+    position: absolute;
+    left: clamp(1rem, 4vw, 2.5rem);
+    bottom: clamp(1.25rem, 3vw, 2rem);
+    z-index: 2;
+    max-width: min(520px, 85%);
+    color: #fff;
+}
+
+.colleges-banner__name {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+    font-weight: 800;
+    line-height: 1.25;
+    text-shadow: 0 2px 12px rgba(15, 23, 42, 0.4);
+}
+
+.colleges-banner__location {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.4;
 }
 
 .colleges-banner__empty {
-    background: #f1f5f9;
+    padding: 2rem 0;
 }
 
 .colleges-banner :deep(.swiper-button-next),
 .colleges-banner :deep(.swiper-button-prev) {
-    width: 42px;
-    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     color: #15803d;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+    transition: transform 0.25s ease, background 0.25s ease;
 
     &::after {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 700;
+    }
+
+    &:hover {
+        background: #f0fdf4;
+        transform: scale(1.05);
     }
 }
 
+.colleges-banner :deep(.swiper-button-prev) {
+    left: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.colleges-banner :deep(.swiper-button-next) {
+    right: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.colleges-banner :deep(.swiper-pagination) {
+    bottom: 1rem !important;
+}
+
 .colleges-banner :deep(.swiper-pagination-bullet) {
-    background: rgba(255, 255, 255, 0.45);
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.5);
     opacity: 1;
+    transition: width 0.25s ease, background 0.25s ease;
 }
 
 .colleges-banner :deep(.swiper-pagination-bullet-active) {
-    width: 22px;
+    width: 24px;
     border-radius: 4px;
-    background: #fff;
+    background: #22c55e;
+}
+
+@media (max-width: 767px) {
+    .colleges-banner {
+        padding-top: 2rem;
+    }
+
+    .colleges-banner__inner {
+        margin-bottom: 1.25rem;
+    }
 }
 
 .placements-eyebrow {
@@ -464,12 +625,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import HomeCardSlider from "./HomeCardSlider.vue";
 
-const colleges = ref([]);
+const collegeSlides = ref([]);
+const loadingBanner = ref(true);
 const placements = ref([]);
 const showPlacements = false;
+
+const collegeSliderAutoplay = {
+    delay: 4000,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+};
 
 const placementBreakpoints = {
     320: { slidesPerView: 1, spaceBetween: 16 },
@@ -478,10 +646,78 @@ const placementBreakpoints = {
     1200: { slidesPerView: 3, spaceBetween: 28 },
 };
 
+const onCollegeSwiper = (swiper) => {
+    if (swiper?.autoplay && collegeSlides.value.length > 1) {
+        swiper.autoplay.start();
+    }
+};
+
+const mapGallerySlides = (items = []) =>
+    items
+        .filter((item) => item.media_url && !item.is_video)
+        .map((item) => ({
+            id: `gallery-${item.id}`,
+            image: item.media_url,
+            name: item.college?.name || item.title || "",
+            location: item.college?.location || "",
+        }));
+
+const mergeCollegeSlides = (colleges = [], logos = []) => {
+    const slides = [];
+    const seenNames = new Set();
+
+    const addSlide = (slide) => {
+        const key = (slide.name || "").trim().toLowerCase();
+        if (!key || !slide.image || seenNames.has(key)) {
+            return;
+        }
+        seenNames.add(key);
+        slides.push(slide);
+    };
+
+    colleges.forEach((college) => {
+        addSlide({
+            id: `college-${college.id}`,
+            image: college.logo,
+            name: college.name,
+            location: college.location || "",
+        });
+    });
+
+    logos
+        .filter((logo) => logo.partner_type === "college")
+        .forEach((logo) => {
+            addSlide({
+                id: `logo-${logo.id}`,
+                image: logo.logo,
+                name: logo.name,
+                location: "",
+            });
+        });
+
+    return slides;
+};
+
 onMounted(async () => {
     try {
-        const collegesRes = await axios.get("/home/partner-colleges");
-        colleges.value = collegesRes.data.data.colleges ?? [];
+        const [galleryRes, collegesRes, logosRes] = await Promise.all([
+            axios.get("/college-gallery/list", {
+                params: { media_type: "image", per_page: 20 },
+            }),
+            axios.get("/home/partner-colleges"),
+            axios.get("/home/partner-logos"),
+        ]);
+
+        const galleryItems = galleryRes.data.data.items ?? [];
+        const gallerySlides = mapGallerySlides(galleryItems);
+
+        if (gallerySlides.length) {
+            collegeSlides.value = gallerySlides;
+        } else {
+            const colleges = collegesRes.data.data.colleges ?? [];
+            const logos = logosRes.data.data.logos ?? [];
+            collegeSlides.value = mergeCollegeSlides(colleges, logos);
+        }
 
         if (showPlacements) {
             const placementsRes = await axios.get("/home/placements");
@@ -489,6 +725,8 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error("Error fetching landing statistics:", error);
+    } finally {
+        loadingBanner.value = false;
     }
 });
 </script>

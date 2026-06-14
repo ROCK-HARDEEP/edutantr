@@ -192,6 +192,7 @@ Route::middleware(['auth', 'restrict_sales_counselor'])->group(function () {
     // R2 Video Storage (Cloudflare)
     Route::get('/storage/videos', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'index'])->name('storage.videos.index');
     Route::post('/storage/videos', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'store'])->name('storage.videos.store');
+    Route::patch('/storage/videos/rename', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'rename'])->name('storage.videos.rename');
     Route::delete('/storage/videos', [App\Http\Controllers\WebAdmin\R2StorageController::class, 'destroy'])->name('storage.videos.destroy');
 
     // Chapters

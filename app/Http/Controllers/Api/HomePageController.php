@@ -71,4 +71,16 @@ class HomePageController extends Controller
 
         return $this->json('partner logos', ['logos' => PartnerLogoResource::collection($logos)], 200);
     }
+
+    public function industryPartners()
+    {
+        $logos = PartnerLogoRepository::query()
+            ->where('is_active', true)
+            ->where('partner_type', 'industry_logos')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        return $this->json('industry partners', ['logos' => PartnerLogoResource::collection($logos)], 200);
+    }
 }

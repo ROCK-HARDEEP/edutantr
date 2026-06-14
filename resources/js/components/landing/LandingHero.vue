@@ -1,8 +1,7 @@
 <template>
-    <section class="landing-hero position-relative" :class="{ 'landing-hero--partners': hasPartnerBg }">
-        <!-- Cinematic 5-column partner background (reference layout) -->
-        <div v-if="hasPartnerBg" class="hero-bg hero-bg--cinematic">
-            <div class="hero-partners-scroll" aria-hidden="true">
+    <section class="landing-hero position-relative landing-hero--partners">
+        <div class="hero-bg hero-bg--cinematic">
+            <div v-if="hasPartnerBg" class="hero-partners-scroll" aria-hidden="true">
                 <div class="hero-partners-track" :style="{ '--partners-duration': `${partnersScrollDuration}s` }">
                     <div class="hero-partners-strip">
                         <img
@@ -29,9 +28,7 @@
 
             <div class="container hero-content hero-content--cinematic">
                 <div class="hero-cinematic-copy text-center">
-                    <span class="hero-badge hero-badge--light">
-                        {{ $t('Welcome To Online School') }}
-                    </span>
+                    
 
                     <h1 class="hero-heading hero-heading--cinematic">
                         {{ $t('From beginner to skilled—starting in') }}
@@ -55,82 +52,18 @@
             </div>
         </div>
 
-        <!-- Default hero (no partners) -->
-        <div v-else class="hero-bg hero-bg--classic">
-            <div class="container position-relative hero-content">
-                <div class="row align-items-center g-4 g-lg-5">
-                    <div class="col-lg-6 text-center text-lg-start">
-                        <span class="hero-badge">
-                            {{ $t('Welcome To Online School') }}
-                        </span>
-
-                        <h1 class="hero-heading fw-bold">
-                            <span class="d-block">{{ $t('The Best Program') }}</span>
-                            <span class="d-block">{{ $t('Enroll for Exchange') }}</span>
-                        </h1>
-
-                        <div class="hero-actions d-flex flex-wrap align-items-center gap-3 justify-content-center justify-content-lg-start">
-                            <router-link :to="heroPrimaryLink" class="hero-btn hero-btn--primary">
-                                <span>{{ heroPrimaryLabel }}</span>
-                                <span class="hero-btn__arrow" aria-hidden="true">
-                                    <i class="bi bi-arrow-right"></i>
-                                </span>
-                            </router-link>
-                            <router-link to="/courses" class="hero-btn hero-btn--video text-decoration-none">
-                                <span class="hero-btn__play" aria-hidden="true">
-                                    <i class="bi bi-play-fill"></i>
-                                </span>
-                                <span>{{ $t('Watch Video') }}</span>
-                            </router-link>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="hero-visual">
-                            <div class="hero-visual__shape" aria-hidden="true">
-                                <span class="hero-visual__arc hero-visual__arc--orange"></span>
-                                <span class="hero-visual__arc hero-visual__arc--blue"></span>
-                                <span class="hero-visual__arc hero-visual__arc--purple"></span>
-                            </div>
-
-                            <div class="hero-visual__photo">
-                                <img
-                                    :src="heroImage"
-                                    class="hero-visual__person"
-                                    :alt="activeProgram?.title ?? $t('Program banner')"
-                                    loading="lazy"
-                                />
-                            </div>
-
-                            <div class="hero-float-card hero-float-card--enroll">
-                                <div class="hero-float-card__avatars" aria-hidden="true">
-                                    <span class="hero-float-card__avatar hero-float-card__avatar--1"></span>
-                                    <span class="hero-float-card__avatar hero-float-card__avatar--2"></span>
-                                    <span class="hero-float-card__avatar hero-float-card__avatar--3"></span>
-                                    <span class="hero-float-card__avatar hero-float-card__avatar--plus">
-                                        <i class="bi bi-plus"></i>
-                                    </span>
-                                </div>
-                                <span class="hero-float-card__text">
-                                    <strong>{{ enrollCount }}+</strong> {{ $t('User Enroll') }}
-                                </span>
-                            </div>
-
-                            <span class="hero-brand-icon hero-brand-icon--google" aria-hidden="true">
-                                <i class="bi bi-google"></i>
-                            </span>
-                            <span class="hero-brand-icon hero-brand-icon--youtube" aria-hidden="true">
-                                <i class="bi bi-youtube"></i>
-                            </span>
-                            <span class="hero-brand-icon hero-brand-icon--meet" aria-hidden="true">
-                                <i class="bi bi-camera-video-fill"></i>
-                            </span>
-
-                            <div class="hero-books" aria-hidden="true">
-                                <span class="hero-books__book hero-books__book--1"></span>
-                                <span class="hero-books__book hero-books__book--2"></span>
-                                <span class="hero-books__book hero-books__book--3"></span>
-                            </div>
+        <div class="three_column_section">
+            <div class="three_column_section__panel">
+                <div class="container">
+                    <div class="three_column_section__grid">
+                        <div
+                            v-for="stat in heroStats"
+                            :key="stat.label"
+                            class="three_column_section__item"
+                        >
+                            <span class="three_column_section__value">{{ stat.value }}</span>
+                            <span class="three_column_section__line" aria-hidden="true"></span>
+                            <span class="three_column_section__label">{{ stat.label }}</span>
                         </div>
                     </div>
                 </div>
@@ -145,16 +78,34 @@
     min-height: 100vh;
 }
 
+.landing-hero--partners {
+    margin-top: 0;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.landing-hero__top {
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+    padding-top: 5rem;
+}
+
+.landing-hero__top--classic {
+    padding-top: 5rem;
+}
+
 /* ─── Cinematic partner background (auto-scrolling logos) ─── */
 .hero-bg--cinematic {
     position: relative;
     min-height: 100vh;
+    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     overflow: hidden;
     background: #0a0a0a;
-    padding: 4rem 1.5rem;
+    padding: 5rem 0 10rem;
+    box-sizing: border-box;
 }
 
 .hero-partners-scroll {
@@ -213,6 +164,82 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.three_column_section {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    width: 100%;
+    pointer-events: none;
+}
+
+.three_column_section__panel {
+    pointer-events: auto;
+    width: 100%;
+    padding: 2rem 0 2.25rem;
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.three_column_section__link {
+    display: block;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #4ade80;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #86efac;
+    }
+}
+
+.three_column_section__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.three_column_section__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.three_column_section__value {
+    font-size: clamp(2rem, 4.5vw, 2.85rem);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.three_column_section__line {
+    display: block;
+    width: 52px;
+    height: 3px;
+    margin: 0.75rem auto 0.85rem;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.three_column_section__label {
+    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.35;
 }
 
 .hero-cinematic-copy {
@@ -296,14 +323,21 @@
     position: relative;
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     overflow: hidden;
-    padding: 1.5rem 6rem 2rem;
+    padding: 0 6rem 2rem;
     background:
         radial-gradient(ellipse 55% 70% at 0% 50%, rgba(255, 200, 190, 0.45) 0%, transparent 60%),
         radial-gradient(ellipse 50% 60% at 100% 40%, rgba(180, 230, 210, 0.35) 0%, transparent 55%),
         radial-gradient(ellipse 40% 50% at 85% 80%, rgba(190, 220, 255, 0.35) 0%, transparent 50%),
         linear-gradient(180deg, #2cab4d 0%, #f7fff6 100%);
+}
+
+.hero-bg--classic .hero-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-top: 1.5rem;
 }
 
 .hero-content {
@@ -326,10 +360,6 @@
 .hero-heading {
     color: #81e5a9;
     font-size: clamp(2rem, 4.5vw, 3.25rem);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin-bottom: 2rem;
-    max-width: 520px;
 }
 
 .hero-actions {
@@ -631,12 +661,30 @@
 
 @media (max-width: 991px) {
     .hero-bg--classic {
-        padding: 1.5rem;
+        padding: 0 1.5rem 2rem;
     }
 
     .hero-bg--cinematic {
         min-height: 580px;
-        padding: 3rem 1rem;
+        padding-top: 4.5rem;
+        padding-bottom: 13rem;
+    }
+
+    .hero-content--cinematic {
+        padding: 1.5rem 1rem 0.5rem;
+    }
+
+    .three_column_section__panel {
+        padding: 1.5rem 0 1.75rem;
+    }
+
+    .three_column_section__grid {
+        gap: 0.75rem;
+    }
+
+    .three_column_section__line {
+        width: 36px;
+        margin: 0.55rem auto 0.65rem;
     }
 
     .hero-columns {
@@ -663,6 +711,20 @@
 }
 
 @media (max-width: 575px) {
+    .three_column_section__grid {
+        grid-template-columns: 1fr;
+        gap: 1.1rem;
+    }
+
+    .three_column_section__item:not(:last-child) {
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hero-bg--cinematic {
+        padding-bottom: 18rem;
+    }
+
     .hero-actions {
         flex-direction: column;
         align-items: stretch !important;
@@ -701,6 +763,7 @@ const authStore = useAuthStore();
 const masterStore = useMasterStore();
 const programs = ref([]);
 const partners = ref([]);
+const collegePartnerCount = ref(0);
 const activeIndex = ref(0);
 
 const hasPartnerBg = computed(() => partners.value.length > 0);
@@ -744,11 +807,41 @@ const enrollCount = computed(() => {
     return count;
 });
 
+const formatStatCount = (value, fallback = "10") => {
+    const num = parseInt(String(value ?? "").replace(/\D/g, ""), 10);
+    if (!num || Number.isNaN(num)) {
+        return `${fallback}+`;
+    }
+    if (num >= 1000) {
+        return `${Math.floor(num / 1000)}k+`;
+    }
+    return `${num}+`;
+};
+
+const heroStats = computed(() => [
+    {
+        value: formatStatCount(
+            masterStore?.masterData?.total_student ?? masterStore?.masterData?.total_enrollments,
+            "10"
+        ),
+        label: t("Students"),
+    },
+    {
+        value: formatStatCount(masterStore?.masterData?.total_instructors, "20"),
+        label: t("Instructors"),
+    },
+    {
+        value: formatStatCount(collegePartnerCount.value, "10"),
+        label: t("College Partners"),
+    },
+]);
+
 onMounted(async () => {
     try {
-        const [programsRes, partnersRes] = await Promise.all([
+        const [programsRes, partnersRes, collegesRes] = await Promise.all([
             axios.get("/home/programs"),
             axios.get("/home/partner-logos"),
+            axios.get("/home/partner-colleges"),
         ]);
 
         programs.value = programsRes.data.data.programs ?? [];
@@ -759,6 +852,10 @@ onMounted(async () => {
 
         const companyPartners = logos.filter((item) => item.partner_type === "company");
         partners.value = companyPartners.length ? companyPartners : logos;
+
+        const colleges = collegesRes.data.data.colleges ?? [];
+        const collegeLogos = logos.filter((item) => item.partner_type === "college");
+        collegePartnerCount.value = Math.max(colleges.length, collegeLogos.length);
     } catch (error) {
         console.error("Error fetching landing hero data:", error);
     }

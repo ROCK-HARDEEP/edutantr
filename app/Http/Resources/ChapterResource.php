@@ -17,6 +17,7 @@ class ChapterResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'overview' => $this->overview,
             'serial_number' => $this->serial_number,
             'total_duration' => $this->contents->sum('duration'),
             'duration' => $this->contents->sum('duration'),

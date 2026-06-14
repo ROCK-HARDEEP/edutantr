@@ -165,25 +165,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Google Map -->
-        <section
-            v-if="masterStore.masterData?.google_map"
-            class="py-5 contact-page__map"
-        >
-            <div class="container">
-                <div class="row justify-content-center text-center mb-4">
-                    <div class="col-lg-8">
-                        <h2 class="fw-bold">{{ $t('Find Us on Google Maps') }}</h2>
-                        <p class="text-muted mb-0">{{ $t('Visit our head office or reach us easily using the map below.') }}</p>
-                    </div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-10">
+                <div v-if="googleMapEmbed" class="row justify-content-center mt-5">
+                    <div class="col-12">
                         <div class="map-embed shadow rounded-4 overflow-hidden">
-                            <div v-html="masterStore.masterData.google_map" class="map-embed__frame"></div>
+                            <div v-html="googleMapEmbed" class="map-embed__frame"></div>
                         </div>
                     </div>
                 </div>
@@ -240,6 +226,11 @@ const headOfficeAddress = computed(() => {
     );
 });
 
+const googleMapEmbed = computed(() => {
+    const embedCode = masterStore.masterData?.google_map?.trim();
+    return embedCode || "";
+});
+
 const learningOffers = computed(() => [
     {
         icon: "bi bi-easel2-fill",
@@ -284,7 +275,7 @@ const resetForm = () => {
 };
 
 onMounted(async () => {
-    if (masterStore.masterData?.name) {
+    if (masterStore.masterData?.google_map) {
         return;
     }
 

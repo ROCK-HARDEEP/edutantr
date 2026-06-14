@@ -46,7 +46,7 @@
                     </div>
                     <div class="partners-showcase__card-body">
                         <span class="partners-showcase__card-type">
-                            {{ item.partner_type === 'college' ? $t('College') : $t('Company') }}
+                            {{ item.partner_type === 'college' ? $t('College') : item.partner_type === 'industry_logos' ? $t('Industry Logos') : $t('Company') }}
                         </span>
                         <h3 class="partners-showcase__card-name">{{ item.name }}</h3>
                     </div>

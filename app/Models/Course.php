@@ -131,4 +131,9 @@ class Course extends Model
     {
         return $this->belongsToMany(Subscriber::class, 'subscriber_courses');
     }
+
+    public function project()
+    {
+        return $this->hasOne(CourseProject::class);
+    }
 }

@@ -14,6 +14,14 @@
                         @dragstart.prevent
                         @keydown.capture="preventLessonMediaSpeedShortcut"
                     >
+                        <div v-if="contentData.type == 'overview'"
+                            class="chapter-overview-panel border border-primary rounded p-4 mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <i class="bi bi-journal-text fs-3 text-primary"></i>
+                                <h4 class="mb-0">{{ contentData?.title }}</h4>
+                            </div>
+                            <div class="chapter-overview-body" v-html="contentData?.overview"></div>
+                        </div>
                         <CourseVideoPlayer
                             v-if="contentData.type == 'video' && contentData.media_id"
                             :src="contentData?.media"
@@ -102,6 +110,7 @@
                         <CourseLessons :chapters="chapterData" :courseId="courseData?.course?.id"
                             :course="courseData?.course" :isPlayingVideo="isPlayingVideo" :contentData="contentData"
                             :exams="examData" :quizes="quizesData" :isPlayingAudio="isPlayingAudio"
+                            :project="projectData"
                             @playVideo="onPlayVideo" @pauseVideo="onPauseVideo" @playAudio="onPlayAudio"
                             @pauseAudio="onPauseAudio" />
                     </section>
@@ -190,6 +199,16 @@
     user-select: none;
     -webkit-user-select: none;
 }
+
+.chapter-overview-panel {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+.chapter-overview-body :deep(img) {
+    max-width: 100%;
+    height: auto;
+}
 </style>
 
 <script setup>
@@ -214,6 +233,7 @@ let contentData = ref({});
 let chapterData = ref({});
 let examData = ref({});
 let quizesData = ref({});
+let projectData = ref(null);
 
 let isPlayingVideo = ref(false);
 let isPlayingAudio = ref(false);
@@ -255,13 +275,49 @@ watch(
     () => route.query.content_id,
     () => {
         contentId.value = route.query.content_id;
-        fetchContent(contentId.value);
+        loadSelectedContent(contentId.value);
     }
 );
 
 onMounted(() => {
     fetchCourse();
 });
+
+function isOverviewContentId(id) {
+    return String(id ?? '').startsWith('overview-');
+}
+
+function getChapterOverviewContent(contentId) {
+    const chapterId = Number(String(contentId).replace('overview-', ''));
+    const chapter = chapterData.value.find((item) => item.id === chapterId);
+
+    if (!chapter?.overview) {
+        return null;
+    }
+
+    return {
+        type: 'overview',
+        title: `${chapter.title} - Chapter Overview`,
+        overview: chapter.overview,
+    };
+}
+
+function loadSelectedContent(selectedContentId) {
+    if (isOverviewContentId(selectedContentId)) {
+        const overviewContent = getChapterOverviewContent(selectedContentId);
+
+        if (!overviewContent) {
+            canView.value = false;
+            return;
+        }
+
+        canView.value = courseData.value?.course?.is_enrolled ?? true;
+        contentData.value = overviewContent;
+        return;
+    }
+
+    fetchContent(selectedContentId);
+}
 
 // Fetch course
 const fetchCourse = async () => {
@@ -278,12 +334,18 @@ const fetchCourse = async () => {
         chapterData.value = response.data.data.chapters;
         examData.value = response.data.data.exams;
         quizesData.value = response.data.data.quizzes;
+        projectData.value = response.data.data.project;
 
         if (contentId.value) {
-            fetchContent(contentId.value);
+            loadSelectedContent(contentId.value);
         } else {
-            contentId.value = response.data.data.chapters[0].contents[0].id;
-            fetchContent(contentId.value);
+            const firstChapter = response.data.data.chapters?.[0];
+            const firstContentId = firstChapter?.contents?.[0]?.id;
+
+            if (firstContentId) {
+                contentId.value = firstContentId;
+                loadSelectedContent(contentId.value);
+            }
         }
     } catch (error) {
         //
@@ -300,6 +362,7 @@ const fetchContent = async (contentId) => {
             },
         });
         contentData.value = response.data.data.content;
+        canView.value = true;
 
     } catch (error) {
         if (error.response?.data?.message.includes("subscribe") && error.response?.status === 403) {

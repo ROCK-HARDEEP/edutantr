@@ -1,9 +1,12 @@
 <template>
     <div class="wrapper" @contextmenu="handleContextMenu">
-        <header class="site-header">
+        <header class="site-header" :class="{ 'site-header--home': isHomePage }">
             <Header />
         </header>
-        <main class="flex-grow-1 d-flex flex-column site-main">
+        <main
+            class="flex-grow-1 d-flex flex-column site-main"
+            :class="{ 'site-main--home': isHomePage }"
+        >
             <!-- WhatsApp Support -->
             <div v-if="masterStore?.masterData?.whatsapp_support_number != ''"
                 class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 99;">
@@ -33,11 +36,14 @@
 <script setup>
 import { useMasterStore } from "@/stores/master";
 import { useRoute } from "vue-router";
+import { computed } from "vue";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 
 const masterStore = useMasterStore();
 const route = useRoute();
+
+const isHomePage = computed(() => route.path === "/");
 
 const handleContextMenu = (event) => {
     if (route.path.startsWith("/play")) {
@@ -60,10 +66,20 @@ const handleContextMenu = (event) => {
     left: 0;
     right: 0;
     z-index: 1040;
+    padding: 0 13px 13px 13px;
+    border-radius: 9px;
+}
+
+.site-header--home {
+    background: transparent;
 }
 
 .site-main {
     padding-top: 66px;
+}
+
+.site-main--home {
+    padding-top: 0;
 }
 
 .bubble-arrow {

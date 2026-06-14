@@ -1,7 +1,5 @@
 <template>
     <div class="home-page">
-        <HomeMarquee />
-
         <LandingHero />
 
         <LandingStatistics />
@@ -14,6 +12,14 @@
 
         <section class="home-section home-section--mentors">
             <MentorsSection />
+        </section>
+
+        <section class="home-section home-section--process">
+            <OurProcess />
+        </section>
+
+        <section class="home-section home-section--industry">
+            <IndustryPartnersSlider />
         </section>
 
         <div class="home-section home-section--why">
@@ -70,6 +76,16 @@
     background: #fff;
 }
 
+.home-section--process {
+    padding: 0;
+    background: transparent;
+}
+
+.home-section--industry {
+    padding: 0;
+    background: #fff;
+}
+
 .home-section--why {
     padding: 0;
     background: #fff;
@@ -111,7 +127,6 @@
 import { useMasterStore } from "@/stores/master";
 import { useLocaleStore } from "../stores/locale";
 import { onMounted } from "vue";
-import HomeMarquee from "../components/landing/HomeMarquee.vue";
 import LandingHero from "../components/landing/LandingHero.vue";
 import LandingStatistics from "../components/landing/LandingStatistics.vue";
 import SectionHeader from "../components/landing/SectionHeader.vue";
@@ -121,6 +136,8 @@ import FAQ from "../components/FAQ.vue";
 import Testimonials from "../components/Testimonials.vue";
 import PopularCourses from "../components/PopularCourses.vue";
 import MentorsSection from "../components/landing/MentorsSection.vue";
+import OurProcess from "../components/landing/OurProcess.vue";
+import IndustryPartnersSlider from "../components/landing/IndustryPartnersSlider.vue";
 import OfferModal from "../components/OfferModal.vue";
 
 const masterStore = useMasterStore();

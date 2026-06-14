@@ -7,6 +7,7 @@ use App\Events\NotifyEvent;
 use App\Http\Resources\ChapterResource;
 use App\Http\Resources\ContentResource;
 use App\Http\Resources\CourseDescriptionResource;
+use App\Http\Resources\CourseProjectResource;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\ExamResource;
 use App\Http\Resources\QuizResource;
@@ -135,6 +136,7 @@ class CourseController extends Controller
                 'quizzes.questions',
                 'exams.questions',
                 'reviews',
+                'project.media',
             ])
             ->find($id);
 
@@ -154,6 +156,9 @@ class CourseController extends Controller
             'quizzes' => QuizResource::collection($course->quizzes->whereNull('chapter_id')->values()),
             'exams' => ExamResource::collection($course->exams->whereNull('chapter_id')->values()),
             'reviews' => ReviewResource::collection($course->reviews),
+            'project' => $course->project
+                ? CourseProjectResource::make($course->project)
+                : null,
         ], 200);
     }
 

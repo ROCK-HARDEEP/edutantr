@@ -82,6 +82,8 @@ class CourseRepository extends Repository
             }
         }
 
+        CourseProjectRepository::syncFromRequest($course, $request);
+
         return $course;
     }
 
@@ -132,7 +134,7 @@ class CourseRepository extends Repository
             ) : null;
         }
 
-        return self::update($course, [
+        self::update($course, [
             'category_id' => $request->category_id ?? $course->category_id,
             'title' => $request->title ?? $course->title,
             'media_id' => $media ? $media->id : $course->media->id,
@@ -154,5 +156,9 @@ class CourseRepository extends Repository
             'is_active' => $isActive,
             'published_at' => $request->is_active == 'on' ? now() : null
         ]);
+
+        CourseProjectRepository::syncFromRequest($course, $request);
+
+        return $course->refresh();
     }
 }

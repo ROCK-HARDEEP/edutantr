@@ -14,8 +14,8 @@
                         <img
                             :src="course.instructor.profile_picture"
                             alt=""
-                            width="28"
-                            height="28"
+                            width="32"
+                            height="32"
                             class="rounded-circle object-fit-cover"
                         />
                         <span>{{ shortName(course.instructor?.name) }}</span>
@@ -128,21 +128,19 @@
 .course-card--popular {
     .popular-course-card {
         background: #fff;
-        border-radius: 16px;
-        border: 1px solid #f0f0f0;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
         overflow: hidden;
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        transition: border-color 0.3s ease;
 
         &:hover {
             border-color: #fed7aa;
-            box-shadow: 0 12px 32px rgba(249, 115, 22, 0.1);
         }
     }
 
     .popular-course-card__thumb {
         display: block;
-        height: 180px;
+        height: 220px;
         overflow: hidden;
 
         img {
@@ -158,7 +156,7 @@
     }
 
     .popular-course-card__body {
-        padding: 1rem 1rem 0.75rem;
+        padding: 1.25rem 1.25rem 1rem;
     }
 
     .popular-course-card__meta {
@@ -172,9 +170,9 @@
     .popular-course-card__instructor {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.45rem;
         color: #6b7280;
-        font-size: 0.8rem;
+        font-size: 0.875rem;
         font-weight: 600;
         min-width: 0;
 
@@ -187,11 +185,11 @@
 
     .popular-course-card__category {
         flex-shrink: 0;
-        padding: 0.2rem 0.55rem;
+        padding: 0.25rem 0.65rem;
         border-radius: 50px;
         background: #fff7ed;
         color: #ea580c;
-        font-size: 0.72rem;
+        font-size: 0.78rem;
         font-weight: 600;
         max-width: 45%;
         overflow: hidden;
@@ -205,11 +203,11 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
         color: #111827;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         font-weight: 700;
         line-height: 1.4;
-        margin-bottom: 0.65rem;
-        min-height: 2.65rem;
+        margin-bottom: 0.75rem;
+        min-height: 2.95rem;
     }
 
     .popular-course-card__stats {
@@ -217,7 +215,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.5rem;
-        font-size: 0.78rem;
+        font-size: 0.85rem;
         font-weight: 600;
         color: #6b7280;
 
@@ -237,7 +235,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
         background: #f9fafb;
         border-top: 1px solid #f3f4f6;
         margin-top: auto;
@@ -250,8 +248,8 @@
     .popular-course-card__rating {
         display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
-        font-size: 0.82rem;
+        gap: 0.3rem;
+        font-size: 0.9rem;
         color: #6b7280;
 
         i {

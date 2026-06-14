@@ -16,7 +16,7 @@ class PartnerLogoStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'partner_type' => ['required', Rule::in(['college', 'company'])],
+            'partner_type' => ['required', Rule::in(['college', 'company', 'industry_logos'])],
             'website_url' => 'nullable|url|max:500',
             'sort_order' => 'nullable|integer|min:0',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',

@@ -1,10 +1,13 @@
 <template>
     <nav
         class="navbar navbar-expand-lg navbar-modern"
-        :class="{ 'navbar-modern--scrolled': isScrolled }"
+        :class="{
+            'navbar-modern--scrolled': isScrolled,
+            'navbar-modern--home': isHomeOverlay,
+        }"
     >
         <div class="container navbar-modern__inner">
-            <BrandLogo to="/" class="navbar-brand" />
+            <BrandLogo to="/" class="navbar-brand" :variant="isHomeOverlay ? 'light' : 'default'" />
 
             <button
                 class="navbar-toggler navbar-toggler-modern"
@@ -132,10 +135,69 @@
     border-bottom-color: rgba(48, 108, 60, 0.12);
 }
 
+.navbar-modern--home {
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+
+    .navbar-accent {
+        opacity: 0;
+    }
+
+    .nav-pill {
+        color: rgba(255, 255, 255, 0.88) !important;
+
+        i {
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        &:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+
+            i {
+                color: #fff;
+            }
+        }
+
+        &.active {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: none;
+
+            i {
+                color: #fff;
+            }
+        }
+    }
+
+    .navbar-toggler-modern {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+
+        .navbar-toggler-icon-modern {
+            color: #fff;
+        }
+    }
+
+    .login-btn {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.28);
+        box-shadow: none;
+        backdrop-filter: blur(8px);
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: none;
+        }
+    }
+}
+
 .navbar-modern__inner {
     position: relative;
-    padding-top: 0.65rem;
-    padding-bottom: 0.65rem;
+    padding: 22px;
 }
 
 .navbar-accent {
@@ -307,9 +369,6 @@
 
 .profile-btn__ring {
     position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #22c55e, #15803d);
     padding: 2px;
     z-index: 0;
 }
@@ -349,6 +408,30 @@
         background: #ffffff;
         border: 1px solid rgba(48, 108, 60, 0.1);
         box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    .navbar-modern--home #navbarContent {
+        background: rgba(0, 0, 0, 0.82);
+        border-color: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(16px);
+
+        .nav-pill {
+            color: rgba(255, 255, 255, 0.9) !important;
+
+            i {
+                color: rgba(255, 255, 255, 0.75);
+            }
+
+            &:hover,
+            &.active {
+                color: #fff !important;
+                background: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #15803d, #22c55e);
+        }
     }
 
     #navbarContent.collapsing {
@@ -405,15 +488,19 @@
 import BrandLogo from "@/components/BrandLogo.vue";
 import { useAuthStore } from "@/stores/auth";
 import Swal from "sweetalert2";
-import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const isLoggedIn = ref(false);
 const isScrolled = ref(false);
 const { t } = useI18n();
+
+const isHomePage = computed(() => route.path === "/");
+const isHomeOverlay = computed(() => isHomePage.value && !isScrolled.value);
 
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 0;

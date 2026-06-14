@@ -167,6 +167,36 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <div v-if="chapterHasOverview(chapter)" class="chapter-overview border-top border-light">
+                                <router-link v-if="course?.is_enrolled" :to="authStore.userData
+                                    ? `/play/${courseId}?content_id=overview-${chapter.id}`
+                                    : ''
+                                    " @click.prevent="handleWaring" :class="{
+                                        'd-block px-3 py-2 rounded-3 border-light text-decoration-none text-dark content-link': true,
+                                        active: isOverviewActive(chapter.id),
+                                    }">
+                                    <div class="d-flex align-items-center">
+                                        <span class="img-fluid me-3 svgEdit d-inline-flex align-items-center justify-content-center"
+                                            style="width: 32px; height: 32px;">
+                                            <i class="bi bi-journal-text text-primary"></i>
+                                        </span>
+                                        <span class="text-primary title-font fw-semibold">{{ $t('Chapter Overview') }}</span>
+                                        <small class="text-muted ms-auto" style="font-size: 0.625em">{{ $t('Summary') }}</small>
+                                    </div>
+                                </router-link>
+                                <div v-else @click="enrollWarning"
+                                    class="content d-block px-3 py-2 border-bottom border-light text-decoration-none text-dark">
+                                    <div class="d-flex align-items-center">
+                                        <span class="img-fluid me-3 svgEdit d-inline-flex align-items-center justify-content-center"
+                                            style="width: 32px; height: 32px;">
+                                            <i class="bi bi-journal-text text-muted"></i>
+                                        </span>
+                                        <span class="text-muted title-font fw-semibold">{{ $t('Chapter Overview') }}</span>
+                                        <small class="text-muted ms-auto"><i class="bi bi-lock-fill"></i></small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -248,6 +278,18 @@
 
         </div>
 
+        <div v-if="$route.path.includes('/play') && projectHasContent"
+            class="course-project-section mt-4 p-3 rounded border bg-white">
+            <p class="text-decoration-none text-primary mb-3 fw-semibold">
+                <i class="bi bi-kanban fs-5"></i> {{ $t('Course Project') }}
+            </p>
+            <h6 class="fw-bold">{{ project.title || $t('Course Project') }}</h6>
+            <article v-if="projectDescriptionText" class="small text-muted mb-3 project-snippet" v-html="project.description"></article>
+            <a v-if="project.pdf_url" :href="project.pdf_url" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-file-earmark-pdf me-1"></i> {{ $t('Download Project PDF') }}
+            </a>
+        </div>
+
     </section>
 </template>
 
@@ -311,6 +353,11 @@
     border-radius: 12px;
     background: #f7f2f2;
 }
+
+.project-snippet :deep(img) {
+    max-width: 100%;
+    height: auto;
+}
 </style>
 
 <script setup>
@@ -350,6 +397,10 @@ let props = defineProps({
     contentData: Object,
     exams: Array,
     quizes: Array,
+    project: {
+        type: Object,
+        default: null,
+    },
 });
 
 const markContentComplete = (contentId) => {
@@ -368,6 +419,35 @@ function findContentById(contentId) {
     }
     return null;
 }
+
+function chapterHasOverview(chapter) {
+    if (!chapter?.overview) {
+        return false;
+    }
+
+    const plainText = chapter.overview.replace(/<[^>]*>/g, '').trim();
+    return plainText.length > 0;
+}
+
+function isOverviewActive(chapterId) {
+    return String(route.query.content_id) === `overview-${chapterId}`;
+}
+
+const projectHasContent = computed(() => {
+    const project = props.project;
+
+    if (!project) {
+        return false;
+    }
+
+    const plainDescription = project.description?.replace(/<[^>]*>/g, "").trim() ?? "";
+
+    return Boolean(project.title || plainDescription || project.pdf_url);
+});
+
+const projectDescriptionText = computed(() => {
+    return props.project?.description?.replace(/<[^>]*>/g, "").trim() ?? "";
+});
 
 // Method to mark a content as completed
 

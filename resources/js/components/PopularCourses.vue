@@ -10,17 +10,33 @@
             </h2>
         </div>
 
-        <div v-if="popularCourses.length" class="popular-courses__slider">
+        <div v-if="isLoading" class="popular-courses__slider popular-courses__slider--loading">
+            <div class="popular-courses__loading-grid">
+                <div v-for="index in 3" :key="index" class="popular-courses__skeleton"></div>
+            </div>
+        </div>
+
+        <div v-else-if="popularCourses.length" class="popular-courses__slider">
             <swiper
-                :modules="[Navigation, Pagination, Autoplay]"
-                :space-between="20"
+                :key="swiperKey"
+                :modules="[Navigation, Autoplay]"
+                :slides-per-view="SLIDES_PER_VIEW"
+                :slides-per-group="1"
+                :space-between="28"
+                :speed="900"
+                :loop="true"
+                :loop-fill-group-with-blank="false"
+                :loop-additional-slides="SLIDES_PER_VIEW"
+                :watch-slides-progress="true"
                 :breakpoints="swiperBreakpoints"
+                :autoplay="autoplayOptions"
                 navigation
-                pagination
-                autoplay
-                loop
+                @swiper="onSwiper"
             >
-                <swiper-slide v-for="course in popularCourses" :key="course.id" class="pb-4">
+                <swiper-slide
+                    v-for="(course, index) in displayCourses"
+                    :key="`popular-${course.id}-${index}`"
+                >
                     <CourseCard :course="course" variant="popular" class="course-card-premium" />
                 </swiper-slide>
             </swiper>
@@ -71,6 +87,45 @@
 }
 
 .popular-courses__slider {
+    &--loading {
+        min-height: 420px;
+    }
+}
+
+.popular-courses__loading-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+}
+
+.popular-courses__skeleton {
+    min-height: 380px;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: popular-courses-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes popular-courses-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.popular-courses__slider:not(.popular-courses__slider--loading) {
+    :deep(.swiper) {
+        overflow: hidden;
+    }
+
+    :deep(.swiper-slide) {
+        height: auto;
+    }
+
     :deep(.swiper-button-next),
     :deep(.swiper-button-prev) {
         width: 42px;
@@ -79,16 +134,11 @@
         background: #fff;
         border: 1px solid #e2e8f0;
         color: #f97316;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 
         &::after {
             font-size: 0.95rem;
             font-weight: 700;
         }
-    }
-
-    :deep(.swiper-pagination-bullet-active) {
-        background: #f97316;
     }
 }
 
@@ -107,20 +157,52 @@
 </style>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import CourseCard from "./CourseCard.vue";
 
 const popularCourses = ref([]);
+const isLoading = ref(true);
+
+const SLIDES_PER_VIEW = 3;
+
+const autoplayOptions = {
+    delay: 3500,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+};
 
 const swiperBreakpoints = {
-    320: { slidesPerView: 1.15, spaceBetween: 16 },
-    576: { slidesPerView: 2, spaceBetween: 18 },
-    768: { slidesPerView: 2.5, spaceBetween: 20 },
-    992: { slidesPerView: 3, spaceBetween: 22 },
-    1200: { slidesPerView: 4, spaceBetween: 24 },
+    320: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 16 },
+    576: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 20 },
+    768: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 24 },
+    992: { slidesPerView: SLIDES_PER_VIEW, slidesPerGroup: 1, spaceBetween: 28 },
+};
+
+const displayCourses = computed(() => {
+    const courses = popularCourses.value;
+    if (!courses.length) {
+        return [];
+    }
+
+    const minForLoop = Math.max(SLIDES_PER_VIEW * 4, 12);
+    const result = [...courses];
+
+    while (result.length < minForLoop) {
+        result.push(...courses);
+    }
+
+    return result;
+});
+
+const swiperKey = computed(() => `${popularCourses.value.length}-${displayCourses.value.length}`);
+
+const onSwiper = (swiper) => {
+    if (swiper?.autoplay) {
+        swiper.autoplay.start();
+    }
 };
 
 const fetchPopularCourses = async () => {
@@ -141,6 +223,8 @@ const fetchPopularCourses = async () => {
         popularCourses.value = response.data.data.courses ?? [];
     } catch (error) {
         console.error("Error fetching courses:", error);
+    } finally {
+        isLoading.value = false;
     }
 };
 

@@ -1,5 +1,12 @@
 <template>
-    <section class="home-marquee" aria-label="Announcements">
+    <section
+        class="home-marquee"
+        :class="{
+            'home-marquee--overlay-dark': overlay === 'dark',
+            'home-marquee--overlay-light': overlay === 'light',
+        }"
+        aria-label="Announcements"
+    >
         <div class="home-marquee__label">
             <i class="bi bi-megaphone-fill" aria-hidden="true"></i>
             <span>{{ $t('Latest Updates') }}</span>
@@ -38,6 +45,13 @@
 import { computed } from "vue";
 import { useMasterStore } from "@/stores/master";
 import { useI18n } from "vue-i18n";
+
+defineProps({
+    overlay: {
+        type: String,
+        default: "",
+    },
+});
 
 const masterStore = useMasterStore();
 const { t } = useI18n();
@@ -97,6 +111,60 @@ const duration = computed(() => Math.max(24, items.value.length * 8));
     background: linear-gradient(90deg, #052e16 0%, #14532d 50%, #052e16 100%);
     border-bottom: 1px solid rgba(134, 239, 172, 0.2);
     overflow: hidden;
+}
+
+.home-marquee--overlay-dark {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    .home-marquee__label {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.92);
+        border-right-color: rgba(255, 255, 255, 0.12);
+
+        i {
+            color: #fbbf24;
+        }
+    }
+
+    .home-marquee__item {
+        color: rgba(255, 255, 255, 0.88);
+
+        i {
+            color: #4ade80;
+        }
+    }
+
+    .home-marquee__dot {
+        color: rgba(255, 255, 255, 0.35);
+    }
+}
+
+.home-marquee--overlay-light {
+    background: transparent;
+    border-bottom: 1px solid rgba(48, 108, 60, 0.15);
+
+    .home-marquee__label {
+        background: rgba(255, 255, 255, 0.35);
+        color: #14532d;
+        border-right-color: rgba(48, 108, 60, 0.12);
+
+        i {
+            color: #ea580c;
+        }
+    }
+
+    .home-marquee__item {
+        color: #14532d;
+
+        i {
+            color: #15803d;
+        }
+    }
+
+    .home-marquee__dot {
+        color: rgba(48, 108, 60, 0.35);
+    }
 }
 
 .home-marquee__label {

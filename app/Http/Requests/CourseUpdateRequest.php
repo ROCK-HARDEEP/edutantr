@@ -44,6 +44,10 @@ class CourseUpdateRequest extends FormRequest
             'pre_course_enabled' => 'nullable|boolean',
             'pre_course_price' => 'nullable|required_if:pre_course_enabled,1,true,on|numeric|min:1',
             'pre_course_description' => 'nullable|required_if:pre_course_enabled,1,true,on|string|max:1000',
+            'project_title' => 'nullable|string|max:255',
+            'project_description' => 'nullable|string',
+            'project_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'project_remove_pdf' => 'nullable|boolean',
         ];
     }
     /**

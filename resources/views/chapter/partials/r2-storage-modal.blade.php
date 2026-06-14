@@ -46,7 +46,7 @@
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body">
                             <div class="row g-3 align-items-end">
-                                <div class="col-lg-8">
+                                <div class="col-lg-5">
                                     <label class="form-label fw-semibold">{{ __('Upload Video') }}</label>
                                     <input type="file" class="form-control" id="r2VideoUploadInput"
                                         accept="video/mp4,video/mpeg,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
@@ -54,7 +54,15 @@
                                         {{ __('Supported: MP4, WebM, MOV, AVI, MKV. Max 500 MB.') }}
                                     </div>
                                 </div>
-                                <div class="col-lg-4 d-flex gap-2">
+                                <div class="col-lg-4">
+                                    <label class="form-label fw-semibold">{{ __('Video File Name') }}</label>
+                                    <input type="text" class="form-control" id="r2UploadDisplayName"
+                                        placeholder="{{ __('Enter name or use the selected file name') }}">
+                                    <div class="form-text">
+                                        {{ __('This name is saved in cloud storage and shown in your library.') }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 d-flex gap-2">
                                     <button type="button" class="btn btn-success flex-grow-1" id="r2UploadBtn"
                                         disabled>
                                         <i class="fa-solid fa-upload me-1"></i> {{ __('Upload to R2') }}
@@ -157,6 +165,7 @@
 
                 const listUrl = @json(route('storage.videos.index'));
                 const uploadUrl = @json(route('storage.videos.store'));
+                const renameUrl = @json(route('storage.videos.rename'));
                 const deleteUrl = @json(route('storage.videos.destroy'));
                 const csrfToken = @json(csrf_token());
 
@@ -168,6 +177,7 @@
                 const videoCount = document.getElementById('r2VideoCount');
                 const searchInput = document.getElementById('r2SearchInput');
                 const uploadInput = document.getElementById('r2VideoUploadInput');
+                const uploadDisplayName = document.getElementById('r2UploadDisplayName');
                 const uploadBtn = document.getElementById('r2UploadBtn');
                 const refreshBtn = document.getElementById('r2RefreshBtn');
                 const uploadProgressWrap = document.getElementById('r2UploadProgressWrap');
@@ -248,6 +258,13 @@
                         copyBtn.innerHTML = '<i class="fa-regular fa-copy me-1"></i> {{ __('Copy Link') }}';
                         copyBtn.addEventListener('click', () => copyLink(video.url, copyBtn));
 
+                        const renameBtn = document.createElement('button');
+                        renameBtn.type = 'button';
+                        renameBtn.className = 'btn btn-sm btn-outline-secondary';
+                        renameBtn.title = '{{ __('Rename video') }}';
+                        renameBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                        renameBtn.addEventListener('click', () => renameVideo(video, renameBtn));
+
                         const deleteBtn = document.createElement('button');
                         deleteBtn.type = 'button';
                         deleteBtn.className = 'btn btn-sm btn-outline-danger';
@@ -256,6 +273,7 @@
                         deleteBtn.addEventListener('click', () => deleteVideo(video, deleteBtn));
 
                         actions.appendChild(copyBtn);
+                        actions.appendChild(renameBtn);
                         actions.appendChild(deleteBtn);
                         body.appendChild(actions);
                         card.appendChild(preview);
@@ -317,6 +335,54 @@
                         .finally(() => setLoading(false));
                 }
 
+                function renameVideo(video, btn) {
+                    Swal.fire({
+                        title: '{{ __('Rename video') }}',
+                        input: 'text',
+                        inputValue: video.name,
+                        inputLabel: '{{ __('New file name') }}',
+                        showCancelButton: true,
+                        confirmButtonText: '{{ __('Save') }}',
+                        cancelButtonText: '{{ __('Cancel') }}',
+                        inputValidator: (value) => {
+                            if (!value || !value.trim()) {
+                                return '{{ __('Please enter a file name') }}';
+                            }
+                        },
+                    }).then((result) => {
+                        if (!result.isConfirmed) return;
+
+                        btn.disabled = true;
+
+                        fetch(renameUrl, {
+                            method: 'PATCH',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                path: video.path,
+                                name: result.value.trim(),
+                            }),
+                        })
+                            .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+                            .then(({ ok, data }) => {
+                                if (ok) {
+                                    loadVideos();
+                                    showToast('success', data.message || '{{ __('Video renamed') }}');
+                                } else {
+                                    showToast('error', data.message || '{{ __('Failed to rename video') }}');
+                                }
+                            })
+                            .catch(() => showToast('error', '{{ __('Failed to rename video') }}'))
+                            .finally(() => {
+                                btn.disabled = false;
+                            });
+                    });
+                }
+
                 function deleteVideo(video, btn) {
                     Swal.fire({
                         title: '{{ __('Delete video?') }}',
@@ -366,6 +432,11 @@
                     formData.append('video', file);
                     formData.append('_token', csrfToken);
 
+                    const displayName = (uploadDisplayName?.value || file.name || '').trim();
+                    if (displayName) {
+                        formData.append('display_name', displayName);
+                    }
+
                     uploadBtn.disabled = true;
                     uploadProgressWrap.classList.remove('d-none');
                     uploadProgress.style.width = '30%';
@@ -387,6 +458,9 @@
                         uploadProgressWrap.classList.add('d-none');
                         uploadProgress.style.width = '0%';
                         uploadInput.value = '';
+                        if (uploadDisplayName) {
+                            uploadDisplayName.value = '';
+                        }
 
                         let response;
                         try {
@@ -414,7 +488,12 @@
                 }
 
                 uploadInput?.addEventListener('change', () => {
-                    uploadBtn.disabled = !uploadInput.files?.length;
+                    const file = uploadInput.files?.[0];
+                    uploadBtn.disabled = !file;
+
+                    if (file && uploadDisplayName) {
+                        uploadDisplayName.value = file.name;
+                    }
                 });
 
                 uploadBtn?.addEventListener('click', uploadVideo);

@@ -7,6 +7,7 @@ use App\Http\Resources\CourseResource;
 use App\Http\Resources\EnrolledCourseResource;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\StudentCertificate;
 use App\Models\Invoice;
 use App\Models\PaymentGateway;
 use App\Models\SalesTeam;
@@ -71,13 +72,9 @@ class EnrollController extends Controller
         return $this->json('Enrollment summary', [
             'total_courses' => EnrollmentRepository::query()->where('user_id', '=', auth()->id())->count(),
             'completed_courses' => EnrollmentRepository::query()->where('user_id', '=', auth()->id())->where('course_progress', '=', 100.00)->count(),
-            'certificate_achieved' => CourseRepository::query()
-                ->where('certificate_available', '=', true)
-                ->whereHas('enrollments', function ($query) {
-                    return $query
-                        ->where('user_id',  auth()->id())
-                        ->where('course_progress', 100.00);
-                })->count(),
+            'certificate_achieved' => StudentCertificate::query()
+                ->where('user_id', auth()->id())
+                ->count(),
             'last_activity_course' => $lastActivityCourse ? CourseResource::make($lastActivityCourse) : null,
         ]);
     }

@@ -30,14 +30,39 @@ class R2StorageController extends Controller
     {
         $request->validate([
             'video' => ['required', 'file', 'mimetypes:video/mp4,video/mpeg,video/webm,video/quicktime,video/x-msvideo,video/x-matroska', 'max:512000'],
+            'display_name' => ['nullable', 'string', 'max:255'],
         ]);
 
         try {
-            $video = R2StorageService::uploadVideo($request->file('video'));
+            $video = R2StorageService::uploadVideo(
+                $request->file('video'),
+                $request->input('display_name'),
+            );
 
             return $this->json('Video uploaded successfully', [
                 'video' => $video,
             ], 201);
+        } catch (RuntimeException $exception) {
+            return $this->json($exception->getMessage(), [], 422);
+        }
+    }
+
+    public function rename(Request $request)
+    {
+        $request->validate([
+            'path' => ['required', 'string', 'max:1024'],
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        try {
+            $video = R2StorageService::renameVideo(
+                $request->input('path'),
+                $request->input('name'),
+            );
+
+            return $this->json('Video renamed successfully', [
+                'video' => $video,
+            ]);
         } catch (RuntimeException $exception) {
             return $this->json($exception->getMessage(), [], 422);
         }

@@ -251,6 +251,9 @@
                     </div>
                 </div>
 
+                @php($project = $course->project ?? null)
+                @include('course.partials.project-section', ['project' => $project])
+
                 <div class="row my-3">
                     <div class="col-md-12">
                         <div class="card">
