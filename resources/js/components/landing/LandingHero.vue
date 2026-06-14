@@ -36,7 +36,7 @@
                     </h1>
 
                     <p class="hero-cinematic-subtitle">
-                        {{ $t('Fueling the Next Generation of Entrepreneurs') }}
+                        {{ $t('Bridging gaps, Building Bridges') }}
                     </p>
 
                     <div class="hero-actions hero-actions--center">
