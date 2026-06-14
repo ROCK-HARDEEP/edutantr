@@ -414,6 +414,18 @@ const activeCollege = computed(() => colleges.value[activeIndex.value] ?? {});
 
 const defaultCollegeImage = "/assets/images/profile/demo-profile.png";
 
+const normalizeApiList = (payload) => {
+    if (Array.isArray(payload)) {
+        return payload;
+    }
+
+    if (payload && Array.isArray(payload.data)) {
+        return payload.data;
+    }
+
+    return [];
+};
+
 const buildGalleryLookup = (items = []) => {
     const byCollegeId = new Map();
 
@@ -541,19 +553,31 @@ const resumeRotation = () => {
 
 onMounted(async () => {
     try {
-        const [galleryRes, collegesRes, logosRes] = await Promise.all([
-            axios.get("/college-gallery/list", {
-                params: { media_type: "image", per_page: 20 },
-            }),
-            axios.get("/home/partner-colleges"),
-            axios.get("/home/partner-logos"),
-        ]);
+        const collegesRes = await axios.get("/home/partner-colleges");
+        const collegeItems = normalizeApiList(collegesRes.data?.data?.colleges);
 
-        const galleryItems = galleryRes.data.data.items ?? [];
-        const collegeItems = collegesRes.data.data.colleges ?? [];
-        const logos = logosRes.data.data.logos ?? [];
+        let galleryItems = [];
 
-        colleges.value = buildPartnerCollegeSlides(collegeItems, galleryItems, logos);
+        try {
+            const galleryRes = await axios.get("/college-gallery/list", {
+                params: { media_type: "image", per_page: 100 },
+            });
+            galleryItems = normalizeApiList(galleryRes.data?.data?.items);
+        } catch (galleryError) {
+            console.warn("Partner college gallery images unavailable:", galleryError);
+        }
+
+        colleges.value = buildPartnerCollegeSlides(collegeItems, galleryItems, []);
+
+        if (!colleges.value.length) {
+            try {
+                const logosRes = await axios.get("/home/partner-logos");
+                const logos = normalizeApiList(logosRes.data?.data?.logos);
+                colleges.value = buildPartnerCollegeSlides([], [], logos);
+            } catch (logosError) {
+                console.warn("Partner college logos unavailable:", logosError);
+            }
+        }
 
         resetProgress();
         startRotation();

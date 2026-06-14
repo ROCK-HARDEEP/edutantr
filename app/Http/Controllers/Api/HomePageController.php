@@ -8,6 +8,7 @@ use App\Http\Resources\HomeProgramResource;
 use App\Http\Resources\HomeStatisticResource;
 use App\Http\Resources\PartnerCollegeResource;
 use App\Http\Resources\PartnerLogoResource;
+use App\Models\Scopes\OrganizationScope;
 use App\Repositories\HomePlacementRepository;
 use App\Repositories\HomeProgramRepository;
 use App\Repositories\HomeStatisticRepository;
@@ -41,9 +42,11 @@ class HomePageController extends Controller
     public function partnerColleges()
     {
         $colleges = PartnerCollegeRepository::query()
+            ->withoutGlobalScope(OrganizationScope::class)
             ->where('is_active', true)
+            ->with('media')
             ->orderBy('sort_order')
-            ->latest('id')
+            ->orderBy('id')
             ->get();
 
         return $this->json('partner colleges', ['colleges' => PartnerCollegeResource::collection($colleges)], 200);
@@ -63,7 +66,9 @@ class HomePageController extends Controller
     public function partnerLogos()
     {
         $logos = PartnerLogoRepository::query()
+            ->withoutGlobalScope(OrganizationScope::class)
             ->where('is_active', true)
+            ->with('media')
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();

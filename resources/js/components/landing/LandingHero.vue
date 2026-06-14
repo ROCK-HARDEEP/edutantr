@@ -2,7 +2,13 @@
     <section class="landing-hero position-relative landing-hero--partners">
         <div class="hero-bg hero-bg--cinematic">
             <div v-if="hasPartnerBg" class="hero-partners-scroll" aria-hidden="true">
-                <div class="hero-partners-track" :style="{ '--partners-duration': `${partnersScrollDuration}s` }">
+                <div
+                    class="hero-partners-track"
+                    :style="{
+                        '--partners-count': partners.length,
+                        '--partners-duration': `${partnersScrollDuration}s`,
+                    }"
+                >
                     <div
                         v-for="stripIndex in 2"
                         :key="`partners-strip-${stripIndex}`"
@@ -124,14 +130,14 @@
 
 .hero-partners-strip {
     display: flex;
-    width: 100vw;
+    width: max(100vw, calc(var(--partners-count, 1) * 200px));
     height: 100%;
     flex-shrink: 0;
 }
 
 .hero-partners-cell {
     flex: 1 1 0;
-    min-width: 0;
+    min-width: max(calc(100vw / var(--partners-count, 1)), 180px);
     height: 100%;
     overflow: hidden;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -781,8 +787,20 @@ const activeIndex = ref(0);
 const hasPartnerBg = computed(() => partners.value.length > 0);
 
 const partnersScrollDuration = computed(() =>
-    Math.max(18, partners.value.length * 5)
+    Math.max(20, partners.value.length * 4)
 );
+
+const normalizeApiList = (payload) => {
+    if (Array.isArray(payload)) {
+        return payload;
+    }
+
+    if (payload && Array.isArray(payload.data)) {
+        return payload.data;
+    }
+
+    return [];
+};
 
 const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
 const isLoggedIn = computed(() => Boolean(authStore.authToken));
@@ -856,16 +874,15 @@ onMounted(async () => {
             axios.get("/home/partner-colleges"),
         ]);
 
-        programs.value = programsRes.data.data.programs ?? [];
+        programs.value = normalizeApiList(programsRes.data?.data?.programs);
 
-        const logos = (partnersRes.data.data.logos ?? []).sort(
-            (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
-        );
+        const logos = normalizeApiList(partnersRes.data?.data?.logos)
+            .filter((item) => item.logo)
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        const companyPartners = logos.filter((item) => item.partner_type === "company");
-        partners.value = companyPartners.length ? companyPartners : logos;
+        partners.value = logos;
 
-        const colleges = collegesRes.data.data.colleges ?? [];
+        const colleges = normalizeApiList(collegesRes.data?.data?.colleges);
         const collegeLogos = logos.filter((item) => item.partner_type === "college");
         collegePartnerCount.value = Math.max(colleges.length, collegeLogos.length);
     } catch (error) {
