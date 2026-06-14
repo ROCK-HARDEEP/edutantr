@@ -790,6 +790,12 @@ const normalizeApiList = (payload) => {
     return [];
 };
 
+const isCompanyPartner = (item) => {
+    const type = String(item?.partner_type ?? item?.type ?? "").toLowerCase();
+
+    return type === "company";
+};
+
 const hasPartnerBg = computed(() => partners.value.length > 0);
 
 const partnersScrollDuration = computed(() =>
@@ -862,22 +868,22 @@ const heroStats = computed(() => [
 
 onMounted(async () => {
     try {
-        const [programsRes, partnersRes, collegesRes] = await Promise.all([
+        const [programsRes, companyPartnersRes, allPartnersRes, collegesRes] = await Promise.all([
             axios.get("/home/programs"),
+            axios.get("/home/partner-logos", { params: { partner_type: "company" } }),
             axios.get("/home/partner-logos"),
             axios.get("/home/partner-colleges"),
         ]);
 
         programs.value = programsRes.data.data.programs ?? [];
 
-        const logos = normalizeApiList(partnersRes.data?.data?.logos).sort(
-            (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
-        );
+        partners.value = normalizeApiList(companyPartnersRes.data?.data?.logos)
+            .filter(isCompanyPartner)
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        partners.value = logos.filter((item) => item.partner_type === "company");
-
+        const allLogos = normalizeApiList(allPartnersRes.data?.data?.logos);
         const colleges = normalizeApiList(collegesRes.data?.data?.colleges);
-        const collegeLogos = logos.filter((item) => item.partner_type === "college");
+        const collegeLogos = allLogos.filter((item) => item.partner_type === "college");
         collegePartnerCount.value = Math.max(colleges.length, collegeLogos.length);
     } catch (error) {
         console.error("Error fetching landing hero data:", error);

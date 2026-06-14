@@ -14,6 +14,7 @@ use App\Repositories\HomeProgramRepository;
 use App\Repositories\HomeStatisticRepository;
 use App\Repositories\PartnerCollegeRepository;
 use App\Repositories\PartnerLogoRepository;
+use Illuminate\Http\Request;
 
 class HomePageController extends Controller
 {
@@ -63,10 +64,17 @@ class HomePageController extends Controller
         return $this->json('home placements', ['placements' => HomePlacementResource::collection($placements)], 200);
     }
 
-    public function partnerLogos()
+    public function partnerLogos(Request $request)
     {
+        $partnerType = $request->query('partner_type');
+        $allowedTypes = ['college', 'company', 'industry_logos'];
+
         $logos = PartnerLogoRepository::query()
             ->where('is_active', true)
+            ->when(
+                $partnerType && in_array($partnerType, $allowedTypes, true),
+                fn ($query) => $query->where('partner_type', $partnerType)
+            )
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
