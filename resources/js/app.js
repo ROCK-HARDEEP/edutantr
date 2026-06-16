@@ -1,17 +1,20 @@
 import "./bootstrap";
 import "bootstrap/dist/js/bootstrap.min.js";
-import "./library/smoothscroll.min.js";
 import "animate.css";
-import "/resources/style/app.scss";
-import "/resources/style/responsive.css";
+import "/resources/style/tailwind.css";
 
 import VueAwesomePaginate from "vue-awesome-paginate";
 import { createApp } from "vue";
 import App from "./App.vue";
+import vReveal from "./directives/vReveal.js";
 import localization from "./localization.js";
 import router from "./router";
 import { createPinia } from "pinia";
 import piniaPersist from "pinia-plugin-persistedstate";
+
+// PrimeVue
+import PrimeVue from "primevue/config";
+import Aura from "@primevue/themes/aura";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -24,31 +27,18 @@ app.use(router);
 pinia.use(piniaPersist);
 app.use(VueAwesomePaginate);
 
-// axios.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//         if (
-//             error.response &&
-//             (error.response.status === 403 || error.response.status === 404)
-//         ) {
-//             window.location.href = "/404";
-//         }
-//         return Promise.reject(error);
-//     }
-// );
+// PrimeVue with Aura theme
+app.use(PrimeVue, {
+    theme: {
+        preset: Aura,
+        options: {
+            darkModeSelector: ".dark-mode",
+        },
+    },
+    ripple: true,
+});
+
+// Register scroll-reveal directive globally
+app.directive("reveal", vReveal);
 
 app.mount("#app");
-
-// SmoothScroll({
-//     animationTime: 800,
-//     stepSize: 75,
-//     accelerationDelta: 30,
-//     accelerationMax: 2,
-//     keyboardSupport: true,
-//     arrowScroll: 50,
-//     pulseAlgorithm: true,
-//     pulseScale: 4,
-//     pulseNormalize: 1,
-//     touchpadSupport: true,
-//     fixedBackground: true,
-// });

@@ -282,7 +282,7 @@ const isReactionIllustrationAnimated = ref(true);
 
 const performSearch = () => {
     if (searchInputQuery.value) {
-        router.push(`/courses?search=${searchInputQuery.value}`);
+        router.push(`/programs?search=${searchInputQuery.value}`);
     }
 };
 </script>

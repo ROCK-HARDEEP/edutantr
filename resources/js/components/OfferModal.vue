@@ -1,294 +1,86 @@
-<!-- src/components/OfferModal.vue -->
-<!-- <template>
-    <div v-if="showModal && masterStore?.masterData?.show_banner" class="popup-wrapper">
-        <div class="offer">
-            <button class="close-btn" @click="closeModal">
-                <i class="bi bi-x"></i>
-            </button>
-            <img @click="handleClick" :src="banner.thumbnail ?? 'https://placehold.co/800x600'" class="rounded"
-                alt="banner offer image">
-        </div>
-    </div>
-</template> -->
-
 <template>
-    <div v-if="showModal && masterStore?.masterData?.show_banner" class="popup-wrapper">
-        <div class="offer">
-            <button class="close-btn" @click="closeModal">X</button>
-            <img @click="handleClick" :src="banner.thumbnail ?? 'https://placehold.co/800x600'" class="rounded"
-                alt="banner offer image">
-        </div>
-    </div>
+    <!-- Only show if there's a real banner image (not placeholder) -->
+    <Teleport to="body">
+        <Transition
+            enter-active-class="transition ease-out duration-300"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition ease-in duration-200"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div
+                v-if="showModal && banner.thumbnail && !isPlaceholder"
+                class="fixed inset-0 z-[1050] flex items-center justify-center"
+                style="background: rgba(0,0,0,0.5);"
+                @click.self="closeModal"
+            >
+                <div class="relative bg-white rounded-2xl max-w-[700px] w-[90%] max-h-[80vh] overflow-hidden shadow-2xl animate-[fadeInScale_0.35s_ease-in-out]">
+                    <!-- Close Button -->
+                    <button
+                        @click="closeModal"
+                        class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 shadow-md flex items-center justify-center text-slate-600 hover:bg-slate-900 hover:text-white transition-all"
+                    >
+                        <i class="bi bi-x-lg text-sm"></i>
+                    </button>
+
+                    <!-- Banner Image -->
+                    <img
+                        :src="banner.thumbnail"
+                        alt="Offer Banner"
+                        class="w-full h-full object-contain block bg-slate-50"
+                        @click="handleClick"
+                    />
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useMasterStore } from '@/stores/master'
-import { useRouter } from 'vue-router';
+import { ref, onMounted, computed } from "vue";
+import { useMasterStore } from "@/stores/master";
+import { useRouter } from "vue-router";
 
 const masterStore = useMasterStore();
 const router = useRouter();
-const showModal = ref(false)
-const banner = ref({})
+const showModal = ref(false);
+const banner = ref({});
+
+const isPlaceholder = computed(() => {
+    const url = banner.value?.thumbnail || "";
+    return url.includes("placehold.co") || url.includes("placeholder") || url === "";
+});
 
 onMounted(async () => {
+    // Only show if banner is enabled AND we can fetch a real image
     if (masterStore?.masterData?.show_banner == 1) {
-        const response = await axios.get('/banner/list')
-        banner.value = response.data.data;
-        showModal.value = true
+        try {
+            const response = await axios.get("/banner/list");
+            banner.value = response.data.data;
+            // Only show if there's a real thumbnail
+            if (banner.value?.thumbnail && !isPlaceholder.value) {
+                showModal.value = true;
+            }
+        } catch {
+            // Don't show modal on error
+        }
     }
-})
+});
 
 function closeModal() {
-    showModal.value = false
+    showModal.value = false;
 }
-
 
 const handleClick = () => {
-    router.push('/courses')
-    showModal.value = false
-}
-
+    router.push("/programs");
+    showModal.value = false;
+};
 </script>
 
 <style scoped>
-/* .popup-wrapper {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.offer {
-    background: white;
-    padding: 0.4rem;
-    border-radius: 1rem;
-    width: 800px;
-    height: 600px;
-    text-align: center;
-    position: relative;
-    animation: fadeIn 0.3s ease-in-out;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.offer img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: fill;
-    box-sizing: border-box;
-}
-
-.offer h2 {
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
-}
-
-.modofferal p {
-    color: #555;
-    margin-bottom: 1.5rem;
-}
-
-.offer button {
-    background-color: #ddd;
-    color: #000000;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 2rem;
-    margin: 0;
-    transition: all 0.4s ease-in-out;
-}
-
-.offer button:hover {
-    background-color: #000000;
-    color: #fff;
-}
-
-.close-btn {
-    position: absolute;
-    top: -40px;
-    right: -30px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #aaa;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    color: #555;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@media (max-width:1400px) {
-    .offer {
-        width: 40%;
-        height: 80%;
-    }
-
-    .offer img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover;
-        box-sizing: border-box;
-    }
-}
-
-@media (max-width:992px) {
-    .offer {
-        width: 70%;
-        height: 60%;
-    }
-}
-
-@media (max-width:767px) {
-    .offer {
-        width: 70%;
-        height: 50%;
-    }
-}
-
-@media (max-width:576px) {
-    .offer {
-        width: 70%;
-        height: 40%;
-    }
-
-    .offer button {
-        width: 30px;
-        height: 30px;
-        font-size: 1.5rem;
-    }
-
-    .close-btn {
-        top: -30px;
-        right: -20px;
-    }
-} */
-
-.popup-wrapper {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1050;
-    backdrop-filter: blur(4px);
-    animation: fadeInBg 0.3s ease-in-out;
-}
-
-/* Popup container */
-.offer {
-    background: #fff;
-    border-radius: 1rem;
-    max-width: 700px;
-    width: 60%;
-    max-height: 80vh;
-    height: auto;
-    overflow: hidden;
-    position: relative;
-    animation: fadeInScale 0.35s ease-in-out;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-}
-
-/* Image fit nicely */
-.offer img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    border-radius: 1rem;
-    background: #f8f8f8;
-}
-
-/* Close button */
-.close-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255, 255, 255, 0.85);
-    border: none;
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease-in-out;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-.close-btn:hover {
-    background: #000;
-    color: #fff;
-}
-
-/* Animations */
 @keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes fadeInBg {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-/* Responsive handling */
-@media (max-width: 992px) {
-    .offer {
-        width: 95%;
-        max-height: 80vh;
-    }
-}
-
-@media (max-width: 576px) {
-    .offer {
-        border-radius: 0.75rem;
-        max-height: 75vh;
-    }
-
-    .close-btn {
-        top: 8px;
-        right: 8px;
-        width: 30px;
-        height: 30px;
-        font-size: 1rem;
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
 }
 </style>

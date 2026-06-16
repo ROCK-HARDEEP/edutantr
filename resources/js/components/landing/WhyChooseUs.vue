@@ -3,7 +3,7 @@
         <div v-if="!embedded" class="why-choose__bg" aria-hidden="true"></div>
         <div v-if="!embedded" class="why-choose__overlay" aria-hidden="true"></div>
 
-        <div :class="embedded ? 'why-choose__embedded-inner' : 'container position-relative'">
+        <div :class="embedded ? 'why-choose__embedded-inner' : 'max-w-7xl mx-auto relative'">
             <div v-if="embedded" class="why-choose__content">
                 <span class="why-badge">
                     <i class="bi bi-building"></i>
@@ -32,7 +32,7 @@
                         </li>
                     </ul>
 
-                    <router-link to="/courses" class="why-cta">
+                    <router-link to="/programs" class="why-cta">
                         <span>{{ $t('Get Started') }}</span>
                         <span class="why-cta-icon" aria-hidden="true">
                             <i class="bi bi-arrow-right"></i>
@@ -41,8 +41,8 @@
                 </div>
             </div>
 
-            <div v-else class="row align-items-center g-4 g-lg-5">
-                <div class="col-lg-6">
+            <div v-else class="flex flex-col lg:flex-row items-center gap-4 lg:gap-8">
+                <div class="w-full lg:w-1/2">
                     <span class="why-badge">
                         <i class="bi bi-building"></i>
                         {{ $t('Why Choose Us') }}
@@ -70,7 +70,7 @@
                             </li>
                         </ul>
 
-                        <router-link to="/courses" class="why-cta">
+                        <router-link to="/programs" class="why-cta">
                             <span>{{ $t('Get Started') }}</span>
                             <span class="why-cta-icon" aria-hidden="true">
                                 <i class="bi bi-arrow-right"></i>
@@ -79,7 +79,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-6">
+                <div class="w-full lg:w-1/2">
                     <div class="why-visual">
                         <div class="why-visual-frame">
                             <img

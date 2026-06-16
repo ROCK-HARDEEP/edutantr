@@ -1,6 +1,6 @@
 <template>
     <div class="partner-colleges">
-        <div class="container partner-colleges__inner">
+        <div class="max-w-7xl mx-auto partner-colleges__inner">
             <div class="partner-colleges__header text-center">
                 <span class="partner-colleges__eyebrow">
                     <i class="bi bi-building-fill"></i>
@@ -15,8 +15,8 @@
             <div v-if="loading" class="partner-colleges__loading" aria-hidden="true"></div>
 
             <div v-else-if="colleges.length" class="partner-colleges__showcase">
-                <div class="row g-4 g-lg-5 align-items-stretch">
-                    <div class="col-12 col-lg-6 partner-colleges__details-col">
+                <div class="flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch">
+                    <div class="w-full lg:w-1/2 partner-colleges__details-col">
                         <div
                             class="partner-colleges__details"
                             @mouseenter="pauseRotation"
@@ -74,7 +74,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-lg-6 partner-colleges__media-col">
+                    <div class="w-full lg:w-1/2 partner-colleges__media-col">
                         <div
                             class="partner-colleges__media"
                             @mouseenter="pauseRotation"

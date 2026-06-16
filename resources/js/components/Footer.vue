@@ -1,246 +1,227 @@
 <template>
-    <footer :class="{ 'homepage-footer': $route.path === '/' }" class="container-fluid text-white mt-5" :style="{
-        backgroundImage: masterStore?.masterData?.footer_bg_thumbnail
-            ? `url(${masterStore.masterData.footer_bg_thumbnail})`
-            : 'url(/assets/website/footer-bg-2.png)',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-    }">
-        <section class="container footer-container">
-            <div class="row">
-                <div class="col-md-8 col-lg-4 mb-5 mb-lg-0 mx-0">
-                    <BrandLogo to="/" variant="light" class="mb-3" />
-                    <p class="small text-light col-xl-8">
+    <footer
+        class="text-white mt-20 bg-cover bg-no-repeat bg-center"
+        :style="{
+            backgroundImage: masterStore?.masterData?.footer_bg_thumbnail
+                ? `url(${masterStore.masterData.footer_bg_thumbnail})`
+                : 'url(/assets/website/footer-bg-2.png)',
+        }"
+    >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 border-b border-white/15 pb-12">
+                <!-- Brand & Contact -->
+                <div class="lg:col-span-1">
+                    <BrandLogo to="/" variant="light" class="mb-4" />
+                    <p class="text-white/75 text-sm leading-relaxed max-w-xs mb-6">
                         {{ masterStore?.masterData?.footer_description }}
                     </p>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <a :href="`tel:${masterStore?.masterData?.footer_contact}`" class="text-decoration-none">
-                                <i class="bi bi-telephone me-3"></i>
+                    <ul class="space-y-3">
+                        <li>
+                            <a
+                                :href="`tel:${masterStore?.masterData?.footer_contact}`"
+                                class="flex items-center gap-3 text-white/80 hover:text-primary-300 transition-colors text-sm"
+                            >
+                                <i class="bi bi-telephone"></i>
                                 {{ masterStore?.masterData?.footer_contact }}
                             </a>
                         </li>
-                        <li class="mb-3">
-                            <a :href="masterStore?.masterData?.footer_email
-                                ? `mailto:${masterStore?.masterData?.footer_email}`
-                                : ''
-                                " class="text-decoration-none">
-                                <i class="bi bi-envelope me-3"></i>
+                        <li>
+                            <a
+                                :href="masterStore?.masterData?.footer_email
+                                    ? `mailto:${masterStore?.masterData?.footer_email}`
+                                    : ''"
+                                class="flex items-center gap-3 text-white/80 hover:text-primary-300 transition-colors text-sm"
+                            >
+                                <i class="bi bi-envelope"></i>
                                 {{ masterStore?.masterData?.footer_email }}
                             </a>
                         </li>
                     </ul>
 
-                    <div class="d-flex mt-3 align-items-center gap-3">
-                        <div v-for="social in masterStore?.masterData
-                            ?.footer_social_icons" :key="social.name">
-                            <a :href="social?.url" target="_blank"><i :class="social?.icon"></i></a>
-                        </div>
+                    <!-- Social Icons -->
+                    <div class="flex items-center gap-3 mt-6">
+                        <a
+                            v-for="social in masterStore?.masterData?.footer_social_icons"
+                            :key="social.name"
+                            :href="social?.url"
+                            target="_blank"
+                            class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary-500 hover:text-white transition-all duration-200"
+                        >
+                            <i :class="social?.icon" class="text-sm"></i>
+                        </a>
                     </div>
                 </div>
-                <div
-                    class="col-md-4 col-lg-2 mb-5 mb-lg-0 d-md-flex d-lg-block flex-column align-items-end justify-content-start">
-                    <h4 class="text-light-primary fs-6 fw-bold mb-3">{{ $t('Quick Links') }}</h4>
-                    <ul class="list-unstyled d-md-flex d-lg-block flex-column align-items-end justify-content-start">
-                        <li class="mb-3">
-                            <router-link to="/courses" class="text-decoration-none">{{ $t('All Courses') }}</router-link>
-                        </li>
-                        <li class="mb-3">
-                            <router-link to="/college-mou-gallery" class="text-decoration-none">{{ $t('MOU & Gallery') }}</router-link>
-                        </li>
-                        <li class="mb-3">
-                            <router-link to="/page/about_us" class="text-decoration-none">{{ $t('About Us')
-                                }}</router-link>
-                        </li>
-                        <li class="mb-3">
-                            <router-link to="/campus-ambassador" class="text-decoration-none">{{ $t('Campus Ambassador') }}</router-link>
-                        </li>
-                        <li class="mb-3">
-                            <router-link to="/faq" class="text-decoration-none">{{ $t('FAQ') }}</router-link>
-                        </li>
-                        <li class="mb-3">
-                            <a href="/admin/register" class="text-decoration-none">{{ $t('Become a Teacher') }}</a>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-5 uppercase tracking-wider">
+                        {{ $t('Quick Links') }}
+                    </h4>
+                    <ul class="space-y-3">
+                        <li v-for="link in quickLinks" :key="link.path">
+                            <router-link
+                                :to="link.path"
+                                class="text-white/70 hover:text-primary-300 transition-colors text-sm flex items-center gap-2"
+                            >
+                                <i class="bi bi-chevron-right text-xs opacity-50"></i>
+                                {{ $t(link.label) }}
+                            </router-link>
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-4 col-lg-3 mb-5 mb-lg-0">
-                    <h4 class="text-light-primary fs-6 fw-bold mb-3">
+
+                <!-- Help & Support -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-5 uppercase tracking-wider">
                         {{ $t('Help & Support') }}
                     </h4>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <router-link to="/contact-us" class="text-decoration-none">
-                                {{ $t('Contact Us')}}</router-link>
+                    <ul class="space-y-3">
+                        <li>
+                            <router-link
+                                to="/contact-us"
+                                class="text-white/70 hover:text-primary-300 transition-colors text-sm flex items-center gap-2"
+                            >
+                                <i class="bi bi-chevron-right text-xs opacity-50"></i>
+                                {{ $t('Contact Us') }}
+                            </router-link>
                         </li>
-                        <li class="mb-3">
-                            <router-link to="/page/terms_and_conditions" class="text-decoration-none">
+                        <li>
+                            <router-link
+                                to="/page/terms_and_conditions"
+                                class="text-white/70 hover:text-primary-300 transition-colors text-sm flex items-center gap-2"
+                            >
+                                <i class="bi bi-chevron-right text-xs opacity-50"></i>
                                 {{ $t('Terms & Conditions') }}
                             </router-link>
                         </li>
-                        <li class="mb-3">
-                            <router-link to="/page/privacy_policy" class="text-decoration-none">
+                        <li>
+                            <router-link
+                                to="/page/privacy_policy"
+                                class="text-white/70 hover:text-primary-300 transition-colors text-sm flex items-center gap-2"
+                            >
+                                <i class="bi bi-chevron-right text-xs opacity-50"></i>
                                 {{ $t('Privacy Policy') }}
                             </router-link>
                         </li>
-                        <li class="mb-3 w-75">
-                            <h6 class="pb-2">{{ $t('Subscribe to Newsletter') }}</h6>
-                            <form class="" @submit.prevent="newsletter()">
-                                <div class="input-group">
-                                    <span class="input-group-text px-2 bg-white border-0 d-flex align-items-center">
-                                        <i class="bi bi-envelope"></i>
-                                    </span>
-                                    <input type="email" class="form-control px-2" :placeholder="$t('Enter your email')"
-                                        v-model="suscribeEmail" required />
-
-                                    <button type="submit" class="btn btn-primary btn-sm newsletter-btn">
-                                        <span class="d-sm-inline px-2">
-                                            <i class="bi bi-send-fill"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="form-text mt-2">
-                                    {{ $t('No spam. Unsubscribe anytime.') }}
-                                </div>
-                            </form>
-                        </li>
                     </ul>
+
+                    <!-- Newsletter -->
+                    <div class="mt-6">
+                        <h6 class="text-white font-semibold text-sm mb-3">
+                            {{ $t('Subscribe to Newsletter') }}
+                        </h6>
+                        <form @submit.prevent="newsletter()" class="flex">
+                            <input
+                                type="email"
+                                v-model="suscribeEmail"
+                                :placeholder="$t('Enter your email')"
+                                required
+                                class="flex-1 px-4 py-2.5 rounded-l-lg bg-white/10 border border-white/20 text-white text-sm placeholder-white/40 focus:outline-none focus:border-primary-400"
+                            />
+                            <button
+                                type="submit"
+                                class="px-4 py-2.5 rounded-r-lg bg-primary-600 text-white hover:bg-primary-500 transition-colors"
+                            >
+                                <i class="bi bi-send-fill text-sm"></i>
+                            </button>
+                        </form>
+                        <p class="text-white/40 text-xs mt-2">
+                            {{ $t('No spam. Unsubscribe anytime.') }}
+                        </p>
+                    </div>
                 </div>
-                <div
-                    class="col-md-8 col-lg-3 col-xl-3 d-md-flex d-lg-block flex-column align-items-end justify-content-end">
-                    <h4 class="text-light-primary fs-6 fw-bold mb-3">
+
+                <!-- Download App -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-5 uppercase tracking-wider">
                         {{ $t('Download Our App') }}
                     </h4>
-                    <div class="d-flex">
-                        <div class="bg-white rounded p-1 mb-3">
-                            <img :src="masterStore?.masterData?.scaner ??
-                                'https://quickchart.io/qr?text=' +
-                                baseUrl +
-                                '/download_app&margin=2&size=110'
-                                " class="d-block" alt="Scan QR code" style="width: 150px; height: 120px" />
-                            <small class="text-dark d-block text-center">{{ $t('Scan the QR code') }}</small>
-                        </div>
+                    <div class="bg-white rounded-xl p-3 inline-block mb-4">
+                        <img
+                            :src="masterStore?.masterData?.scaner ||
+                                'https://quickchart.io/qr?text=' + baseUrl + '/download_app&margin=2&size=110'"
+                            class="block w-[140px] h-[110px] object-contain"
+                            alt="Scan QR code"
+                        />
+                        <small class="text-slate-700 text-xs text-center block mt-1">
+                            {{ $t('Scan the QR code') }}
+                        </small>
                     </div>
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <a :href="masterStore?.masterData?.footer_apple_link" target="_blank"><img
-                                :src="'/assets/images/website/app-store.png'" alt="App Store" class="me-3" /></a>
-                        <a :href="masterStore?.masterData?.footer_google_link" target="_blank"><img
-                                :src="'/assets/images/website/play-store.png'" alt="Play Store" /></a>
+                    <div class="flex gap-3">
+                        <a :href="masterStore?.masterData?.footer_apple_link" target="_blank">
+                            <img
+                                src="/public/assets/images/website/app-store.png"
+                                alt="App Store"
+                                class="h-10 hover:opacity-80 transition-opacity"
+                            />
+                        </a>
+                        <a :href="masterStore?.masterData?.footer_google_link" target="_blank">
+                            <img
+                                src="/public/assets/images/website/play-store.png"
+                                alt="Play Store"
+                                class="h-10 hover:opacity-80 transition-opacity"
+                            />
+                        </a>
                     </div>
                 </div>
             </div>
-        </section>
-        <div class="text-center text-light py-4">
-            <small>{{ masterStore?.masterData?.credit_text }}</small>
+
+            <!-- Copyright -->
+            <div class="text-center py-6">
+                <small class="text-white/60 text-sm">{{ masterStore?.masterData?.credit_text }}</small>
+            </div>
         </div>
     </footer>
 </template>
-
-<style lang="scss" scoped>
-footer {
-    // background: url("/public/assets/website/footer-bg-2.png") no-repeat center;
-    background-size: cover;
-
-    .footer-container {
-        padding-top: 3rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-    }
-
-    a {
-        color: #fff;
-        transition: color 0.2s ease-out;
-
-        &:hover {
-            color: #306c3c;
-        }
-    }
-}
-
-.input-group input {
-    padding: 8px 0.75rem !important;
-}
-
-.input-group-text {
-    padding: 0px 0.75rem !important;
-    border-radius: 4px 0 0 4px !important;
-}
-
-.newsletter-btn {
-    border-radius: 0 4px 4px 0 !important;
-}
-
-// .homepage-footer {
-//     clip-path: ellipse(90% 88% at 50% 100%);
-//     margin-top: -13rem;
-//     padding-top: 12rem;
-// }
-
-@media (max-width: 1200px) {
-    .homepage-footer {
-        margin-top: -12rem;
-    }
-}
-</style>
 
 <script setup>
 import BrandLogo from "@/components/BrandLogo.vue";
 import { useMasterStore } from "@/stores/master";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import Swal from "sweetalert2";
 
 const masterStore = useMasterStore();
-const masterData = ref(masterStore.masterData);
-const suscribeEmail = ref("");
-import { useI18n } from "vue-i18n";
 const { t } = useI18n();
-
+const suscribeEmail = ref("");
 const baseUrl = import.meta.env.VITE_APP_URL;
 
+const quickLinks = [
+    { path: "/college-mou-gallery", label: "MOU & Gallery" },
+    { path: "/page/about_us", label: "About Us" },
+    { path: "/campus-ambassador", label: "Campus Ambassador" },
+    { path: "/faq", label: "FAQ" },
+    { path: "/admin/register", label: "Become a Teacher" },
+];
 
 const newsletter = () => {
-
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(suscribeEmail.value)) {
-        const Toast = Swal.mixin({
+        Swal.fire({
+            icon: "error",
+            title: "Invalid email address",
             toast: true,
             position: "top-end",
             showConfirmButton: false,
             timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "error",
-            title: "Invalid email address"
         });
         return;
     }
 
-    axios.post("/newslatter/subscribe", {
-        email: suscribeEmail.value
-    })
-        .then((response) => {
-            const Toast = Swal.mixin({
+    axios.post("/newslatter/subscribe", { email: suscribeEmail.value })
+        .then(() => {
+            Swal.fire({
+                icon: "success",
+                title: t("Thank you for subscribing to our newsletter"),
                 toast: true,
                 position: "top-end",
                 showConfirmButton: false,
                 timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
             });
-            Toast.fire({
-                icon: "success",
-                title: t("Thank you for subscribing to our newsletter")
-            });
-        }).catch((error) => {
-            console.log(error);
-
+            suscribeEmail.value = "";
         })
-    suscribeEmail.value = "";
+        .catch((error) => {
+            console.error(error);
+        });
 };
 </script>

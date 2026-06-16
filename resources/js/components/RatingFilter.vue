@@ -50,7 +50,7 @@ const emit = defineEmits(['RatingFilter']);
 const selectedRating = ref(0);
 
 function applyRatingFilter(rating) {
-    router.push('/courses');
+    router.push('/programs');
     selectedRating.value = rating;
     emit('RatingFilter', selectedRating.value);
 }

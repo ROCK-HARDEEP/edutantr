@@ -35,12 +35,7 @@
                             $route.path === '/' ? 'active' : '',
                         ]">{{ $t('Home') }}</router-link>
                     </li>
-                    <li class="nav-item">
-                        <router-link to="/courses" :class="[
-                            'nav-link m-0 pb-1 pt-0',
-                            $route.path === '/courses' ? 'active' : '',
-                        ]">{{ $t('Courses') }}</router-link>
-                    </li>
+
                     <li class="nav-item">
                         <router-link to="/about-us" :class="[
                             'nav-link m-0 pb-1 pt-0',

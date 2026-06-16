@@ -1,177 +1,135 @@
 <template>
-    <div class="contact-page">
-        <!-- Our Best Learning Offers -->
-        <section class="py-5 contact-page__offers">
-            <div class="container">
-                
+    <div class="min-h-screen bg-slate-50">
+        <!-- Hero/Header Section -->
+        <section class="relative pt-32 pb-24 bg-slate-900 overflow-hidden">
+            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 50% 0%, rgba(249,115,22,0.15) 0%, transparent 70%);"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-semibold tracking-wide mb-6">
+                    <i class="bi bi-headset"></i> {{ $t("We're Here to Help") }}
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight" style="font-family: 'Lexend', sans-serif;">
+                    {{ $t('Get in') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">{{ $t('Touch') }}</span>
+                </h1>
+                <p class="text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
+                    {{ $t('Have questions about our programs, corporate training, or placement support? Our team is ready to help you launch your tech career.') }}
+                </p>
+            </div>
+        </section>
 
-                <div class="row justify-content-center text-center mb-5">
-                    <div class="col-lg-8 contact-offers-intro">
-                        <div v-if="offersHeaderImage" class="contact-offers-intro__media mb-3">
-                            <img :src="offersHeaderImage" :alt="offersTitle" />
-                        </div>
-                        <div v-else-if="offersIcon" class="contact-offers-intro__icon mb-3">
-                            <i :class="offersIcon" aria-hidden="true"></i>
-                        </div>
-                        <h1 class="fw-bold display-5 text-dark">{{ offersTitle }}</h1>
-                        <p v-if="offersDescription" class="text-muted lead contact-offers-intro__desc">
-                            {{ offersDescription }}
-                        </p>
-                        <hr class="w-25 mx-auto border-3 border-primary" />
-                    </div>
-                </div>
-
-                <div class="row g-4">
-                    <div v-for="offer in learningOffers" :key="offer.title" class="col-md-6 col-lg-4">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                            <div :class="['fs-1 mb-3', offer.colorClass]">
-                                <i :class="offer.icon"></i>
+        <!-- Contact Cards & Form -->
+        <section class="py-16 -mt-16 relative z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Left: Contact Info Cards -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Card 1: Phone -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col items-start gap-4 transition-transform duration-300 hover:-translate-y-1">
+                            <div class="w-14 h-14 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-2xl mb-2">
+                                <i class="bi bi-telephone-fill"></i>
                             </div>
-                            <h5 class="fw-bold">{{ offer.title }}</h5>
-                            <p class="text-muted mb-0">{{ offer.description }}</p>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $t('Call Us') }}</h3>
+                                <p class="text-sm text-slate-500 mb-3">{{ $t('Mon-Fri from 9am to 6pm.') }}</p>
+                                <a :href="`tel:${masterStore.masterData?.footer_contact}`" class="text-lg font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                                    {{ masterStore.masterData?.footer_contact || '+91 00000 00000' }}
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 2: Email -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col items-start gap-4 transition-transform duration-300 hover:-translate-y-1">
+                            <div class="w-14 h-14 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center text-2xl mb-2">
+                                <i class="bi bi-envelope-fill"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $t('Email Us') }}</h3>
+                                <p class="text-sm text-slate-500 mb-3">{{ $t('We usually respond within 24 hours.') }}</p>
+                                <a :href="`mailto:${masterStore.masterData?.footer_email}`" class="text-lg font-semibold text-cyan-600 hover:text-cyan-700 transition-colors">
+                                    {{ masterStore.masterData?.footer_email || 'hello@edutantr.com' }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Location -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col items-start gap-4 transition-transform duration-300 hover:-translate-y-1">
+                            <div class="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-2">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $t('Visit Us') }}</h3>
+                                <p class="text-sm text-slate-500 mb-3">{{ $t('Drop by our headquarters.') }}</p>
+                                <p class="text-base font-medium text-slate-700 leading-relaxed">
+                                    {{ headOfficeAddress }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Form -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/40 p-8 md:p-12 border border-slate-100 h-full flex flex-col justify-center">
+                            <div class="mb-8">
+                                <h2 class="text-3xl font-extrabold text-slate-900 mb-2" style="font-family: 'Lexend', sans-serif;">{{ $t('Send a Message') }}</h2>
+                                <p class="text-slate-500">{{ $t('Fill out the form below and our placement experts will get back to you shortly.') }}</p>
+                            </div>
+
+                            <form @submit.prevent="submitForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-slate-700">{{ $t('Full Name') }} *</label>
+                                        <InputText v-model="form.name" class="w-full !p-4 !rounded-xl !border-slate-200 !bg-slate-50 focus:!bg-white focus:!border-orange-400 focus:!ring-orange-400/20 transition-all" :placeholder="$t('John Doe')" required />
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-semibold text-slate-700">{{ $t('Email Address') }} *</label>
+                                        <InputText v-model="form.email" type="email" class="w-full !p-4 !rounded-xl !border-slate-200 !bg-slate-50 focus:!bg-white focus:!border-orange-400 focus:!ring-orange-400/20 transition-all" :placeholder="$t('john@example.com')" required />
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">{{ $t('Subject') }} *</label>
+                                    <InputText v-model="form.subject" class="w-full !p-4 !rounded-xl !border-slate-200 !bg-slate-50 focus:!bg-white focus:!border-orange-400 focus:!ring-orange-400/20 transition-all" :placeholder="$t('How can we help?')" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-slate-700">{{ $t('Message') }} *</label>
+                                    <Textarea v-model="form.message" rows="5" class="w-full !p-4 !rounded-xl !border-slate-200 !bg-slate-50 focus:!bg-white focus:!border-orange-400 focus:!ring-orange-400/20 transition-all" :placeholder="$t('Tell us more about your inquiry...')" required />
+                                </div>
+                                <div class="pt-4">
+                                    <button type="submit" class="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] transition-all duration-300">
+                                        <i class="bi bi-send-fill mr-2"></i> {{ $t('Send Message') }}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Head Office & Contact -->
-        <section class="py-5 bg-light">
-            <div class="container">
-                <div class="row g-4 g-xl-5 align-items-start">
-                    <div class="col-lg-5">
-                        <div class="head-office-card h-100">
-                            <span class="head-office-card__badge">
-                                <i class="bi bi-geo-alt-fill"></i>
-                                {{ $t('Head Office Address') }}
-                            </span>
-                            <h2 class="head-office-card__title fw-bold">
-                                {{ $t('Get in Touch With Us') }}
-                            </h2>
-                            <p class="head-office-card__address text-muted">
-                                {{ headOfficeAddress }}
-                            </p>
-
-                            <ul class="list-unstyled head-office-card__contacts mb-0">
-                                <li v-if="masterStore?.masterData?.footer_contact">
-                                    <a :href="`tel:${masterStore.masterData.footer_contact}`" class="head-office-card__link">
-                                        <i class="bi bi-telephone-fill"></i>
-                                        <span>{{ masterStore.masterData.footer_contact }}</span>
-                                    </a>
-                                </li>
-                                <li v-if="masterStore?.masterData?.footer_email">
-                                    <a
-                                        :href="`mailto:${masterStore.masterData.footer_email}`"
-                                        class="head-office-card__link"
-                                    >
-                                        <i class="bi bi-envelope-fill"></i>
-                                        <span>{{ masterStore.masterData.footer_email }}</span>
-                                    </a>
-                                </li>
-                                <li v-if="masterStore?.masterData?.whatsapp_support_number">
-                                    <a
-                                        :href="masterStore.masterData.whatsapp_support_number"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="head-office-card__link"
-                                    >
-                                        <i class="bi bi-whatsapp"></i>
-                                        <span>{{ masterStore.masterData.whatsapp_contact_us || $t('WhatsApp Support') }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <div
-                                v-if="masterStore?.masterData?.footer_social_icons?.length"
-                                class="head-office-card__social d-flex flex-wrap gap-2 mt-4"
-                            >
-                                <a
-                                    v-for="social in masterStore.masterData.footer_social_icons"
-                                    :key="social.url"
-                                    :href="social.url"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-primary btn-sm rounded-pill px-3"
-                                >
-                                    <i :class="social.icon"></i>
-                                    {{ social.title }}
-                                </a>
-                            </div>
+        <!-- Why Choose Us (Replaced Learning Offers) -->
+        <section class="py-16 md:py-24 bg-white border-t border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight" style="font-family: 'Lexend', sans-serif;">{{ offersTitle }}</h2>
+                    <p class="text-lg text-slate-500 max-w-2xl mx-auto">{{ offersDescription }}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="(offer, idx) in learningOffers" :key="idx" class="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div :class="['w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-sm border border-black/5', offer.bgClass, offer.iconClass]">
+                            <i :class="offer.icon"></i>
                         </div>
-                    </div>
-
-                    <div class="col-lg-7">
-                        <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
-                            <div class="text-center mb-4">
-                                <BrandLogo to="/" centered size="lg" />
-                                <h4 class="fw-bold mt-3 mb-1">{{ $t('Connect with us') }}!!</h4>
-                                <p class="text-muted small mb-0">{{ $t("We'd love to hear from you") }}</p>
-                            </div>
-
-                            <form @submit.prevent="submitForm">
-                                <div class="row g-3">
-                                    <div class="col-md-6 form-floating">
-                                        <input
-                                            id="contactName"
-                                            v-model="form.name"
-                                            type="text"
-                                            class="form-control"
-                                            :placeholder="$t('Full Name')"
-                                            required
-                                        />
-                                        <label for="contactName">{{ $t('Full Name') }} *</label>
-                                    </div>
-                                    <div class="col-md-6 form-floating">
-                                        <input
-                                            id="contactEmail"
-                                            v-model="form.email"
-                                            type="email"
-                                            class="form-control"
-                                            :placeholder="$t('Email')"
-                                            required
-                                        />
-                                        <label for="contactEmail">{{ $t('Email') }} *</label>
-                                    </div>
-                                    <div class="col-12 form-floating">
-                                        <input
-                                            id="contactSubject"
-                                            v-model="form.subject"
-                                            type="text"
-                                            class="form-control"
-                                            :placeholder="$t('Subject')"
-                                            required
-                                        />
-                                        <label for="contactSubject">{{ $t('Subject') }} *</label>
-                                    </div>
-                                    <div class="col-12 form-floating">
-                                        <textarea
-                                            id="contactMessage"
-                                            v-model="form.message"
-                                            class="form-control"
-                                            :placeholder="$t('Message')"
-                                            rows="5"
-                                            style="height: 140px"
-                                            required
-                                        ></textarea>
-                                        <label for="contactMessage">{{ $t('Message') }} *</label>
-                                    </div>
-                                    <div class="col-12 text-center mt-2">
-                                        <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
-                                            {{ $t('Connect Now') }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">{{ offer.title }}</h3>
+                        <p class="text-slate-600 leading-relaxed">{{ offer.description }}</p>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div v-if="googleMapEmbed" class="row justify-content-center mt-5">
-                    <div class="col-12">
-                        <div class="map-embed shadow rounded-4 overflow-hidden">
-                            <div v-html="googleMapEmbed" class="map-embed__frame"></div>
-                        </div>
-                    </div>
+        <!-- Optional Map Section -->
+        <section v-if="googleMapEmbed" class="py-12 border-t border-slate-100 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white p-2.5 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="rounded-[1.5rem] overflow-hidden [&>iframe]:w-full [&>iframe]:h-[450px]" v-html="googleMapEmbed"></div>
                 </div>
             </div>
         </section>
@@ -186,6 +144,11 @@ import { useMasterStore } from "@/stores/master";
 import axios from "axios";
 import { useI18n } from "vue-i18n";
 
+// PrimeVue components
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+
 const { t } = useI18n();
 const masterStore = useMasterStore();
 
@@ -199,19 +162,19 @@ const form = ref({
 const offersTitle = computed(() => {
     return (
         masterStore.masterData?.contact_offers_title ||
-        t("Our Best Learning Offers")
+        t("Why Partner With Us?")
     );
 });
 
 const offersDescription = computed(() => {
     return (
         masterStore.masterData?.contact_offers_description ||
-        t("Discover the most effective way to learn with expert mentors, real-world projects, and certifications that matter.")
+        t("Discover how our specialized tech training and robust placement cell can catapult your career to the next level.")
     );
 });
 
 const offersIcon = computed(() => {
-    return masterStore.masterData?.contact_offers_icon || "bi bi-mortarboard-fill";
+    return masterStore.masterData?.contact_offers_icon || "pi pi-graduation-cap";
 });
 
 const offersHeaderImage = computed(() => {
@@ -233,40 +196,46 @@ const googleMapEmbed = computed(() => {
 
 const learningOffers = computed(() => [
     {
-        icon: "bi bi-easel2-fill",
-        colorClass: "text-primary",
-        title: t("Expert Instructors"),
-        description: t("Learn directly from industry experts with years of real-world experience."),
+        icon: "bi bi-briefcase-fill",
+        iconClass: "text-orange-600",
+        bgClass: "bg-orange-100",
+        title: t("100% Placement Assistance"),
+        description: t("We don't just teach. We ensure you land a top-tier job with our dedicated placement cell."),
     },
     {
-        icon: "bi bi-award-fill",
-        colorClass: "text-success",
-        title: t("Certification Programs"),
-        description: t("Earn globally recognized certificates to showcase your expertise."),
+        icon: "bi bi-person-workspace",
+        iconClass: "text-cyan-600",
+        bgClass: "bg-cyan-100",
+        title: t("Expert Industry Mentors"),
+        description: t("Learn directly from professionals working at product-based tech companies."),
     },
     {
         icon: "bi bi-code-slash",
-        colorClass: "text-warning",
-        title: t("Hands-on Projects"),
-        description: t("Build real projects and gain practical experience while learning."),
+        iconClass: "text-purple-600",
+        bgClass: "bg-purple-100",
+        title: t("Real-World Projects"),
+        description: t("Build a robust portfolio by working on live projects that mirror industry demands."),
     },
     {
-        icon: "bi bi-people",
-        colorClass: "text-danger",
-        title: t("Community & Mentorship"),
-        description: t("Join a supportive community and get personalized mentorship."),
+        icon: "bi bi-award-fill",
+        iconClass: "text-emerald-600",
+        bgClass: "bg-emerald-100",
+        title: t("Recognized Certification"),
+        description: t("Earn credentials that hold weight and instantly boost your resume's value."),
     },
     {
-        icon: "bi bi-clock-fill",
-        colorClass: "text-info",
-        title: t("Flexible Learning"),
-        description: t("Study at your own pace, anytime and anywhere, without restrictions."),
+        icon: "bi bi-people-fill",
+        iconClass: "text-blue-600",
+        bgClass: "bg-blue-100",
+        title: t("Mock Interviews"),
+        description: t("Practice with HR experts and technical leads to conquer real interviews with confidence."),
     },
     {
         icon: "bi bi-shield-check",
-        colorClass: "text-purple",
-        title: t("Verified Certificates"),
-        description: t("Earn officially recognized credentials to boost your career profile."),
+        iconClass: "text-rose-600",
+        bgClass: "bg-rose-100",
+        title: t("Lifetime Career Support"),
+        description: t("Gain lifelong access to our alumni network, exclusive job boards, and career coaching."),
     },
 ]);
 
@@ -326,154 +295,18 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-.contact-page__offers {
-    background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
-}
-
-.contact-offers-intro__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ecfdf5, #dcfce7);
-    color: #15803d;
-    font-size: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.contact-offers-intro__media img {
-    max-height: 88px;
-    width: auto;
-    object-fit: contain;
-    border-radius: 12px;
-}
-
-.contact-offers-intro__desc {
-    white-space: pre-line;
-}
-
-.head-office-card__address {
-    white-space: pre-line;
-}
-
-.hover-highlight {
-    transition: 0.3s ease-in-out;
-}
-
-.hover-highlight:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
-}
-
-.text-purple {
-    color: #6f42c1;
-}
-
-.head-office-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 2rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
-}
-
-.head-office-card__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: 50px;
-    background: #ecfdf5;
-    color: #15803d;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-}
-
-.head-office-card__title {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    color: #0f172a;
-    margin-bottom: 1rem;
-}
-
-.head-office-card__address {
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
-    white-space: pre-line;
-}
-
-.head-office-card__contacts li + li {
-    margin-top: 0.85rem;
-}
-
-.head-office-card__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    color: #334155;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
-
-    i {
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        background: #f0fdf4;
-        color: #16a34a;
-        flex-shrink: 0;
-    }
-
-    &:hover {
-        color: #15803d;
-    }
-}
-
-.map-embed {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-}
-
-.map-embed__frame {
-    position: relative;
+:deep(.p-inputtext),
+:deep(.p-textarea) {
     width: 100%;
-    min-height: 420px;
 }
 
-.map-embed__frame :deep(iframe) {
-    display: block;
-    width: 100% !important;
-    min-height: 420px;
-    border: 0;
+:deep(.p-button) {
+    background: var(--color-primary-600);
+    border-color: var(--color-primary-600);
 }
 
-.swal-title {
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.card input:focus,
-.card textarea:focus {
-    border-color: #15803d;
-    box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.2);
-}
-
-@media (max-width: 767px) {
-    .head-office-card {
-        padding: 1.5rem;
-    }
-
-    .map-embed__frame,
-    .map-embed__frame :deep(iframe) {
-        min-height: 300px;
-    }
+:deep(.p-button:hover) {
+    background: var(--color-primary-700);
+    border-color: var(--color-primary-700);
 }
 </style>

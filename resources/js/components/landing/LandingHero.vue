@@ -1,69 +1,200 @@
 <template>
-    <section class="landing-hero position-relative landing-hero--partners">
-        <div class="hero-bg hero-bg--cinematic">
-            <div v-if="hasPartnerBg" class="hero-partners-scroll" aria-hidden="true">
-                <div class="hero-partners-track" :style="{ '--partners-duration': `${partnersScrollDuration}s` }">
-                    <div
-                        v-for="stripIndex in 2"
-                        :key="`partners-strip-${stripIndex}`"
-                        class="hero-partners-strip"
-                        :aria-hidden="stripIndex === 2 ? 'true' : undefined"
-                    >
-                        <div
-                            v-for="(item, index) in heroCompanyPartners"
-                            :key="`partner-${stripIndex}-${item.id ?? index}`"
-                            class="hero-partners-cell"
-                        >
-                            <img
-                                :src="item.logo"
-                                :alt="item.name"
-                                loading="eager"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-cinematic-overlay" aria-hidden="true"></div>
-
-            <div class="container hero-content hero-content--cinematic">
-                <div class="hero-cinematic-copy text-center">
-                    
-
-                    <h1 class="hero-heading hero-heading--cinematic">
-                        {{ $t('From beginner to skilled—starting in') }}
-                        <em class="hero-heading-accent">{{ $t('minutes') }}</em>.
-                    </h1>
-
-                    <p class="hero-cinematic-subtitle">
-                        {{ $t('Bridging gaps, Building Bridges') }}
-                    </p>
-
-                    <div class="hero-actions hero-actions--center">
-                        <router-link :to="heroPrimaryLink" class="hero-cta-orange">
-                            {{ heroPrimaryLabel }}
-                        </router-link>
-                        <router-link v-if="!isLoggedIn" to="/courses" class="hero-cta-ghost text-decoration-none">
-                            <i class="bi bi-play-circle me-2"></i>
-                            {{ $t('Check Our Courses') }}
-                        </router-link>
+    <section class="relative min-h-[100svh] overflow-hidden bg-[#0a0a0a]">
+        <!-- Partner Logos Background -->
+        <div v-if="hasPartnerBg" class="absolute inset-0 overflow-hidden z-0" aria-hidden="true">
+            <div class="flex h-full w-max" style="animation: hero-marquee 30s linear infinite; will-change: transform;">
+                <div v-for="stripIndex in 2" :key="`strip-${stripIndex}`" class="flex w-screen h-full shrink-0">
+                    <div v-for="(item, index) in heroCompanyPartners"
+                         :key="`partner-${stripIndex}-${item.id ?? index}`"
+                         class="flex-1 h-full overflow-hidden border-r border-white/5 last:border-r-0">
+                        <img :src="item.logo" :alt="item.name" class="w-full h-full object-cover grayscale-[10%] contrast-[1.05]" loading="lazy" />
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="three_column_section">
-            <div class="three_column_section__panel">
-                <div class="container">
-                    <div class="three_column_section__grid">
-                        <div
-                            v-for="stat in heroStats"
-                            :key="stat.label"
-                            class="three_column_section__item"
-                        >
-                            <span class="three_column_section__value">{{ stat.value }}</span>
-                            <span class="three_column_section__line" aria-hidden="true"></span>
-                            <span class="three_column_section__label">{{ stat.label }}</span>
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 z-1 pointer-events-none"
+             style="background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.72) 100%), linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.65) 50%, rgba(0,0,0,0.8) 100%);"></div>
+
+        <!-- Dot Grid Pattern -->
+        <div class="absolute inset-0 z-1 pointer-events-none" aria-hidden="true"
+             style="background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 28px 28px;"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-2 w-full max-w-[1200px] mx-auto min-h-[calc(100svh-120px)] flex flex-col items-center justify-center px-6 pt-28 pb-16">
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <!-- Left: Text -->
+                <div class="text-center md:text-left flex flex-col items-center md:items-start relative z-10">
+                    <div class="hero-stagger-1 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg shadow-black/20 text-white/90 text-sm font-semibold tracking-wide mb-8 hover:bg-white/10 transition-colors cursor-default">
+                        <div class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse-dot shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
+                        {{ $t("India's Premier IT Training Institute") }}
+                    </div>
+
+                    <h1 class="hero-stagger-2 font-extrabold text-white leading-tight mb-6"
+                        style="font-family: 'Lexend', sans-serif; font-size: clamp(2.25rem, 5.5vw, 4rem); letter-spacing: -0.02em;">
+                        {{ $t('Launch Your') }} <br class="hidden md:block" />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-yellow-400 filter drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                            {{ $t('Tech Career') }}
+                        </span>
+                        {{ $t('Today') }}
+                    </h1>
+
+                    <p class="hero-stagger-3 text-white/70 max-w-[550px] mx-auto md:mx-0 mb-6 text-base md:text-lg font-light leading-relaxed">
+                        {{ $t('Master the most in-demand skills in') }} <span class="text-white font-medium">{{ $t('Full-Stack Development') }}</span>, <span class="text-white font-medium">{{ $t('Data Science') }}</span>, <span class="text-white font-medium">{{ $t('Cloud Computing') }}</span>, {{ $t('and') }} <span class="text-white font-medium">{{ $t('Cybersecurity') }}</span>.
+                    </p>
+
+                    <p class="hero-stagger-4 flex items-center justify-center md:justify-start gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 mb-10 backdrop-blur-sm">
+                        <span class="flex -space-x-2">
+                            <img class="w-8 h-8 rounded-full border-2 border-slate-900" src="/public/assets/images/profile/ambassador.jpg" alt="Student" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 24 24\\\' fill=\\\'white\\\'%3E%3Ccircle cx=\\\'12\\\' cy=\\\'12\\\' r=\\\'12\\\' fill=\\\'%23475569\\\'/%3E%3C/svg%3E'" />
+                            <img class="w-8 h-8 rounded-full border-2 border-slate-900" src="/public/assets/images/profile/ambassador1.jpg" alt="Student" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 24 24\\\' fill=\\\'white\\\'%3E%3Ccircle cx=\\\'12\\\' cy=\\\'12\\\' r=\\\'12\\\' fill=\\\'%23334155\\\'/%3E%3C/svg%3E'" />
+                            <div class="w-8 h-8 rounded-full border-2 border-slate-900 bg-orange-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">50+</div>
+                        </span>
+                        <span class="text-white/80 text-sm font-medium">
+                            {{ $t('Students placed at top tech companies') }}
+                        </span>
+                    </p>
+
+                    <div class="hero-stagger-5 flex flex-wrap items-center justify-center md:justify-start gap-5 mb-8">
+                        <router-link :to="heroPrimaryLink"
+                            class="group relative inline-flex items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold text-base shadow-[0_0_20px_rgba(249,115,22,0.4)] overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]">
+                            <span class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></span>
+                            <span class="relative flex items-center gap-2">
+                                {{ heroPrimaryLabel }}
+                                <i class="bi bi-arrow-right-short text-2xl leading-none transition-transform group-hover:translate-x-1"></i>
+                            </span>
+                        </router-link>
+                        <router-link v-if="!isLoggedIn" to="/programs"
+                            class="inline-flex items-center gap-2 text-white/70 hover:text-white font-semibold text-base transition-colors hover:translate-x-1 duration-300">
+                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/20">
+                                <i class="bi bi-play-fill text-xl text-orange-400"></i>
+                            </div>
+                            {{ $t('Explore Courses') }}
+                        </router-link>
+                    </div>
+
+                    <p class="hero-stagger-6 text-white/50 text-sm font-medium flex items-center gap-2">
+                        <i class="bi bi-stars text-orange-400 animate-pulse"></i>
+                        {{ $t('Next batch starts soon — Limited seats available') }}
+                    </p>
+                </div>
+
+                <!-- Right: Animated Tech Illustration (desktop) -->
+                <!-- Right: Animated Tech Illustration (desktop) -->
+                <div class="hidden md:flex items-center justify-center relative" style="min-height: 500px;">
+                    <!-- Particle dots -->
+                    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+                        <span v-for="n in 12" :key="'p'+n"
+                              class="absolute w-1.5 h-1.5 rounded-full bg-cyan-400/40 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+                              :style="{ top: (10 + (n * 17) % 80) + '%', left: (10 + (n * 23) % 80) + '%',
+                                        animation: 'particle-drift ' + (6 + n % 5) + 's ease-in-out infinite alternate ' + (n * 0.3) + 's' }"></span>
+                    </div>
+
+                    <!-- Orb container -->
+                    <div class="relative flex items-center justify-center animate-float-slow" style="width: 360px; height: 360px;">
+                        <!-- Outer glow pulse -->
+                        <div class="absolute rounded-full hero-glow"
+                             style="width: 500px; height: 500px; top: -70px; left: -70px;
+                                    background: radial-gradient(circle, rgba(14,116,144,0.15) 0%, rgba(249,115,22,0.05) 40%, transparent 70%);"></div>
+
+                        <!-- Ring 1 — main spinning ring -->
+                        <div class="absolute rounded-full"
+                             style="width: 400px; height: 400px; top: -20px; left: -20px;
+                                    border: 2px solid rgba(14,116,144,0.4);
+                                    box-shadow: 0 0 40px rgba(14,116,144,0.2), inset 0 0 40px rgba(14,116,144,0.1);
+                                    animation: ring-spin 20s linear infinite;"></div>
+
+                        <!-- Ring 2 — dashed, reverse -->
+                        <div class="absolute rounded-full"
+                             style="width: 440px; height: 440px; top: -40px; left: -40px;
+                                    border: 2px dashed rgba(249,115,22,0.25);
+                                    animation: ring-spin 30s linear infinite reverse;"></div>
+
+                        <!-- Ring 3 — dotted inner -->
+                        <div class="absolute rounded-full"
+                             style="width: 360px; height: 360px; top: 0px; left: 0px;
+                                    border: 2px dotted rgba(34,211,238,0.3);
+                                    animation: ring-spin 15s linear infinite;"></div>
+
+                        <!-- Orb body -->
+                        <div class="rounded-full relative overflow-hidden backdrop-blur-md"
+                             style="width: 310px; height: 310px;
+                                    background: radial-gradient(circle at 35% 35%, rgba(249,115,22,0.3) 0%, rgba(14,116,144,0.4) 50%, rgba(8,15,30,0.8) 100%);
+                                    border: 1px solid rgba(255,255,255,0.1);
+                                    box-shadow: 0 0 80px rgba(14,116,144,0.3), inset 0 0 60px rgba(249,115,22,0.2);">
+                            
+                            <!-- Inner glowing core -->
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-orange-500/20 rounded-full blur-2xl animate-pulse"></div>
+                        </div>
+
+                        <!-- SVG circuit detail -->
+                        <svg class="absolute z-10 animate-spin-slow-reverse" style="width: 250px; height: 250px; opacity: 0.3;" viewBox="0 0 200 200" fill="none">
+                            <path d="M20 100 A80 80 0 0 1 180 100 A80 80 0 0 1 20 100" stroke="rgba(34,211,238,0.8)" stroke-width="1.5" stroke-dasharray="10 15"/>
+                            <circle cx="100" cy="100" r="50" stroke="rgba(249,115,22,0.6)" stroke-width="1" fill="none" stroke-dasharray="4 6"/>
+                            <circle cx="100" cy="100" r="25" stroke="rgba(255,255,255,0.5)" stroke-width="0.8" fill="none"/>
+                            <circle cx="100" cy="100" r="8" stroke="rgba(34,211,238,0.9)" stroke-width="2" fill="rgba(34,211,238,0.2)"/>
+                            <line x1="100" y1="20" x2="100" y2="180" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                            <line x1="20" y1="100" x2="180" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                            <!-- Connector nodes -->
+                            <circle cx="100" cy="20" r="3" fill="rgba(249,115,22,0.8)"/>
+                            <circle cx="100" cy="180" r="3" fill="rgba(249,115,22,0.8)"/>
+                            <circle cx="20" cy="100" r="3" fill="rgba(34,211,238,0.8)"/>
+                            <circle cx="180" cy="100" r="3" fill="rgba(34,211,238,0.8)"/>
+                        </svg>
+                    </div>
+
+                    <!-- Floating tech icons — enhanced glassmorphism -->
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="top: 5%; left: 8%;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-cyan-500/20">
+                            <span class="text-cyan-400 font-mono text-lg font-extrabold">&lt;/&gt;</span>
+                        </div>
+                    </div>
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="top: -2%; right: 12%; animation-delay: 0.7s;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-sky-500/20">
+                            <i class="bi bi-cloud-arrow-up-fill text-sky-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="bottom: 12%; left: -2%; animation-delay: 1.4s;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-emerald-500/20">
+                            <i class="bi bi-database-fill text-emerald-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="bottom: 4%; right: 8%; animation-delay: 2.1s;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-orange-500/20">
+                            <i class="bi bi-braces text-orange-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="top: 45%; left: -8%; animation-delay: 1.1s;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-purple-500/20">
+                            <i class="bi bi-shield-lock-fill text-purple-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="hero-icon-float hover:scale-110 transition-transform" style="top: 32%; right: -5%; animation-delay: 1.8s;">
+                        <div class="bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl p-3.5 shadow-xl shadow-yellow-500/20">
+                            <i class="bi bi-cpu-fill text-yellow-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div ref="statsBarRef" class="relative z-10 w-full border-t border-white/10 bg-black/80 backdrop-blur-md">
+            <div class="py-8 px-0" style="box-shadow: 0 -12px 40px rgba(0,0,0,0.25);">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="grid grid-cols-4 gap-6">
+                        <div v-for="(stat, idx) in heroStats" :key="stat.label" class="flex flex-col items-center text-center">
+                            <span v-if="stat.isLive"
+                                  class="inline-block w-2 h-2 rounded-full bg-green-400 mb-2"
+                                  style="box-shadow: 0 0 8px rgba(74, 222, 128, 0.6); animation: pulse-dot 2s ease-in-out infinite;"></span>
+                            <span class="text-white font-extrabold leading-none tracking-tight"
+                                  style="font-size: clamp(1.75rem, 4.5vw, 2.85rem); text-shadow: 0 2px 12px rgba(0,0,0,0.35);">
+                                {{ stat.displayValue }}
+                            </span>
+                            <span class="w-[52px] h-[3px] my-3 rounded-sm bg-gradient-to-r from-primary-400 to-primary-300"></span>
+                            <span class="text-white/75 font-medium" style="font-size: clamp(0.85rem, 1.8vw, 1.05rem);">
+                                {{ stat.label }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -72,939 +203,141 @@
     </section>
 </template>
 
-<style scoped lang="scss">
-.landing-hero {
-    margin-bottom: 0;
-    min-height: 100vh;
-}
-
-.landing-hero--partners {
-    margin-top: 0;
-    min-height: 100vh;
-    min-height: 100svh;
-    overflow: hidden;
-}
-
-.landing-hero__top {
-    position: relative;
-    z-index: 10;
-    flex-shrink: 0;
-    padding-top: 5rem;
-}
-
-.landing-hero__top--classic {
-    padding-top: 5rem;
-}
-
-/* ─── Cinematic partner background (auto-scrolling logos) ─── */
-.hero-bg--cinematic {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #0a0a0a;
-    padding: 5rem 0 10rem;
-    box-sizing: border-box;
-}
-
-.hero-partners-scroll {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0;
-}
-
-.hero-partners-track {
-    display: flex;
-    height: 100%;
-    width: max-content;
-    animation: hero-partners-marquee var(--partners-duration, 30s) linear infinite;
-}
-
-.hero-partners-strip {
-    display: flex;
-    width: 100vw;
-    height: 100%;
-    flex-shrink: 0;
-}
-
-.hero-partners-cell {
-    flex: 1 1 0;
-    min-width: 0;
-    height: 100%;
-    overflow: hidden;
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-
-    &:last-child {
-        border-right: none;
-    }
-}
-
-.hero-partners-cell img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    filter: grayscale(10%) contrast(1.05);
-}
-
-@keyframes hero-partners-marquee {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-.hero-cinematic-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background:
-        radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.72) 100%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.65) 50%, rgba(0, 0, 0, 0.8) 100%);
-}
-
-.hero-content--cinematic {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem 1.5rem 1rem;
-}
-
-.three_column_section {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 5;
-    width: 100%;
-    pointer-events: none;
-}
-
-.three_column_section__panel {
-    pointer-events: auto;
-    width: 100%;
-    padding: 2rem 0 2.25rem;
-    background: rgba(0, 0, 0, 0.42);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25);
-}
-
-.three_column_section__link {
-    display: block;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #4ade80;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: #86efac;
-    }
-}
-
-.three_column_section__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
-}
-
-.three_column_section__item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.three_column_section__value {
-    font-size: clamp(2rem, 4.5vw, 2.85rem);
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-}
-
-.three_column_section__line {
-    display: block;
-    width: 52px;
-    height: 3px;
-    margin: 0.75rem auto 0.85rem;
-    border-radius: 2px;
-    background: linear-gradient(90deg, #22c55e, #4ade80);
-}
-
-.three_column_section__label {
-    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.78);
-    line-height: 1.35;
-}
-
-.hero-cinematic-copy {
-    padding: 1rem 0;
-}
-
-.hero-badge--light {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-}
-
-.hero-heading--cinematic {
-    font-family: Georgia, "Times New Roman", Times, serif;
-    font-weight: 400;
-    font-size: clamp(1.65rem, 5vw, 3rem);
-    line-height: 1.2;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 820px;
-}
-
-.hero-heading-accent {
-    font-style: italic;
-    color: #f97316;
-    font-weight: 400;
-}
-
-.hero-cinematic-subtitle {
-    margin: 0 auto 2rem;
-    max-width: 520px;
-    font-size: clamp(0.95rem, 2vw, 1.1rem);
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 400;
-    letter-spacing: 0.02em;
-}
-
-.hero-actions--center {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem 1.25rem;
-}
-
-.hero-cta-orange {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.85rem 2.25rem;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    text-decoration: none;
-    box-shadow: 0 8px 28px rgba(234, 88, 12, 0.45);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-    &:hover {
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 12px 36px rgba(234, 88, 12, 0.55);
-    }
-}
-
-.hero-cta-ghost {
-    display: inline-flex;
-    align-items: center;
-    color: rgba(255, 255, 255, 0.75);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: #fff;
-    }
-}
-
-/* ─── Classic hero (fallback) ─── */
-.hero-bg--classic {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 0 6rem 2rem;
-    background:
-        radial-gradient(ellipse 55% 70% at 0% 50%, rgba(255, 200, 190, 0.45) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 60% at 100% 40%, rgba(180, 230, 210, 0.35) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 50% at 85% 80%, rgba(190, 220, 255, 0.35) 0%, transparent 50%),
-        linear-gradient(180deg, #2cab4d 0%, #f7fff6 100%);
-}
-
-.hero-bg--classic .hero-content {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding-top: 1.5rem;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-badge {
-    display: inline-block;
-    padding: 0.4rem 1rem;
-    border-radius: 50px;
-    background: #339b0b;
-    color: #fff;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    margin-bottom: 1.25rem;
-}
-
-.hero-heading {
-    color: #81e5a9;
-    font-size: clamp(2rem, 4.5vw, 3.25rem);
-}
-
-.hero-actions {
-    margin-bottom: 0.5rem;
-}
-
-.hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.hero-btn:hover {
-    transform: translateY(-2px);
-}
-
-.hero-btn--primary {
-    padding: 0.65rem 0.65rem 0.65rem 1.5rem;
-    border-radius: 50px;
-    background: #111827;
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.2);
-
-    &:hover {
-        color: #fff;
-        box-shadow: 0 12px 32px rgba(17, 24, 39, 0.28);
-    }
-}
-
-.hero-btn__arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #fff;
-    color: #111827;
-    font-size: 1rem;
-}
-
-.hero-btn--video {
-    color: #374151;
-    font-weight: 600;
-    font-size: 0.95rem;
-
-    &:hover {
-        color: #ff3b5c;
-    }
-}
-
-.hero-btn__play {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #339b0b;
-    color: #fff;
-    font-size: 1.1rem;
-    padding-left: 3px;
-    box-shadow: 0 6px 20px rgba(255, 59, 92, 0.35);
-}
-
-.hero-visual {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 460px;
-    min-height: 440px;
-    margin: 0 auto;
-}
-
-.hero-visual__shape {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 88%;
-    aspect-ratio: 1;
-    z-index: 0;
-}
-
-.hero-visual__arc {
-    position: absolute;
-    border-radius: 50%;
-
-    &--orange {
-        inset: 0;
-        background: conic-gradient(from 210deg, #f5a623 0deg 120deg, transparent 120deg);
-    }
-
-    &--blue {
-        inset: 0;
-        background: conic-gradient(from 30deg, #2563eb 0deg 130deg, transparent 130deg);
-    }
-
-    &--purple {
-        inset: 0;
-        background: conic-gradient(from 130deg, #a78bfa 0deg 80deg, transparent 80deg);
-        opacity: 0.85;
-    }
-}
-
-.hero-visual__photo {
-    position: relative;
-    z-index: 2;
-    width: 78%;
-    aspect-ratio: 1;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 6px solid #fff;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-}
-
-.hero-visual__person {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-}
-
-.hero-float-card {
-    position: absolute;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.6rem 1rem;
-    background: #fff;
-    border-radius: 50px;
-    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.12);
-    animation: hero-float 4s ease-in-out infinite;
-}
-
-.hero-float-card--enroll {
-    top: 6%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    animation-name: hero-float-center;
-}
-
-.hero-float-card__avatars {
-    display: flex;
-    align-items: center;
-}
-
-.hero-float-card__avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    margin-left: -8px;
-
-    &:first-child {
-        margin-left: 0;
-    }
-
-    &--1 {
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    }
-
-    &--2 {
-        background: linear-gradient(135deg, #60a5fa, #2563eb);
-    }
-
-    &--3 {
-        background: linear-gradient(135deg, #f472b6, #ec4899);
-    }
-
-    &--plus {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #ff3b5c;
-        color: #fff;
-        font-size: 0.85rem;
-        font-weight: 700;
-    }
-}
-
-.hero-float-card__text {
-    font-size: 0.82rem;
-    color: #374151;
-    font-weight: 500;
-
-    strong {
-        color: #111827;
-        font-weight: 700;
-    }
-}
-
-.hero-brand-icon {
-    position: absolute;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
-    font-size: 1.15rem;
-    animation: hero-float 5s ease-in-out infinite;
-
-    &--google {
-        top: 38%;
-        left: -2%;
-        color: #4285f4;
-        animation-delay: 0.5s;
-    }
-
-    &--youtube {
-        top: 8%;
-        right: 8%;
-        color: #ff0000;
-        animation-delay: 1s;
-    }
-
-    &--meet {
-        bottom: 28%;
-        right: 0;
-        color: #00897b;
-        animation-delay: 1.5s;
-    }
-}
-
-.hero-books {
-    position: absolute;
-    bottom: 8%;
-    left: 12%;
-    z-index: 3;
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    animation: hero-float 4.5s ease-in-out infinite;
-    animation-delay: 0.8s;
-}
-
-.hero-books__book {
-    display: block;
-    border-radius: 3px 3px 2px 2px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-
-    &--1 {
-        width: 14px;
-        height: 38px;
-        background: #f5a623;
-        transform: rotate(-8deg);
-    }
-
-    &--2 {
-        width: 16px;
-        height: 44px;
-        background: #7dd3fc;
-        margin-bottom: 4px;
-    }
-
-    &--3 {
-        width: 14px;
-        height: 36px;
-        background: #2563eb;
-        transform: rotate(6deg);
-    }
-}
-
-@keyframes hero-float {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-8px);
-    }
-}
-
-@keyframes hero-float-center {
-    0%,
-    100% {
-        transform: translateX(-50%) translateY(0);
-    }
-    50% {
-        transform: translateX(-50%) translateY(-8px);
-    }
-}
-
-@media (max-width: 991px) {
-    .hero-bg--classic {
-        padding: 0 1.5rem 2rem;
-    }
-
-    .landing-hero--partners {
-        min-height: auto;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .hero-bg--cinematic {
-        min-height: 72svh;
-        padding: 4.5rem 0 7rem;
-    }
-
-    .hero-content--cinematic {
-        padding: 1rem 1rem 0.5rem;
-    }
-
-    .hero-cinematic-subtitle {
-        margin-bottom: 1.5rem;
-        padding-inline: 0.5rem;
-    }
-
-    .three_column_section {
-        position: relative;
-    }
-
-    .three_column_section__panel {
-        padding: 1.25rem 0 1.5rem;
-    }
-
-    .three_column_section__grid {
-        gap: 0.75rem;
-    }
-
-    .three_column_section__line {
-        width: 36px;
-        margin: 0.55rem auto 0.65rem;
-    }
-
-    .hero-partners-cell {
-        flex: 0 0 50vw;
-        min-width: 50vw;
-    }
-
-    .hero-partners-strip {
-        width: max-content;
-        min-width: 100vw;
-    }
-
-    .hero-columns {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .hero-columns__panel:nth-child(n + 4) {
-        display: none;
-    }
-
-    .hero-heading {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .hero-visual {
-        min-height: 360px;
-        max-width: 400px;
-    }
-
-    .hero-brand-icon--google {
-        left: 2%;
-    }
-}
-
-@media (max-width: 767px) {
-    .hero-bg--cinematic {
-        min-height: 68svh;
-        padding: 4rem 0 5.5rem;
-    }
-
-    .hero-heading--cinematic {
-        font-size: clamp(1.4rem, 6.5vw, 2rem);
-        padding-inline: 0.35rem;
-    }
-
-    .hero-cinematic-subtitle {
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 1.25rem;
-    }
-
-    .hero-cinematic-copy {
-        padding: 0.5rem 0;
-    }
-
-    .hero-cta-orange {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.95rem;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .hero-cta-ghost {
-        font-size: 0.88rem;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .hero-actions--center {
-        flex-direction: column;
-        gap: 0.75rem;
-        width: 100%;
-        max-width: 300px;
-        margin-inline: auto;
-    }
-
-    .hero-partners-cell {
-        flex: 0 0 55vw;
-        min-width: 55vw;
-    }
-
-    .hero-partners-cell img {
-        object-fit: contain;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.04);
-    }
-
-    .three_column_section__value {
-        font-size: clamp(1.35rem, 5vw, 1.85rem);
-    }
-
-    .three_column_section__label {
-        font-size: 0.78rem;
-        line-height: 1.25;
-    }
-
-    .three_column_section__line {
-        width: 28px;
-        margin: 0.45rem auto 0.55rem;
-    }
-}
-
-@media (max-width: 575px) {
-    .hero-bg--cinematic {
-        min-height: 62svh;
-        padding: 3.75rem 0 4.5rem;
-    }
-
-    .three_column_section__grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.35rem;
-    }
-
-    .three_column_section__item:not(:last-child) {
-        padding-bottom: 0;
-        border-bottom: none;
-    }
-
-    .three_column_section__panel {
-        padding: 1rem 0 1.15rem;
-    }
-
-    .three_column_section__value {
-        font-size: 1.25rem;
-    }
-
-    .three_column_section__label {
-        font-size: 0.68rem;
-    }
-
-    .hero-partners-cell {
-        flex: 0 0 62vw;
-        min-width: 62vw;
-    }
-
-    .hero-actions {
-        flex-direction: column;
-        align-items: stretch !important;
-    }
-
-    .hero-btn--primary,
-    .hero-btn--video,
-    .hero-cta-orange {
-        justify-content: center;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-    }
-
-    .hero-visual {
-        min-height: 300px;
-    }
-
-    .hero-brand-icon {
-        width: 38px;
-        height: 38px;
-        font-size: 1rem;
-    }
-}
-</style>
-
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const authStore = useAuthStore();
-
 const masterStore = useMasterStore();
-const programs = ref([]);
-const partners = ref([]);
-const collegePartnerCount = ref(0);
-const activeIndex = ref(0);
+const isLoggedIn = computed(() => !!authStore.authToken);
 
-const normalizeApiList = (payload) => {
-    if (Array.isArray(payload)) {
-        return payload;
-    }
-
-    if (payload && Array.isArray(payload.data)) {
-        return payload.data;
-    }
-
-    return [];
-};
-
-const isCompanyPartner = (item) => {
-    const type = String(item?.partner_type ?? item?.type ?? "")
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "_");
-
-    return type === "company";
-};
-
-const heroCompanyPartners = computed(() =>
-    partners.value.filter(isCompanyPartner)
-);
-
+const heroCompanyPartners = ref([]);
 const hasPartnerBg = computed(() => heroCompanyPartners.value.length > 0);
 
-const partnersScrollDuration = computed(() =>
-    Math.max(18, heroCompanyPartners.value.length * 5)
-);
+const heroPrimaryLabel = computed(() => masterStore?.masterData?.hero_primary_button_text || t("Start Your Tech Career"));
+const heroPrimaryLink = computed(() => masterStore?.masterData?.hero_primary_button_url || "/programs");
 
-const activeProgram = computed(() => programs.value[activeIndex.value] ?? null);
-const isLoggedIn = computed(() => Boolean(authStore.authToken));
+const statsBarRef = ref(null);
+const hasAnimated = ref(false);
 
-const heroPrimaryLink = computed(() => {
-    if (isLoggedIn.value) {
-        return "/courses";
-    }
+function parseStat(rawValue) {
+    const match = rawValue.match(/^([\d,]+)(.*)$/);
+    if (!match) return { number: 0, suffix: rawValue, displayValue: rawValue };
+    return { number: parseInt(match[1].replace(/,/g, ""), 10), suffix: match[2], displayValue: "0" + match[2] };
+}
 
-    return activeProgram.value?.cta_url || "/register";
-});
-
-const heroPrimaryLabel = computed(() => {
-    if (isLoggedIn.value) {
-        return t("Browse Courses");
-    }
-
-    if (hasPartnerBg.value) {
-        return activeProgram.value?.cta_label || t("Explore Programs");
-    }
-
-    return t("Get Started");
-});
-
-const heroImage = computed(
-    () => activeProgram.value?.image ?? masterStore?.masterData?.hero_thumbnail ?? "/assets/website/banner-hero.png"
-);
-
-const enrollCount = computed(() => {
-    const count = masterStore?.masterData?.total_enrollments;
-    if (!count) return "15k";
-    const num = parseInt(String(count).replace(/\D/g, ""), 10);
-    if (num >= 1000) return `${Math.floor(num / 1000)}k`;
-    return count;
-});
-
-const formatStatCount = (value, fallback = "10") => {
-    const num = parseInt(String(value ?? "").replace(/\D/g, ""), 10);
-    if (!num || Number.isNaN(num)) {
-        return `${fallback}+`;
-    }
-    if (num >= 1000) {
-        return `${Math.floor(num / 1000)}k+`;
-    }
-    return `${num}+`;
-};
-
-const heroStats = computed(() => [
-    {
-        value: formatStatCount(
-            masterStore?.masterData?.total_student ?? masterStore?.masterData?.total_enrollments,
-            "10"
-        ),
-        label: t("Students"),
-    },
-    {
-        value: formatStatCount(masterStore?.masterData?.total_instructors, "20"),
-        label: t("Instructors"),
-    },
-    {
-        value: formatStatCount(collegePartnerCount.value, "10"),
-        label: t("College Partners"),
-    },
+const statsData = reactive([
+    { ...parseStat("50+"), label: t("Students Placed"), isLive: false },
+    { ...parseStat("10+"), label: t("Expert Mentors"), isLive: false },
+    { ...parseStat("25+"), label: t("Industry Partners"), isLive: false },
+    { ...parseStat("100+"), label: t("Students Learning"), isLive: true },
 ]);
+
+const heroStats = computed(() => {
+    const provided = masterStore?.masterData?.hero_stats;
+    if (provided?.length) {
+        const merged = provided.slice(0, 3).map((s) => ({ ...parseStat(s.value), label: s.label, isLive: false }));
+        merged.push({ ...parseStat("100+"), label: t("Students Learning"), isLive: true });
+        return merged;
+    }
+    return statsData;
+});
+
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+function startAnimation() {
+    if (hasAnimated.value) return;
+    hasAnimated.value = true;
+    const stats = heroStats.value;
+    const duration = 2000;
+    let startTime = null;
+    function tick(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const eased = easeOutCubic(progress);
+        for (const stat of stats) stat.displayValue = Math.round(stat.number * eased).toLocaleString("en-IN") + stat.suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+let observer = null;
 
 onMounted(async () => {
     try {
-        const [programsRes, companyPartnersRes, collegesRes] = await Promise.all([
-            axios.get("/home/programs"),
-            axios.get("/home/company-partners"),
-            axios.get("/home/partner-colleges"),
-        ]);
+        const res = await axios.get("/home/company-partners", { headers: { Accept: "application/json" } });
+        heroCompanyPartners.value = res.data?.data?.company_partners ?? [];
+    } catch {}
 
-        programs.value = programsRes.data.data.programs ?? [];
-
-        partners.value = normalizeApiList(companyPartnersRes.data?.data?.logos)
-            .filter(isCompanyPartner)
-            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-        const colleges = normalizeApiList(collegesRes.data?.data?.colleges);
-        collegePartnerCount.value = colleges.length;
-    } catch (error) {
-        console.error("Error fetching landing hero data:", error);
+    if (statsBarRef.value) {
+        observer = new IntersectionObserver((entries) => {
+            for (const entry of entries) { if (entry.isIntersecting) { startAnimation(); observer.disconnect(); break; } }
+        }, { threshold: 0.3 });
+        observer.observe(statsBarRef.value);
     }
 });
+
+onUnmounted(() => { if (observer) observer.disconnect(); });
 </script>
+
+<style scoped>
+@keyframes hero-marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+}
+@keyframes ring-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes hero-stagger-in {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+/* Orb glow breathing — lightweight, only scales opacity */
+@keyframes hero-glow-pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); filter: blur(40px); }
+    50% { opacity: 0.9; transform: scale(1.05); filter: blur(50px); }
+}
+.hero-glow { animation: hero-glow-pulse 6s ease-in-out infinite; }
+/* Floating icons — smooth 3d bob */
+@keyframes hero-icon-bob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
+}
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-spin-slow-reverse { animation: ring-spin 25s linear infinite reverse; }
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+
+.hero-icon-float {
+    position: absolute;
+    animation: hero-icon-bob 4s ease-in-out infinite;
+}
+/* Particle drift */
+@keyframes particle-drift {
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    50% { transform: translate(6px, -10px); opacity: 0.6; }
+}
+/* Entrance animations (one-time) */
+.hero-stagger-1 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+.hero-stagger-2 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
+.hero-stagger-3 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+.hero-stagger-4 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+.hero-stagger-5 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards; }
+.hero-stagger-6 { opacity: 0; animation: hero-stagger-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards; }
+</style>

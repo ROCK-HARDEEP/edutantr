@@ -105,7 +105,6 @@
     background:
         linear-gradient(180deg, rgba(8, 15, 30, 0.72) 0%, rgba(8, 15, 30, 0.88) 45%, rgba(8, 15, 30, 0.94) 100%),
         radial-gradient(ellipse 80% 60% at 50% 0%, rgba(44, 171, 77, 0.22) 0%, transparent 65%);
-    backdrop-filter: blur(2px);
 }
 
 .partners-showcase__glow {
@@ -196,7 +195,6 @@
     box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.28),
         inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(14px);
     transition:
         transform 0.35s ease,
         box-shadow 0.35s ease,

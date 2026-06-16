@@ -15,14 +15,7 @@ const router = createRouter({
                 layout: defaultLayout,
             },
         },
-        {
-            path: "/courses",
-            name: "list",
-            component: () => import("./pages/List.vue"),
-            meta: {
-                layout: defaultLayout,
-            },
-        },
+
         {
             path: "/details/:id",
             name: "details",
@@ -251,6 +244,22 @@ const router = createRouter({
             path: "/campus-ambassador",
             name: "campus_ambassador",
             component: () => import("./pages/CampusAmbassador.vue"),
+            meta: {
+                layout: defaultLayout,
+            },
+        },
+        {
+            path: "/programs",
+            name: "programs",
+            component: () => import("./pages/Programs.vue"),
+            meta: {
+                layout: defaultLayout,
+            },
+        },
+        {
+            path: "/programs/:slug",
+            name: "program_detail",
+            component: () => import("./pages/ProgramDetail.vue"),
             meta: {
                 layout: defaultLayout,
             },

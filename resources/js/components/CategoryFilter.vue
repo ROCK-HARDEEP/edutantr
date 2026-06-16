@@ -31,10 +31,10 @@ function applyCatFilter(e, id) {
     // if (e.target.checked) {
     //     selectedCat.value.push(id);
     //     emit("categoryFilter", selectedCat.value);
-    //     router.push("/courses");
+    //     router.push("/programs");
     // } else {
     //     emit("categoryFilter", selectedCat.value);
-    //     router.push("/courses");
+    //     router.push("/programs");
     // }
     if (e.target.checked) {
         selectedCat.value.push(id);
@@ -43,7 +43,7 @@ function applyCatFilter(e, id) {
     }
 
     emit("categoryFilter", selectedCat.value);
-    router.push("/courses");
+    router.push("/programs");
 }
 
 // Fetch categories

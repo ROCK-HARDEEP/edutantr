@@ -1,34 +1,47 @@
 <template>
-    <div class="home-page">
+    <div class="home-page" style="overflow-x: clip;">
+        <!-- Hero -->
         <LandingHero />
 
-        <section class="home-section home-section--process">
+
+        <!-- How It Works -->
+        <section v-reveal.reveal-up class="py-16 md:py-20">
             <OurProcess />
         </section>
 
-        <LandingStatistics />
+        <!-- Placements + Statistics -->
+        <LandingStatistics v-reveal.reveal-up />
 
-        <section class="home-section home-section--courses">
-            <div class="container">
+        <!-- Popular Courses -->
+        <section v-reveal.reveal-up class="py-16 md:py-20 bg-gradient-to-br from-orange-50/50 via-blue-50/30 to-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <PopularCourses />
             </div>
         </section>
 
-        <section class="home-section home-section--mentors">
+        <!-- Career Tracks -->
+        <div v-reveal.reveal-scale id="career-tracks">
+            <CareerTracks />
+        </div>
+
+        <!-- Mentors -->
+        <section v-reveal.reveal-left class="py-0 bg-white">
             <MentorsSection />
         </section>
 
-        <section class="home-section home-section--industry">
+        <!-- Industry Partners -->
+        <section v-reveal.reveal-right class="py-0 bg-white">
             <IndustryPartnersSlider />
         </section>
 
-        <!-- Why Choose Us — hidden for now; set showWhyChooseUs to true to re-enable -->
-        <div v-if="showWhyChooseUs" class="home-section home-section--why">
+        <!-- Why Choose Us (hidden, set showWhyChooseUs=true to enable) -->
+        <section v-if="showWhyChooseUs" class="py-0 bg-white">
             <WhyChooseUs />
-        </div>
+        </section>
 
-        <section class="home-section home-section--feedback">
-            <div class="container">
+        <!-- Student Feedback -->
+        <section v-reveal.reveal-up class="py-16 md:py-20 bg-gradient-to-b from-primary-50/30 to-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <SectionHeader
                     :eyebrow="$t('Student Feedback')"
                     icon="bi bi-chat-quote-fill"
@@ -36,93 +49,29 @@
                 >
                     <template #title>
                         {{ $t('Hear from Our') }}
-                        <span class="accent">{{ $t('Students & Instructors') }}</span>
+                        <span class="gradient-text">{{ $t('Students & Instructors') }}</span>
                     </template>
                 </SectionHeader>
                 <Testimonials />
             </div>
         </section>
 
-        <LandingCTA />
+        <!-- CTA -->
+        <LandingCTA v-reveal.reveal-scale />
 
-        <section class="home-section home-section--faq">
-            <div class="container">
+        <!-- FAQ -->
+        <section v-reveal.reveal-up class="py-16 md:py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <FAQ />
             </div>
         </section>
 
+        <!-- Offer Modal -->
         <OfferModal />
+
+
     </div>
 </template>
-
-<style scoped>
-.home-page {
-    overflow-x: hidden;
-}
-
-.home-section {
-    padding: 4rem 0;
-}
-
-.home-section--courses {
-    background:
-        radial-gradient(ellipse 75% 55% at 8% 45%, rgba(255, 210, 190, 0.55) 0%, transparent 58%),
-        radial-gradient(ellipse 70% 50% at 92% 35%, rgba(186, 220, 255, 0.5) 0%, transparent 55%),
-        #f8fafc;
-    padding: 5rem 0;
-}
-
-.home-section--mentors {
-    padding: 0;
-    background: #fff;
-}
-
-.home-section--process {
-    padding: 0;
-    background: transparent;
-}
-
-.home-section--industry {
-    padding: 0;
-    background: #fff;
-}
-
-.home-section--why {
-    padding: 0;
-    background: #fff;
-}
-
-.home-section--feedback {
-    background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 100%);
-    position: relative;
-}
-
-.home-section--feedback::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url("/public/assets/website/pricing-bg.png") no-repeat center;
-    background-size: cover;
-    opacity: 0.2;
-    pointer-events: none;
-}
-
-.home-section--feedback .container {
-    position: relative;
-    z-index: 1;
-}
-
-.home-section--faq {
-    background: #fff;
-    padding-bottom: 2rem;
-}
-
-@media (max-width: 767px) {
-    .home-section {
-        padding: 2.5rem 0;
-    }
-}
-</style>
 
 <script setup>
 import { useMasterStore } from "@/stores/master";
@@ -139,7 +88,9 @@ import PopularCourses from "../components/PopularCourses.vue";
 import MentorsSection from "../components/landing/MentorsSection.vue";
 import OurProcess from "../components/landing/OurProcess.vue";
 import IndustryPartnersSlider from "../components/landing/IndustryPartnersSlider.vue";
+import CareerTracks from "../components/landing/CareerTracks.vue";
 import OfferModal from "../components/OfferModal.vue";
+
 
 const masterStore = useMasterStore();
 const localeStore = useLocaleStore();
@@ -155,7 +106,6 @@ onMounted(async () => {
         })
         .then((response) => {
             masterStore.setMasterData(response.data.data.master);
-
             if (localeStore.defaultLanguage !== masterStore.masterData.default_language) {
                 localeStore.setLang(masterStore.masterData.default_language);
                 localeStore.setDefaultLang(masterStore.masterData.default_language);

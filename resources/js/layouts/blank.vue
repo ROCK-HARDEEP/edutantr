@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="main flex-grow-1 d-flex flex-column justify-content-center">
+        <div class="main flex-grow-1 flex flex-col justify-center">
             <slot />
         </div>
     </div>

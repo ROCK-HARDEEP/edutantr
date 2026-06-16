@@ -1,152 +1,152 @@
 <template>
-    <section class="py-4" style="background: #F1F5F9; min-height: 70vh;">
-        <div class="container">
-            
-
-            <div class="row g-4">
-                <div class="col-lg-3">
-                    <div class="bg-white rounded-3 p-3 shadow-sm" style="position: sticky; top: 100px;">
-                        <h5 class="fw-bold mb-3">{{ $t('Filters') }}</h5>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted">{{ $t('Search') }}</label>
-                            <input v-model="filters.search" type="text" class="form-control" :placeholder="$t('Job title, company...')" @keyup.enter="fetchJobs(1)" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted">{{ $t('Category') }}</label>
-                            <select v-model="filters.category_id" class="form-select" @change="fetchJobs(1)">
-                                <option value="">{{ $t('All Categories') }}</option>
-                                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted">{{ $t('Job Type') }}</label>
-                            <select v-model="filters.job_type" class="form-select" @change="fetchJobs(1)">
-                                <option value="">{{ $t('All Types') }}</option>
-                                <option value="full_time">{{ $t('Full-Time') }}</option>
-                                <option value="internship">{{ $t('Internship') }}</option>
-                                <option value="part_time">{{ $t('Part-Time') }}</option>
-                                <option value="contract">{{ $t('Contract') }}</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-outline-danger btn-sm w-100" @click="resetFilters">{{ $t('Reset') }}</button>
-                    </div>
+    <div class="min-h-screen bg-slate-50">
+        <!-- Hero Section -->
+        <section class="relative pt-32 pb-24 bg-slate-900 overflow-hidden">
+            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 80% 0%, rgba(20,184,166,0.15) 0%, transparent 70%);"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm font-semibold tracking-wide mb-6">
+                    <i class="bi bi-briefcase-fill"></i> {{ $t("Join Our Network") }}
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight" style="font-family: 'Lexend', sans-serif;">
+                    {{ $t('Career Support &') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-500">{{ $t('Opportunities') }}</span>
+                </h1>
+                <p class="text-lg text-slate-300 max-w-3xl mx-auto font-light leading-relaxed mb-10">
+                    {{ $t('Edutantr was founded with a bold vision: to bridge the gap between ambitious talent and industry demands. We don\'t just train you; we launch you. Experience unparalleled career support designed to get you hired.') }}
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <router-link to="/programs" class="px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(20,184,166,0.5)] transition-all duration-300">
+                        {{ $t('Explore Courses') }}
+                    </router-link>
+                    <a href="#placement-process" class="px-8 py-4 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                        {{ $t('View Placement Process') }}
+                    </a>
                 </div>
+            </div>
+        </section>
 
-                <div class="col-lg-9">
-                    <div v-if="loading" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status"></div>
-                    </div>
-
-                    <div v-else-if="jobs.length === 0" class="bg-white rounded-3 p-5 text-center shadow-sm">
-                        <i class="bi bi-briefcase fs-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">{{ $t('No job openings available') }}</h5>
-                    </div>
-
-                    <div v-else class="d-flex flex-column gap-3">
-                        <div v-for="job in jobs" :key="job.id" class="bg-white rounded-3 p-4 shadow-sm job-card">
-                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-                                <div>
-                                    <h5 class="fw-bold mb-1">{{ job.title }}</h5>
-                                    <p class="text-muted mb-2">
-                                        <span v-if="job.company_name">{{ job.company_name }}</span>
-                                        <span v-if="job.location"> &bull; {{ job.location }}</span>
-                                    </p>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <span class="badge bg-primary-subtle text-primary">{{ job.category?.name }}</span>
-                                        <span class="badge bg-light text-dark">{{ job.job_type_label }}</span>
-                                        <span v-if="job.salary_range" class="badge bg-success-subtle text-success">{{ job.salary_range }}</span>
-                                    </div>
-                                </div>
-                                <router-link :to="{ name: 'career_detail', params: { id: job.id } }" class="btn btn-primary btn-sm rounded-pill px-4">
-                                    {{ $t('View & Apply') }}
-                                </router-link>
+        <!-- Stats / Highlights Row -->
+        <section class="relative z-20 -mt-12 mb-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="flex gap-6 items-start group">
+                            <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm border border-amber-100">
+                                <i class="bi bi-map-fill text-amber-500 text-2xl"></i>
                             </div>
-                            <p class="text-muted mt-3 mb-0 small">{{ truncate(job.description, 180) }}</p>
-                            <small v-if="job.application_deadline" class="text-danger d-block mt-2">
-                                <i class="bi bi-clock me-1"></i>{{ $t('Deadline') }}: {{ job.application_deadline }}
-                            </small>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 mb-2">{{ $t('Strategic Career Planning') }}</h4>
+                                <p class="text-slate-600 leading-relaxed">{{ $t('We provide personalized roadmaps, continuous portfolio reviews, and targeted skill development to ensure you are job-ready for top-tier companies from day one.') }}</p>
+                            </div>
                         </div>
-
-                        <nav v-if="pagination.last_page > 1" class="mt-3">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
-                                    <button class="page-link" @click="fetchJobs(pagination.current_page - 1)">{{ $t('Previous') }}</button>
-                                </li>
-                                <li v-for="page in pagination.last_page" :key="page" class="page-item" :class="{ active: page === pagination.current_page }">
-                                    <button class="page-link" @click="fetchJobs(page)">{{ page }}</button>
-                                </li>
-                                <li class="page-item" :class="{ disabled: pagination.current_page === pagination.last_page }">
-                                    <button class="page-link" @click="fetchJobs(pagination.current_page + 1)">{{ $t('Next') }}</button>
-                                </li>
-                            </ul>
-                        </nav>
+                        <div class="flex gap-6 items-start group">
+                            <div class="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm border border-teal-100">
+                                <i class="bi bi-graph-up-arrow text-teal-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 mb-2">{{ $t('Rapid Growth Opportunities') }}</h4>
+                                <p class="text-slate-600 leading-relaxed">{{ $t('Joining our network means exclusive access to fast-tracked career paths, hidden job markets, and direct referrals to our rapidly growing network of tech partners.') }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Career Path Section (Placement Process) -->
+        <section id="placement-process" class="py-16 md:py-24 bg-white border-y border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4" style="font-family: 'Lexend', sans-serif;">{{ $t('How We Guarantee Your Success') }}</h2>
+                    <p class="text-lg text-slate-500 max-w-2xl mx-auto">{{ $t('Our career support isn’t an afterthought—it is built into every step of your educational journey.') }}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                    <!-- Connecting line for desktop -->
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-slate-100 via-teal-200 to-slate-100 -translate-y-1/2 z-0"></div>
+
+                    <!-- Step 1 -->
+                    <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 shadow-lg hover:-translate-y-2 transition-all duration-300 relative z-10 group">
+                        <div class="absolute -top-6 left-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white font-bold flex items-center justify-center text-xl shadow-xl shadow-slate-900/20 group-hover:scale-110 transition-transform">1</div>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-6 mb-4">{{ $t('Skill Mastery') }}</h3>
+                        <p class="text-slate-600 leading-relaxed">{{ $t('Before talking to recruiters, we ensure you have undeniable skills. You will build complex, real-world projects that prove your capabilities to any hiring manager.') }}</p>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 shadow-lg hover:-translate-y-2 transition-all duration-300 relative z-10 group">
+                        <div class="absolute -top-6 left-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white font-bold flex items-center justify-center text-xl shadow-xl shadow-teal-500/30 group-hover:scale-110 transition-transform">2</div>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-6 mb-4">{{ $t('Interview Prep') }}</h3>
+                        <p class="text-slate-600 leading-relaxed">{{ $t('Participate in rigorous mock interviews with industry veterans. We refine your communication, technical answers, algorithm problem-solving, and salary negotiation tactics.') }}</p>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 shadow-lg hover:-translate-y-2 transition-all duration-300 relative z-10 group">
+                        <div class="absolute -top-6 left-8 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-white font-bold flex items-center justify-center text-xl shadow-xl shadow-orange-500/30 group-hover:scale-110 transition-transform">3</div>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-6 mb-4">{{ $t('Placement & Growth') }}</h3>
+                        <p class="text-slate-600 leading-relaxed">{{ $t('We don’t stop until you are hired. Even after your first placement, we remain your career partner, helping you navigate promotions, job changes, and leadership opportunities.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mentorship & Industry Connect -->
+        <section class="py-16 md:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 md:p-16 text-white relative overflow-hidden shadow-2xl">
+                    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500 rounded-full blur-[120px] opacity-20 pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+                    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-teal-300 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
+                                <i class="bi bi-link-45deg"></i> {{ $t('Network Effect') }}
+                            </span>
+                            <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight" style="font-family: 'Lexend', sans-serif;">{{ $t('Direct Industry Connections') }}</h2>
+                            <p class="text-lg text-slate-300 mb-8 font-light leading-relaxed">
+                                {{ $t('Your resume won’t get lost in a pile. Because we work directly with hiring managers and startup founders, our students get priority interviews. Our network becomes your network.') }}
+                            </p>
+                            <ul class="space-y-5">
+                                <li class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
+                                    <div class="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <span class="font-medium">{{ $t('Exclusive Hiring Drives & Job Fairs') }}</span>
+                                </li>
+                                <li class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
+                                    <div class="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <span class="font-medium">{{ $t('1-on-1 Mentorship from Tech Leads') }}</span>
+                                </li>
+                                <li class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
+                                    <div class="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <span class="font-medium">{{ $t('Resume & LinkedIn Profile Optimization') }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex justify-center lg:justify-end">
+                            <div class="relative w-full max-w-sm">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-teal-500 to-emerald-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
+                                <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl relative z-10 text-center">
+                                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-teal-400 to-emerald-600 rounded-full flex items-center justify-center text-white text-3xl shadow-xl mb-6">
+                                        <i class="bi bi-rocket-takeoff-fill"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-white mb-2">{{ $t('Ready to Launch?') }}</h3>
+                                    <p class="text-slate-300 mb-8 text-sm">{{ $t('Join thousands of successful graduates who started right here.') }}</p>
+                                    <router-link to="/programs" class="block w-full py-4 bg-white text-slate-900 hover:bg-slate-100 font-bold rounded-xl transition-colors shadow-lg">
+                                        {{ $t('View Programs') }}
+                                    </router-link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
-
-const loading = ref(true);
-const jobs = ref([]);
-const categories = ref([]);
-const filters = reactive({ search: '', category_id: '', job_type: '' });
-const pagination = reactive({ current_page: 1, last_page: 1, per_page: 12, total: 0 });
-
-function stripHtml(html) {
-    if (!html) return '';
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return (div.textContent || div.innerText || '').trim();
-}
-
-function truncate(text, len) {
-    const plain = stripHtml(text);
-    if (!plain) return '';
-    return plain.length > len ? plain.substring(0, len) + '...' : plain;
-}
-
-async function fetchCategories() {
-    const { data } = await axios.get('/job/categories');
-    categories.value = data.data.categories;
-}
-
-async function fetchJobs(page = 1) {
-    loading.value = true;
-    try {
-        const { data } = await axios.get('/job/list', {
-            params: { page, ...filters },
-        });
-        jobs.value = data.data.jobs;
-        Object.assign(pagination, data.data.pagination);
-    } finally {
-        loading.value = false;
-    }
-}
-
-function resetFilters() {
-    filters.search = '';
-    filters.category_id = '';
-    filters.job_type = '';
-    fetchJobs(1);
-}
-
-onMounted(async () => {
-    await fetchCategories();
-    await fetchJobs();
-});
 </script>
 
 <style scoped>
-.job-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 4px solid #306c3c;
-}
-.job-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
-}
 </style>

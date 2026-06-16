@@ -1,168 +1,123 @@
 <template>
-    <div class="container mb-5">
-        <article class="my-3">
-            <h1 class="text-center mb-5 text-uppercase">{{$t('FAQ')}}</h1>
-        </article>
-        <section class="row">
-            <section class="col-12 col-lg-6">
-                <span class="d-block text-primary fw-bold mb-2"
-                    >{{ $t('Find Your Answers') }}</span
-                >
-                <h3 class="fw-bold">{{ $t('Have any thought') }}?</h3>
-                <h3 class="fw-bold mb-4">{{ $t('Look here') }}.</h3>
-                <p class="col-9 mb-5">
-                    {{ $t('Completely plagiarize fully researched collaboration and idea-sharing for covalent') }}.
-                </p>
-                <router-link
-                    to="/page/faq"
-                    class="btn rounded-pill fw-bold read-more-btn"
-                    >{{ $t('Read More') }} <i class="bi bi-arrow-right ms-1"></i
-                ></router-link>
-            </section>
-            <section class="col-12 col-lg-6 mt-5 mt-lg-0">
-                <div
-                    class="accordion accordion-flush"
-                    id="accordionFlushExample"
-                >
-                    <div class="accordion-item p-2 mb-3">
-                        <h2 class="accordion-header" id="flush-headingOne">
-                            <button
-                                class="accordion-button fw-bold collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseOne"
-                                aria-expanded="false"
-                                aria-controls="flush-collapseOne"
-                            >
-                                {{ $t('How to delete my account') }}?
-                            </button>
-                        </h2>
-                        <div
-                            id="flush-collapseOne"
-                            class="accordion-collapse collapse"
-                            aria-labelledby="flush-headingOne"
-                            data-bs-parent="#accordionFlushExample"
-                        >
-                            <div class="accordion-body">
-                                To delete your account permanently,
-                             please contact our support team and request account deletion. Once verified,
-                              your account and all associated data will be removed from our system. Please note, this action is irreversible.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item p-2 mb-3">
-                        <h2 class="accordion-header" id="flush-headingTwo">
-                            <button
-                                class="accordion-button fw-bold collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseTwo"
-                                aria-expanded="false"
-                                aria-controls="flush-collapseTwo"
-                            >
-                                {{ $t('How can I deactivate my account')}}?
-                            </button>
-                        </h2>
-                        <div
-                            id="flush-collapseTwo"
-                            class="accordion-collapse collapse"
-                            aria-labelledby="flush-headingTwo"
-                            data-bs-parent="#accordionFlushExample"
-                        >
-                            <div class="accordion-body">
-                                You can temporarily deactivate your account from the Account Settings page.
-                             Simply navigate to the Privacy & Security section and click on <code>“Deactivate Account.”</code>
-                             While your account is deactivated, your profile will be hidden, and you won’t receive any notifications.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item p-2 mb-3">
-                        <h2 class="accordion-header" id="flush-headingThree">
-                            <button
-                                class="accordion-button fw-bold collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseThree"
-                                aria-expanded="false"
-                                aria-controls="flush-collapseThree"
-                            >
-                            {{ $t('How can I reactive my account') }}?
-                            </button>
-                        </h2>
-                        <div
-                            id="flush-collapseThree"
-                            class="accordion-collapse collapse"
-                            aria-labelledby="flush-headingThree"
-                            data-bs-parent="#accordionFlushExample"
-                        >
-                            <div class="accordion-body">
-                                To reactivate your account, simply log back in using your email and password.
-                             Your account will be restored with all your previous data and progress intact.
-                              If you face any issues, feel free to reach out to our support team.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item p-2 mb-3">
-                        <h2 class="accordion-header" id="flush-headingFour">
-                            <button
-                                class="accordion-button fw-bold collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#flush-collapseFour"
-                                aria-expanded="false"
-                                aria-controls="flush-collapseFour"
-                            >
-                                {{ $t('What happens to my course progress if I deactivate my account') }}?
-                            </button>
-                        </h2>
-                        <div
-                            id="flush-collapseFour"
-                            class="accordion-collapse collapse"
-                            aria-labelledby="flush-headingFour"
-                            data-bs-parent="#accordionFlushExample"
-                        >
-                            <div class="accordion-body">
-                                Your course progress is safely stored even if you deactivate your account.
-                                Once you reactivate or log back in, you can continue from where you left off without losing any data.
-                            </div>
-                        </div>
-                    </div>
+    <section class="py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+                <!-- Left Content -->
+                <div class="lg:sticky lg:top-28">
+                    <span class="inline-block text-primary-600 font-bold mb-3 tracking-wide uppercase text-sm">
+                        {{ $t('Find Your Answers') }}
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy mb-2">
+                        {{ $t('Have any thought') }}?
+                    </h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy mb-5">
+                        {{ $t('Look here') }}.
+                    </h2>
+                    <p class="text-slate leading-relaxed mb-8 max-w-md">
+                        {{ $t('Completely plagiarize fully researched collaboration and idea-sharing for covalent') }}.
+                    </p>
+                    <router-link
+                        to="/page/faq"
+                        class="inline-flex items-center gap-2 px-6 py-3 border-2 border-primary-600 text-primary-700 font-semibold rounded-full hover:bg-primary-600 hover:text-white transition-all duration-300"
+                    >
+                        {{ $t('Read More') }}
+                        <i class="pi pi-arrow-right"></i>
+                    </router-link>
                 </div>
-            </section>
-        </section>
-    </div>
+
+                <!-- Right Accordion -->
+                <div>
+                    <Accordion :multiple="true" :activeIndex="[0]">
+                        <AccordionPanel v-for="(faq, index) in faqs" :key="index" :value="index">
+                            <AccordionHeader class="font-semibold">
+                                {{ faq.question }}
+                            </AccordionHeader>
+                            <AccordionContent>
+                                <p class="text-slate leading-relaxed m-0">
+                                    {{ faq.answer }}
+                                </p>
+                            </AccordionContent>
+                        </AccordionPanel>
+                    </Accordion>
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+
+// PrimeVue Accordion components
+import Accordion from "primevue/accordion";
+import AccordionPanel from "primevue/accordionpanel";
+import AccordionHeader from "primevue/accordionheader";
+import AccordionContent from "primevue/accordioncontent";
+
+const { t } = useI18n();
+
+const faqs = [
+    {
+        question: t("How to delete my account") + "?",
+        answer: "To delete your account permanently, please contact our support team and request account deletion. Once verified, your account and all associated data will be removed from our system. Please note, this action is irreversible.",
+    },
+    {
+        question: t("How can I deactivate my account") + "?",
+        answer: 'You can temporarily deactivate your account from the Account Settings page. Simply navigate to the Privacy & Security section and click on "Deactivate Account." While your account is deactivated, your profile will be hidden, and you won\'t receive any notifications.',
+    },
+    {
+        question: t("How can I reactive my account") + "?",
+        answer: "To reactivate your account, simply log back in using your email and password. Your account will be restored with all your previous data and progress intact. If you face any issues, feel free to reach out to our support team.",
+    },
+    {
+        question: t("What happens to my course progress if I deactivate my account") + "?",
+        answer: "Your course progress is safely stored even if you deactivate your account. Once you reactivate or log back in, you can continue from where you left off without losing any data.",
+    },
+];
 
 onMounted(() => {
     window.scrollTo(0, 0);
 });
 </script>
 
-<style scoped lang="scss">
-.ratio {
-    margin: 100px 0;
-}
-.read-more-btn {
-    border: 1px solid #777;
-
-    &:hover {
-        background-color: #306c3c;
-        color: #fff;
-    }
+<style scoped>
+:deep(.p-accordion) {
+    background: transparent;
 }
 
-.accordion-item {
-    box-shadow: 0px 12px 48px 0px #0000000d;
-    border: 0;
-    border-radius: 10px;
+:deep(.p-accordion-panel) {
+    border: none;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    background: white;
+    border: 1px solid #e2e8f0;
+}
 
-    .accordion-header {
-        .accordion-button {
-            border-radius: 10px !important;
-        }
-    }
+:deep(.p-accordion-header) {
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--color-navy);
+}
+
+:deep(.p-accordion-content) {
+    padding: 0 1.25rem 1.25rem;
+    background: transparent;
+    border: none;
+}
+
+:deep(.p-accordion-header-link) {
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+}
+
+:deep(.p-accordion-header-link:hover) {
+    background: var(--color-primary-50);
+}
+
+:deep(.p-accordion-toggle-icon) {
+    color: var(--color-primary-600);
 }
 </style>

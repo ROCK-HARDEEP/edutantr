@@ -1,79 +1,55 @@
 <template>
-    <!-- About 1 - Bootstrap Brain Component -->
-    <section class="py-3 py-md-5">
-        <div class="container">
-            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
-                <div class="col-12 col-lg-6 col-xl-5">
+    <div>
+    <!-- Hero / Why Choose Section -->
+    <section class="py-16 md:py-24 bg-gradient-to-br from-slate-50 via-white to-green-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                <!-- Image -->
+                <div class="animate-slide-left">
                     <img
-                        class="img-fluid rounded"
+                        class="w-full rounded-2xl shadow-xl"
                         loading="lazy"
                         src="/public/assets/website/teacher.jpg"
-                        alt="About 1"
+                        alt="About Edutantr"
                     />
                 </div>
-                <div class="col-12 col-lg-6 col-xl-7">
-                    <div class="row justify-content-xl-center">
-                        <div class="col-12 col-xl-11">
-                            <h2 class="mb-3 fw-bold">{{ $t('Why Choose') }} <span class="text-primary fs-1">Edutandr</span>?</h2>
-                            <p class="lead fs-4 text-secondary mb-3">
-                                {{ $t('We help people to build incredible brands and superior products. Our perspective is to furnish outstanding captivating services') }}.
-                            </p>
-                            <p class="mb-5">
-                                {{ $t('We are a fast-growing company, but we have never lost sight of our core values. We believe in collaboration, innovation, and customer satisfaction. We are always looking for new ways to improve our products and services') }}.
-                            </p>
-                            <div class="row gy-4 gy-md-0 gx-xxl-5X">
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex p-3 rounded-3 hover-highlight shadow-sm">
-                                        <div class="me-4 text-primary">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="32"
-                                                height="32"
-                                                fill="#C0C0C0"
-                                                class="bi bi-gear-fill"
-                                                viewBox="0 0 16 16"
-                                            >
-                                                <path
-                                                    d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h2 class="h4 mb-3">
-                                                {{ $t('Trusted Company') }}
-                                            </h2>
-                                            <p class="text-secondary mb-0">
-                                                {{ $t('We are crafting a digital method that subsists life across all mediums') }}.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex p-3 rounded-3 hover-highlight shadow-sm">
-                                        <div class="me-4 text-primary">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="32"
-                                                height="32"
-                                                fill="#FFC107"
-                                                class="bi bi-fire"
-                                                viewBox="0 0 16 16"
-                                            >
-                                                <path
-                                                    d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h2 class="h4 mb-3">
-                                                {{ $t('eLearning Platform') }}
-                                            </h2>
-                                            <p class="text-secondary mb-0">
-                                                {{ $t('We believe in innovation by merging primary with elaborate ideas') }}.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+
+                <!-- Content -->
+                <div class="animate-slide-right">
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy mb-4">
+                        {{ $t('Why Choose') }}
+                        <span class="text-primary-600">Edutandr</span>?
+                    </h2>
+                    <p class="text-lg text-slate mb-4 leading-relaxed">
+                        {{ $t('We help people to build incredible brands and superior products. Our perspective is to furnish outstanding captivating services') }}.
+                    </p>
+                    <p class="text-slate mb-8 leading-relaxed">
+                        {{ $t('We are a fast-growing company, but we have never lost sight of our core values. We believe in collaboration, innovation, and customer satisfaction. We are always looking for new ways to improve our products and services') }}.
+                    </p>
+
+                    <!-- Feature Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-slate-100 card-hover">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-primary-50 flex items-center justify-center">
+                                <i class="pi pi-cog text-primary-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-navy mb-1">{{ $t('Trusted Company') }}</h3>
+                                <p class="text-sm text-slate leading-relaxed">
+                                    {{ $t('We are crafting a digital method that subsists life across all mediums') }}.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-slate-100 card-hover">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center">
+                                <i class="pi pi-bolt text-amber-500 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-navy mb-1">{{ $t('eLearning Platform') }}</h3>
+                                <p class="text-sm text-slate leading-relaxed">
+                                    {{ $t('We believe in innovation by merging primary with elaborate ideas') }}.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -82,220 +58,149 @@
         </div>
     </section>
 
-    <section class="py-5">
-        <div class="container">
-            <div class="row gy-5 align-items-center">
+    <!-- Our Story & Mission Section -->
+    <section class="py-16 md:py-24 relative overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+        <!-- Floating decorative elements -->
+        <div class="absolute top-20 right-10 w-72 h-72 bg-primary-500 rounded-full blur-[100px] opacity-20 pointer-events-none"></div>
+        <div class="absolute bottom-10 left-10 w-96 h-96 bg-indigo-500 rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/public/assets/website/pattern.png')] opacity-5 pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 text-primary-300 text-sm font-bold tracking-widest uppercase mb-4 backdrop-blur-sm border border-white/10 shadow-sm">
+                    {{ $t('Our Story') }}
+                </span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    {{ $t('A Fresh Start with a Bold Vision') }}
+                </h2>
+                <p class="text-lg text-slate-300 leading-relaxed font-light">
+                    {{ $t('Edutantr launched just a few weeks ago, but our mission has been years in the making. We recognized a massive gap between traditional education and actual industry needs. We decided to do our absolute best to close it by creating a platform that prioritizes real-world skills, practical execution, and direct career placement.') }}
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="group bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-rose-400 to-rose-600 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(225,29,72,0.3)] group-hover:scale-110 transition-transform">
+                        <i class="pi pi-heart-fill text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">{{ $t('How We Do Our Best') }}</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed font-light">
+                        {{ $t('We pour our energy into curating industry-relevant curriculum. Our team works tirelessly day and night to partner with top-tier mentors and ensure that every piece of content we produce directly translates to employable skills.') }}
+                    </p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="group bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(245,158,11,0.3)] group-hover:scale-110 transition-transform">
+                        <i class="pi pi-star-fill text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">{{ $t('Creating Opportunities') }}</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed font-light">
+                        {{ $t('We don’t just teach; we connect. By networking with leading tech companies and startups, Edutantr creates exclusive internship and full-time placement opportunities tailored specifically for our graduates.') }}
+                    </p>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="group bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.3)] group-hover:scale-110 transition-transform">
+                        <i class="pi pi-rocket text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">{{ $t('Future Focused') }}</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed font-light">
+                        {{ $t('Although we are young, our trajectory is clear. We are building an ecosystem where students, professionals, and companies thrive together. Your growth is the metric by which we measure our own success.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Success Section -->
+    <section class="py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <!-- Left Content -->
-                <div class="col-12 col-lg-6">
-                    <h2 class="fw-bold mb-3 fs-1">{{ $t('Our Success') }}</h2>
-                    <p class="lead text-muted mb-4">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-navy mb-4">{{ $t('Our Success') }}</h2>
+                    <p class="text-lg text-slate mb-6 leading-relaxed">
                         {{ $t('With years of experience and deep industry knowledge, we have a proven track record of success and are constantly pushing ourselves to stay ahead of the curve') }}.
                     </p>
 
-                    <!-- Highlights -->
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <div class="card border-0 shadow-sm h-100 p-3 d-flex flex-row align-items-center">
-                                <i class="bi bi-lightning-charge-fill text-primary fs-2 me-3"></i>
-                                <p class="fs-6 fw-semibold mb-0">
-                                    {{ $t('Our evolution procedure is super intelligent') }}.
-                                </p>
-                            </div>
+                    <!-- Highlight Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                            <i class="pi pi-bolt text-primary-600 text-xl flex-shrink-0"></i>
+                            <p class="text-sm font-semibold text-navy">
+                                {{ $t('Our evolution procedure is super intelligent') }}.
+                            </p>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="card border-0 shadow-sm h-100 p-3 d-flex flex-row align-items-center">
-                                <i class="bi bi-award-fill text-success fs-2 me-3"></i>
-                                <p class="fs-6 fw-semibold mb-0">
-                                    {{ $t('We deliver services beyond expectations') }}.
-                                </p>
-                            </div>
+                        <div class="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                            <i class="pi pi-star text-amber-500 text-xl flex-shrink-0"></i>
+                            <p class="text-sm font-semibold text-navy">
+                                {{ $t('We deliver services beyond expectations') }}.
+                            </p>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="card border-0 shadow-sm h-100 p-3 d-flex flex-row align-items-center">
-                                <i class="bi bi-people-fill text-warning fs-2 me-3"></i>
-                                <p class="fs-6 fw-semibold mb-0">
-                                    {{ $t("Let's hire us to reach your objectives") }}.
-                                </p>
-                            </div>
+                        <div class="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                            <i class="pi pi-users text-primary-500 text-xl flex-shrink-0"></i>
+                            <p class="text-sm font-semibold text-navy">
+                                {{ $t("Let's hire us to reach your objectives") }}.
+                            </p>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="card border-0 shadow-sm h-100 p-3 d-flex flex-row align-items-center">
-                                <i class="bi bi-bar-chart-fill text-danger fs-2 me-3"></i>
-                                <p class="fs-6 fw-semibold mb-0">
-                                    {{ $t('Proven track record of business growth') }}.
-                                </p>
-                            </div>
+                        <div class="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                            <i class="pi pi-chart-bar text-red-500 text-xl flex-shrink-0"></i>
+                            <p class="text-sm font-semibold text-navy">
+                                {{ $t('Proven track record of business growth') }}.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Button -->
-                    <div class="mt-4">
+                    <!-- CTA Button -->
+                    <div class="mt-6">
                         <router-link
                             to="/contact-us"
-                            class="btn btn-primary btn-lg px-4 rounded-pill shadow-sm"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-semibold rounded-full shadow-lg hover:bg-primary-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
                         >
-                            <i class="bi bi-chat-dots-fill me-2"></i> {{ $t('Connect Now') }}
+                            <i class="pi pi-comments"></i>
+                            {{ $t('Connect Now') }}
                         </router-link>
                     </div>
                 </div>
 
                 <!-- Right Image -->
-                <div class="col-12 col-lg-6 text-center">
+                <div class="text-center animate-slide-right">
                     <img
-                        class="img-fluid rounded shadow"
+                        class="w-full rounded-2xl shadow-xl"
                         loading="lazy"
                         src="/public/assets/website/about2.jpg"
-                        alt="About 2"
+                        alt="Our Success"
                     />
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-5 text-dark">
-        <div class="container">
-            <!-- Highlight Stats -->
-            <div class="row g-4 text-center mb-5">
-                <div class="col-6 col-md-3">
-                    <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-highlight">
-                        <i class="bi bi-people-fill fs-1 text-primary mb-2"></i>
-                        <h3 class="fw-bold mb-1">{{ masterStore.masterData.total_student }}+</h3>
-                        <p class="text-muted mb-0">{{ $t('Active Users') }}</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-highlight">
-                        <i class="bi bi-journal-bookmark-fill fs-1 text-success mb-2"></i>
-                        <h3 class="fw-bold mb-1">{{ masterStore.masterData.total_courses }}+</h3>
-                        <p class="text-muted mb-0">{{ $t('Available Courses') }}</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-highlight">
-                        <i class="bi bi-mortarboard-fill fs-1 text-warning mb-2"></i>
-                        <h3 class="fw-bold mb-1">{{ masterStore.masterData.total_instructors }}+</h3>
-                        <p class="text-muted mb-0">{{ $t('Honorable Mentors') }}</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-highlight">
-                        <i class="bi bi-award-fill fs-1 text-warning mb-2"></i>
-                        <h3 class="fw-bold mb-1">{{ masterStore.masterData.total_enrollments }}+</h3>
-                        <p class="text-muted mb-0">{{ $t('Enrolled Students') }}</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Heading -->
-            <!-- <div class="row justify-content-center text-center mb-5">
-                <div class="col-lg-8">
-                    <h2 class="fw-bold display-5 text-dark">{{ $t('Our Best Learning Offers') }}</h2>
-                    <p class="text-muted lead">
-                        {{ $t('Discover the most effective way to learn with expert mentors, real-world projects, and certifications that matter.') }}
-                    </p>
-                    <hr class="w-25 mx-auto border-3 border-primary" />
-                </div>
-            </div>-->
 
-            <!-- Feature Cards -->
-            <!--<div class="row g-4">
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-primary fs-1 mb-3">
-                            <i class="bi bi-easel2-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Expert Instructors') }}</h5>
-                        <p class="text-muted">{{ $t('Learn directly from industry experts with years of real-world experience.') }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-success fs-1 mb-3">
-                            <i class="bi bi-award-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Certification Programs') }}</h5>
-                        <p class="text-muted">{{ $t('Earn globally recognized certificates to showcase your expertise.') }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-warning fs-1 mb-3">
-                            <i class="bi bi-code-slash"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Hands-on Projects') }}</h5>
-                        <p class="text-muted">{{ $t('Build real projects and gain practical experience while learning.') }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-danger fs-1 mb-3">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Community & Mentorship') }}</h5>
-                        <p class="text-muted">{{ $t('Join a supportive community and get personalized mentorship.') }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-info fs-1 mb-3">
-                            <i class="bi bi-clock-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Flexible Learning') }}</h5>
-                        <p class="text-muted">{{ $t('Study at your own pace, anytime and anywhere, without restrictions.') }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4 hover-highlight">
-                        <div class="text-purple fs-1 mb-3">
-                            <i class="bi bi-shield-check"></i>
-                        </div>
-                        <h5 class="fw-bold">{{ $t('Verified Certificates') }}</h5>
-                        <p class="text-muted">{{ $t('Earn officially recognized credentials to boost your career profile.') }}</p>
-                    </div>
-                </div>
-            </div>-->
-        </div>
-    </section>
-
-    <section class="py-5 bg-light" v-if="masterStore.masterData?.google_map && masterStore.masterData?.google_map != ''">
-        <div class="container">
-            <h2 class="fw-bold text-center mb-4">{{ $t('Find Us on Google Maps') }}</h2>
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-10">
-                    <div class="ratio ratio-16x9 shadow rounded">
-                        <div v-html="masterStore.masterData?.google_map" class="ratio ratio-16x9"></div>
-                    </div>
+    <!-- Google Map Section -->
+    <section
+        v-if="masterStore.masterData?.google_map && masterStore.masterData?.google_map != ''"
+        class="py-16 md:py-24 bg-slate-50"
+    >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-navy text-center mb-10">
+                {{ $t('Find Us on Google Maps') }}
+            </h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl border border-slate-200">
+                    <div v-html="masterStore.masterData?.google_map" class="w-full h-full"></div>
                 </div>
             </div>
         </div>
     </section>
-
+    </div>
 </template>
 
-<style scoped>
-    .bg-gradient {
-        background: linear-gradient(135deg, #f0f9ff, #e0f7fa, #fdfbfb);
-    }
-    .hover-highlight {
-        transition: 0.3s ease-in-out;
-    }
-    .hover-highlight:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.15) !important;
-    }
-    .text-purple {
-        color: #6f42c1;
-    }
-</style>
-
 <script setup>
-import {useMasterStore} from "@/stores/master";
+import { useMasterStore } from "@/stores/master";
 const masterStore = useMasterStore();
-
 </script>

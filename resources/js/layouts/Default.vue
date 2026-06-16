@@ -1,34 +1,74 @@
 <template>
-    <div class="wrapper" @contextmenu="handleContextMenu">
-        <header class="site-header" :class="{ 'site-header--home': isHomePage }">
-            <Header />
+    <div class="min-h-screen flex flex-col bg-white">
+        <!-- Header -->
+        <header
+            class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-slate-100"
+            :class="isScrolled ? 'shadow-lg' : ''"
+        >
+            <Header
+                :is-scrolled="isScrolled"
+                :is-home-overlay="false"
+            />
         </header>
+
+        <!-- Main Content -->
         <main
-            class="flex-grow-1 d-flex flex-column site-main"
-            :class="{ 'site-main--home': isHomePage }"
+            class="flex-grow"
+            :class="isHomePage ? 'pt-0' : 'pt-[72px]'"
         >
             <!-- WhatsApp Support -->
-            <div v-if="masterStore?.masterData?.whatsapp_support_number != ''"
-                class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 99;">
-                <!-- Message Bubble -->
-                <a v-if="masterStore?.masterData?.whatsapp_support_title"
-                    :href="masterStore?.masterData?.whatsapp_support_number" target="_blank"
-                    class="bg-light-primary text-primary px-3 py-2 rounded-2 shadow-sm mb-2 text-decoration-none position-absolute"
-                    style="bottom: 60px; right: 0; white-space: nowrap; font-size: 14px;">
+            <div
+                v-if="masterStore?.masterData?.whatsapp_support_number"
+                class="fixed bottom-6 right-6 z-[99] flex flex-col items-end gap-3"
+            >
+                <a
+                    v-if="masterStore?.masterData?.whatsapp_support_title"
+                    :href="masterStore?.masterData?.whatsapp_support_number"
+                    target="_blank"
+                    class="bg-white text-slate-700 px-4 py-2 rounded-xl shadow-lg text-sm font-medium whitespace-nowrap hover:bg-primary-50 transition-colors"
+                >
                     {{ masterStore?.masterData?.whatsapp_support_title }} 💬
-                    <span class="bubble-arrow"></span>
                 </a>
-
-                <!-- WhatsApp Button -->
-                <a :href="masterStore?.masterData?.whatsapp_support_number" target="_blank"
-                    class="d-flex align-items-center justify-content-center rounded-circle bg-white border border-2 border-success shadow-sm"
-                    style="width: 50px; height: 50px; cursor: pointer;">
-                    <img src="/public/whatsapp/support.svg" alt="Logo" style="width: 22px; height: 22px;">
+                <a
+                    :href="masterStore?.masterData?.whatsapp_support_number + '?text=Hi%2C%20I%27m%20interested%20in%20your%20courses.%20Can%20you%20help%20me%20get%20started%3F'"
+                    target="_blank"
+                    class="w-14 h-14 rounded-full bg-white border-2 border-green-500 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+                >
+                    <img
+                        src="/public/whatsapp/support.svg"
+                        alt="WhatsApp"
+                        class="w-6 h-6"
+                    />
                 </a>
             </div>
-            <!-- WhatsApp Support -->
+
+            <!-- Floating Enroll CTA -->
+            <transition name="slide-right">
+                <div
+                    v-if="showFloatingCTA && !floatingCTADismissed"
+                    class="fixed bottom-[88px] right-6 z-[90] flex items-center"
+                >
+                    <a
+                        href="/programs"
+                        class="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white pl-5 pr-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold text-sm md:text-base"
+                    >
+                        <span class="hidden sm:inline">Enroll Now</span>
+                        <span class="sm:hidden text-lg">🎓</span>
+                        <i class="bi bi-arrow-right text-base"></i>
+                    </a>
+                    <button
+                        @click="floatingCTADismissed = true"
+                        class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-700 text-white text-xs flex items-center justify-center hover:bg-slate-900 transition-colors shadow"
+                    >
+                        <i class="bi bi-x text-xs"></i>
+                    </button>
+                </div>
+            </transition>
+
             <slot />
         </main>
+
+        <!-- Footer -->
         <Footer />
     </div>
 </template>
@@ -36,61 +76,47 @@
 <script setup>
 import { useMasterStore } from "@/stores/master";
 import { useRoute } from "vue-router";
-import { computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 
 const masterStore = useMasterStore();
 const route = useRoute();
+const isScrolled = ref(false);
+const showFloatingCTA = ref(false);
+const floatingCTADismissed = ref(false);
 
 const isHomePage = computed(() => route.path === "/");
 
-const handleContextMenu = (event) => {
-    if (route.path.startsWith("/play")) {
-        event.preventDefault();
-    }
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 20;
 };
+
+const handleFloatingCTA = () => {
+    showFloatingCTA.value = window.scrollY > 600;
+};
+
+onMounted(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    window.addEventListener("scroll", handleFloatingCTA, { passive: true });
+});
+
+onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+    window.removeEventListener("scroll", handleFloatingCTA);
+});
+
 </script>
 
 <style scoped>
-.wrapper {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-    justify-content: space-between;
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition: transform 0.4s ease, opacity 0.4s ease;
 }
-
-.site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1040;
-    padding: 0 13px 13px 13px;
-    border-radius: 9px;
-}
-
-.site-header--home {
-    background: transparent;
-}
-
-.site-main {
-    padding-top: 66px;
-}
-
-.site-main--home {
-    padding-top: 0;
-}
-
-.bubble-arrow {
-    position: absolute;
-    bottom: -8px;
-    right: 15px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid #e8f0ea;
-    /* same as bg-dark */
+.slide-right-enter-from,
+.slide-right-leave-to {
+    transform: translateX(120%);
+    opacity: 0;
 }
 </style>

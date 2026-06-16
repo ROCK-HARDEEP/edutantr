@@ -35,7 +35,7 @@ function applyInstFilter(e, id) {
     }
 
     emit("instructorFilter", selectedInst.value);
-    router.push("/courses");
+    router.push("/programs");
 }
 
 // Fetch instructors

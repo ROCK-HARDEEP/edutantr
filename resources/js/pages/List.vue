@@ -1,110 +1,173 @@
 <template>
-    <section class="py-4" style="background: #F1F5F9;">
-        <section class="container">
-            <h1 v-if="search" class="fw-bold text-center mb-4">
-                <span class="text-muted">{{ $t('Search') }} -</span> {{ search }}
+    <section class="bg-slate-50 min-h-screen py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Search result heading -->
+            <h1
+                v-if="search"
+                class="text-2xl sm:text-3xl font-bold text-center mb-6 text-slate-800"
+            >
+                <span class="text-slate-400">{{ $t('Search') }} -</span>
+                {{ search }}
             </h1>
 
-            <section class="courses-toolbar rounded-2 bg-white mb-4">
-                <div class="row align-items-center p-3 pb-0">
-                    <div class="col-12 col-lg-5 text-center mb-3 mb-lg-0 text-lg-start">
-                        <span v-if="loading" class="courses-count courses-count--loading">
-                            <span class="courses-count-dot"></span>
+            <!-- Toolbar -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm mb-6 overflow-hidden">
+                <!-- Top row: count + search -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 pb-0 sm:pb-0">
+                    <!-- Course count -->
+                    <div class="text-center sm:text-left">
+                        <span
+                            v-if="loading"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-slate-500"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                             {{ $t('Loading courses...') }}
                         </span>
-                        <span v-else class="courses-count-label">
-                            {{ $t('Showing') }} {{ courses.length }} {{ $t('of') }}
-                            {{ totalItems }} {{ $t('courses') }}
+                        <span v-else class="text-sm font-medium text-slate-500">
+                            {{ $t('Showing') }}
+                            <span class="text-slate-800">{{ courses.length }}</span>
+                            {{ $t('of') }}
+                            <span class="text-slate-800">{{ totalItems }}</span>
+                            {{ $t('courses') }}
                         </span>
                     </div>
 
-                    <div class="col-12 col-lg-7">
-                        <form @submit.prevent="performSearch" class="input-group border rounded-pill" role="search">
+                    <!-- Search form -->
+                    <form
+                        @submit.prevent="performSearch"
+                        class="w-full sm:w-auto sm:min-w-[320px]"
+                        role="search"
+                    >
+                        <div class="relative flex items-center">
                             <input
                                 v-model="searchInputQuery"
-                                class="form-control border-0 rounded-pill search-input"
                                 type="search"
                                 :placeholder="$t('Search Course')"
                                 @input="searchInputQuery === '' ? clearSearch() : null"
+                                class="w-full rounded-full border border-slate-200 bg-slate-50 pl-5 pr-14 py-2.5 text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all"
                             />
-                            <button type="submit" class="btn btn-primary d-flex rounded-pill px-4">
-                                <img :src="'/assets/images/website/search.svg'" alt="Search" />
+                            <button
+                                type="submit"
+                                class="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="m21 21-4.3-4.3" />
+                                </svg>
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div v-if="categories.length" class="category-tabs-wrap px-3 pb-3">
-                    <div class="category-tabs">
+                <!-- Category tabs -->
+                <div
+                    v-if="categories.length"
+                    class="border-t border-slate-100 px-4 sm:px-5 pt-3 pb-3"
+                >
+                    <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                        <!-- All tab -->
                         <button
                             type="button"
-                            :class="['category-tab', !category_id ? 'category-tab--active' : '']"
+                            :class="[
+                                'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all duration-200 shrink-0',
+                                !category_id
+                                    ? 'bg-gradient-to-r from-green-600 to-green-500 border-transparent text-white shadow-md shadow-green-500/25'
+                                    : 'bg-white border-slate-200 text-slate-500 hover:border-green-200 hover:bg-green-50 hover:text-green-700'
+                            ]"
                             @click="selectCategory(null)"
                         >
-                            <i v-if="!category_id" class="bi bi-check-lg category-tab__check" aria-hidden="true"></i>
-                            <i v-else class="bi bi-grid-3x3-gap-fill category-tab__icon" aria-hidden="true"></i>
+                            <svg v-if="category_id" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+                            </svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" :class="category_id ? 'text-white' : 'text-slate-400'" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+                            </svg>
                             {{ $t('All') }}
                         </button>
+
+                        <!-- Category tabs -->
                         <button
                             v-for="category in categories"
                             :key="category.id"
                             type="button"
-                            :class="['category-tab', String(category.id) === String(category_id) ? 'category-tab--active' : '']"
+                            :class="[
+                                'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all duration-200 shrink-0',
+                                String(category.id) === String(category_id)
+                                    ? 'bg-gradient-to-r from-green-600 to-green-500 border-transparent text-white shadow-md shadow-green-500/25'
+                                    : 'bg-white border-slate-200 text-slate-500 hover:border-green-200 hover:bg-green-50 hover:text-green-700'
+                            ]"
                             @click="selectCategory(category.id)"
                         >
-                            <i
-                                v-if="String(category.id) === String(category_id)"
-                                class="bi bi-check-lg category-tab__check"
-                                aria-hidden="true"
-                            ></i>
+                            <svg v-if="String(category.id) === String(category_id)" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                            </svg>
                             <img
                                 v-else-if="category.image"
                                 :src="category.image"
                                 :alt="category.title"
-                                class="category-tab__img"
+                                class="w-[18px] h-[18px] object-contain rounded"
                             />
-                            <i v-else class="bi bi-bookmark-fill category-tab__icon" aria-hidden="true"></i>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+                            </svg>
                             {{ category.title }}
                         </button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <div v-if="loading" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <div v-for="n in 8" :key="n" class="mb-4">
-                    <div class="course-skeleton card border-0 h-100 overflow-hidden">
-                        <div class="course-skeleton__thumb"></div>
-                        <div class="card-body">
-                            <div class="course-skeleton__line course-skeleton__line--sm"></div>
-                            <div class="course-skeleton__line course-skeleton__line--md"></div>
-                            <div class="course-skeleton__line course-skeleton__line--lg"></div>
-                            <div class="d-flex justify-content-between mt-3">
-                                <div class="course-skeleton__line course-skeleton__line--price"></div>
-                                <div class="course-skeleton__line course-skeleton__line--btn"></div>
-                            </div>
+            <!-- Loading skeleton grid -->
+            <div
+                v-if="loading"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+                <div v-for="n in 8" :key="n" class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="h-44 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse bg-[length:200%_100%]"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="h-3 bg-slate-200 rounded-full w-2/5 animate-pulse"></div>
+                        <div class="h-4 bg-slate-200 rounded-full w-3/4 animate-pulse"></div>
+                        <div class="h-4 bg-slate-200 rounded-full w-full animate-pulse"></div>
+                        <div class="flex justify-between items-center pt-2">
+                            <div class="h-3 bg-slate-200 rounded-full w-1/4 animate-pulse"></div>
+                            <div class="h-8 bg-slate-200 rounded-full w-1/5 animate-pulse"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-else-if="courses.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <div v-for="course in courses" :key="course.id" class="mb-4">
+            <!-- Course cards grid -->
+            <div
+                v-else-if="courses.length > 0"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+                <div v-for="course in courses" :key="course.id">
                     <CourseCard :course="course" />
                 </div>
             </div>
 
-            <div v-else class="courses-empty text-center my-5 py-5">
-                <div class="courses-empty__icon">
-                    <i class="bi bi-journal-x"></i>
+            <!-- Empty state -->
+            <div
+                v-else
+                class="text-center my-12 py-12"
+            >
+                <div class="inline-flex items-center justify-center w-20 h-20 mb-5 rounded-full bg-gradient-to-br from-green-100 to-green-50 text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                    </svg>
                 </div>
-                <h3 class="fw-bold mb-2">{{ $t('No courses found') }}</h3>
-                <p class="text-muted mb-4">{{ $t('Try adjusting your filters or search for something else.') }}</p>
-                <button type="button" class="btn btn-primary rounded-pill px-4" @click="applyReset">
+                <h3 class="text-xl font-bold text-slate-800 mb-2">{{ $t('No courses found') }}</h3>
+                <p class="text-slate-400 mb-6">{{ $t('Try adjusting your filters or search for something else.') }}</p>
+                <button
+                    type="button"
+                    class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-full transition-colors shadow-md shadow-green-600/20"
+                    @click="applyReset"
+                >
                     {{ $t('Clear Filters') }}
                 </button>
             </div>
 
-            <div v-if="!loading && courses.length > 0" class="text-center my-4">
+            <!-- Pagination -->
+            <div v-if="!loading && courses.length > 0" class="text-center my-6">
                 <VueAwesomePaginate
                     v-model="currentPage"
                     :total-items="totalItems"
@@ -113,7 +176,7 @@
                     @click="onClickHandler"
                 />
             </div>
-        </section>
+        </div>
     </section>
 </template>
 
@@ -134,6 +197,27 @@ const category_id = ref(route.query.category_id);
 const searchInputQuery = ref("");
 
 const categories = ref([]);
+
+const fallbackCourses = [
+    { id: 1, title: "Full Stack Web Development", category: "Technology", thumbnail: "", price: "15000", regular_price: "25000", average_rating: "4.8", review_count: "120", chapter_count: 24, total_duration: 720, instructor: { id: 1, name: "Rajesh Kumar", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["React", "Node.js", "MongoDB", "AWS"] },
+    { id: 2, title: "Artificial Intelligence with Machine Learning", category: "Technology", thumbnail: "", price: "18000", regular_price: "30000", average_rating: "4.9", review_count: "95", chapter_count: 28, total_duration: 840, instructor: { id: 2, name: "Priya Venkatesh", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["Python", "TensorFlow", "PyTorch"] },
+    { id: 3, title: "Data Science", category: "Data & Analytics", thumbnail: "", price: "12000", regular_price: "20000", average_rating: "4.7", review_count: "88", chapter_count: 20, total_duration: 600, instructor: { id: 3, name: "Arun Prasad", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Python", "SQL", "Power BI"] },
+    { id: 4, title: "DevOps", category: "Technology", thumbnail: "", price: "14000", regular_price: "22000", average_rating: "4.6", review_count: "65", chapter_count: 22, total_duration: 660, instructor: { id: 1, name: "Rajesh Kumar", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["Docker", "Kubernetes", "Jenkins"] },
+    { id: 5, title: "Software Testing", category: "Technology", thumbnail: "", price: "10000", regular_price: "18000", average_rating: "4.5", review_count: "55", chapter_count: 18, total_duration: 540, instructor: { id: 4, name: "Deepa Lakshmi", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Selenium", "JIRA", "TestNG"] },
+    { id: 6, title: "Python with Power BI", category: "Data & Analytics", thumbnail: "", price: "11000", regular_price: "19000", average_rating: "4.7", review_count: "72", chapter_count: 20, total_duration: 600, instructor: { id: 2, name: "Priya Venkatesh", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Python", "Power BI", "Pandas"] },
+    { id: 7, title: "Application Development", category: "Technology", thumbnail: "", price: "15000", regular_price: "25000", average_rating: "4.6", review_count: "48", chapter_count: 24, total_duration: 720, instructor: { id: 1, name: "Rajesh Kumar", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["React Native", "Flutter", "Firebase"] },
+    { id: 8, title: "Data Analytics / Business Analytics", category: "Data & Analytics", thumbnail: "", price: "10000", regular_price: "18000", average_rating: "4.5", review_count: "42", chapter_count: 18, total_duration: 540, instructor: { id: 2, name: "Priya Venkatesh", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Excel", "SQL", "Power BI"] },
+    { id: 9, title: "Cyber Security", category: "Technology", thumbnail: "", price: "16000", regular_price: "28000", average_rating: "4.8", review_count: "58", chapter_count: 26, total_duration: 780, instructor: { id: 3, name: "Arun Prasad", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["Ethical Hacking", "Network Security", "SIEM"] },
+    { id: 10, title: "Embedded Systems", category: "Hardware", thumbnail: "", price: "12000", regular_price: "20000", average_rating: "4.4", review_count: "35", chapter_count: 20, total_duration: 600, instructor: { id: 3, name: "Arun Prasad", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["C", "C++", "Arduino"] },
+    { id: 11, title: "VLSI", category: "Hardware", thumbnail: "", price: "14000", regular_price: "24000", average_rating: "4.5", review_count: "30", chapter_count: 24, total_duration: 720, instructor: { id: 3, name: "Arun Prasad", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Advanced", tech_stacks: ["Verilog", "VHDL", "Cadence"] },
+    { id: 12, title: "Digital Marketing", category: "Business", thumbnail: "", price: "8000", regular_price: "15000", average_rating: "4.6", review_count: "65", chapter_count: 16, total_duration: 480, instructor: { id: 4, name: "Deepa Lakshmi", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["SEO", "Google Ads", "Social Media"] },
+    { id: 13, title: "Business Growth Specialist", category: "Business", thumbnail: "", price: "12000", regular_price: "20000", average_rating: "4.8", review_count: "40", chapter_count: 18, total_duration: 540, instructor: { id: 1, name: "Rajesh Kumar", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Strategy", "Sales", "Marketing"] },
+    { id: 14, title: "Human Resource Management", category: "Business", thumbnail: "", price: "8000", regular_price: "14000", average_rating: "4.4", review_count: "28", chapter_count: 16, total_duration: 480, instructor: { id: 4, name: "Deepa Lakshmi", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["HRIS", "Recruitment", "Payroll"] },
+    { id: 15, title: "Cloud Computing", category: "Technology", thumbnail: "", price: "16000", regular_price: "28000", average_rating: "4.8", review_count: "52", chapter_count: 26, total_duration: 780, instructor: { id: 3, name: "Arun Prasad", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Intermediate", tech_stacks: ["AWS", "Azure", "GCP"] },
+    { id: 16, title: "UI/UX", category: "Technology", thumbnail: "", price: "10000", regular_price: "18000", average_rating: "4.7", review_count: "45", chapter_count: 18, total_duration: 540, instructor: { id: 4, name: "Deepa Lakshmi", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Figma", "Adobe XD", "Prototyping"] },
+    { id: 17, title: "Finance & Tally", category: "Business", thumbnail: "", price: "7000", regular_price: "12000", average_rating: "4.3", review_count: "32", chapter_count: 14, total_duration: 420, instructor: { id: 2, name: "Priya Venkatesh", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["Tally", "GST", "Income Tax"] },
+    { id: 18, title: "Medical Coding", category: "Technology", thumbnail: "", price: "9000", regular_price: "16000", average_rating: "4.5", review_count: "38", chapter_count: 16, total_duration: 480, instructor: { id: 4, name: "Deepa Lakshmi", profile_picture: "" }, is_free: false, is_enrolled: false, difficulty_level: "Beginner", tech_stacks: ["ICD-10", "CPT", "HIPAA"] },
+];
 
 const courses = ref([]);
 const loading = ref(true);
@@ -251,6 +335,11 @@ async function fetchCourses(pageNumber = 1) {
         courses.value = res.data.data.courses ?? [];
         totalItems.value = res.data.data.total_courses ?? 0;
         currentPage.value = pageNumber;
+        // If API returns empty, show fallback programs
+        if (courses.value.length === 0 && !search.value && !category_id.value) {
+            courses.value = fallbackCourses;
+            totalItems.value = fallbackCourses.length;
+        }
     } catch (error) {
         console.error("Error fetching courses:", error);
         courses.value = [];
@@ -267,184 +356,13 @@ const performSearch = () => {
 };
 </script>
 
-<style lang="scss">
-.courses-toolbar {
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+<style scoped>
+/* Thin scrollbar for category tabs */
+.scrollbar-thin::-webkit-scrollbar {
+    height: 4px;
 }
-
-.courses-count-label {
-    font-weight: 500;
-    color: #475569;
-    white-space: nowrap;
-}
-
-.category-tabs-wrap {
-    border-top: 1px solid #f1f5f9;
-    padding-top: 0.85rem !important;
-    margin-top: 0.75rem;
-}
-
-.category-tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.15rem;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 999px;
-    }
-}
-
-.category-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    color: #475569;
-    font-size: 0.82rem;
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-
-    &:hover:not(.category-tab--active) {
-        border-color: #bbf7d0;
-        background: #f0fdf4;
-        color: #15803d;
-    }
-}
-
-.category-tab--active {
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-}
-
-.category-tab__check {
-    font-size: 0.9rem;
-}
-
-.category-tab__icon {
-    font-size: 0.85rem;
-    color: #94a3b8;
-}
-
-.category-tab--active .category-tab__icon {
-    color: #fff;
-}
-
-.category-tab__img {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.courses-count--loading {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #64748b;
-    font-weight: 500;
-}
-
-.courses-count-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22c55e;
-    animation: courses-pulse 1s ease-in-out infinite;
-}
-
-@keyframes courses-pulse {
-    0%,
-    100% {
-        opacity: 0.4;
-        transform: scale(0.85);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.course-skeleton {
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
-    background: #fff;
-}
-
-.course-skeleton__thumb {
-    height: 180px;
-    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-    background-size: 200% 100%;
-    animation: courses-shimmer 1.4s ease-in-out infinite;
-}
-
-.course-skeleton__line {
-    height: 12px;
-    border-radius: 6px;
-    margin-bottom: 0.65rem;
-    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-    background-size: 200% 100%;
-    animation: courses-shimmer 1.4s ease-in-out infinite;
-
-    &--sm {
-        width: 45%;
-    }
-
-    &--md {
-        width: 70%;
-    }
-
-    &--lg {
-        width: 90%;
-        height: 16px;
-    }
-
-    &--price {
-        width: 35%;
-        margin-bottom: 0;
-    }
-
-    &--btn {
-        width: 28%;
-        margin-bottom: 0;
-    }
-}
-
-@keyframes courses-shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-.courses-empty__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1.25rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #dcfce7, #f0fdf4);
-    color: #16a34a;
-    font-size: 2rem;
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
 }
 </style>

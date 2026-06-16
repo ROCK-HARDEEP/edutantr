@@ -14,7 +14,7 @@
             <slot :item="item" :index="index" />
         </swiper-slide>
     </swiper>
-    <p v-else class="text-center text-muted py-4">{{ emptyText }}</p>
+    <p v-else class="text-center text-slate-400 py-4">{{ emptyText }}</p>
 </template>
 
 <style>

@@ -1,545 +1,339 @@
 <template>
-    <nav
-        class="navbar navbar-expand-lg navbar-modern"
-        :class="{
-            'navbar-modern--scrolled': isScrolled,
-            'navbar-modern--home': isHomeOverlay,
-        }"
-    >
-        <div class="container navbar-modern__inner">
-            <BrandLogo to="/" class="navbar-brand" :variant="isHomeOverlay ? 'light' : 'default'" />
-
-            <button
-                class="navbar-toggler navbar-toggler-modern"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarContent"
-                aria-label="Toggle navigation"
-            >
-                <span class="navbar-toggler-icon-modern">
-                    <i class="bi bi-list"></i>
-                </span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end align-items-center" id="navbarContent">
-                <ul class="navbar-nav navbar-nav-modern mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <router-link to="/" :class="['nav-link nav-pill', $route.path === '/' ? 'active' : '']">
-                            <i class="bi bi-house-door"></i>
-                            {{ $t('Home') }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link
-                            to="/courses"
-                            :class="['nav-link nav-pill', $route.path === '/courses' ? 'active' : '']"
-                        >
-                            <i class="bi bi-journal-bookmark"></i>
-                            {{ $t('Courses') }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link
-                            to="/careers"
-                            :class="['nav-link nav-pill', $route.path.startsWith('/careers') ? 'active' : '']"
-                        >
-                            <i class="bi bi-briefcase"></i>
-                            {{ $t('Careers') }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link
-                            to="/about-us"
-                            :class="['nav-link nav-pill', $route.path === '/about-us' ? 'active' : '']"
-                        >
-                            <i class="bi bi-info-circle"></i>
-                            {{ $t('About Us') }}
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link
-                            to="/contact-us"
-                            :class="['nav-link nav-pill', $route.path === '/contact-us' ? 'active' : '']"
-                        >
-                            <i class="bi bi-envelope"></i>
-                            {{ $t('Contact Us') }}
-                        </router-link>
-                    </li>
-                    <li
-                        v-if="!authStore.authToken"
-                        class="nav-item nav-item-login d-flex align-items-center ms-lg-2"
+    <nav class="w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-[72px]">
+                <!-- Brand Logo -->
+                <router-link to="/" class="flex-shrink-0">
+                    <img
+                        v-if="masterStore?.masterData?.logo"
+                        :src="isHomeOverlay ? masterStore.masterData.white_logo || masterStore.masterData.logo : masterStore.masterData.logo"
+                        :alt="masterStore?.masterData?.name"
+                        class="h-10 w-auto"
+                    />
+                    <span
+                        v-else
+                        class="text-xl font-bold"
+                        :class="isHomeOverlay ? 'text-white' : 'text-primary-700'"
                     >
-                        <router-link to="/login" class="login-btn">
-                            <i class="bi bi-box-arrow-in-right"></i>
+                        Edutantr
+                    </span>
+                </router-link>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center gap-1">
+                    <router-link
+                        v-for="item in navItems"
+                        :key="item.path"
+                        :to="item.path"
+                        class="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                        :class="getNavClass(item.path)"
+                    >
+                        <i :class="item.icon" class="text-sm"></i>
+                        {{ $t(item.label) }}
+                    </router-link>
+                </div>
+
+                <!-- Desktop Actions -->
+                <div class="hidden lg:flex items-center gap-3">
+                    <!-- Dark Mode Toggle -->
+                    <button
+                        @click="toggleDarkMode"
+                        class="p-2 rounded-full transition-all duration-200"
+                        :class="isHomeOverlay
+                            ? 'text-white/80 hover:text-white hover:bg-white/10'
+                            : 'text-slate-500 hover:text-primary-700 hover:bg-primary-50'"
+                        :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+                    >
+                        <i :class="isDark ? 'bi bi-sun-fill text-lg' : 'bi bi-moon-fill text-lg'"></i>
+                    </button>
+
+                    <template v-if="!authStore.authToken">
+                        <router-link
+                            to="/login"
+                            class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200"
+                            :class="isHomeOverlay
+                                ? 'text-white/90 hover:text-white hover:bg-white/10'
+                                : 'text-slate-600 hover:text-primary-700 hover:bg-primary-50'"
+                        >
                             {{ $t('Student Login') }}
                         </router-link>
-                    </li>
-                    <li
-                        v-if="authStore.authToken"
-                        class="nav-item nav-item-profile d-flex align-items-center justify-content-center ms-lg-2"
-                    >
-                        <div class="dropdown">
-                            <button
-                                class="profile-btn"
-                                type="button"
-                                id="profileDropdown"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
+                        <router-link
+                            to="/register"
+                            class="px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all duration-200 bg-gradient-to-r from-primary-700 to-primary-500 shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:-translate-y-0.5"
+                        >
+                            {{ $t('Get Started') }}
+                        </router-link>
+                    </template>
+
+                    <!-- Profile Dropdown -->
+                    <div v-else class="relative">
+                        <button
+                            @click="showProfile = !showProfile"
+                            class="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                        >
+                            <img
+                                :src="authStore.userData?.profile_picture"
+                                alt="Profile"
+                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                            />
+                        </button>
+                        <Transition
+                            enter-active-class="transition ease-out duration-200"
+                            enter-from-class="opacity-0 scale-95 translate-y-1"
+                            enter-to-class="opacity-100 scale-100 translate-y-0"
+                            leave-active-class="transition ease-in duration-150"
+                            leave-from-class="opacity-100 scale-100 translate-y-0"
+                            leave-to-class="opacity-0 scale-95 translate-y-1"
+                        >
+                            <div
+                                v-if="showProfile"
+                                class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50"
                             >
-                                <img :src="authStore.userData.profile_picture" alt="Profile" class="profile-btn__img" />
-                                <span class="profile-btn__ring"></span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end profile-dropdown shadow-lg" aria-labelledby="profileDropdown">
-                                <router-link to="/dashboard" class="dropdown-item">
-                                    <i class="bi bi-speedometer2 me-2"></i>
+                                <router-link
+                                    to="/dashboard"
+                                    class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                                    @click="showProfile = false"
+                                >
+                                    <i class="bi bi-speedometer2"></i>
                                     {{ $t('Dashboard') }}
                                 </router-link>
-                                <router-link to="/dashboard/profile" class="dropdown-item">
-                                    <i class="bi bi-person me-2"></i>
+                                <router-link
+                                    to="/dashboard/profile"
+                                    class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                                    @click="showProfile = false"
+                                >
+                                    <i class="bi bi-person"></i>
                                     {{ $t('Profile') }}
                                 </router-link>
-                                <router-link to="/dashboard/courses" class="dropdown-item">
-                                    <i class="bi bi-book me-2"></i>
+                                <router-link
+                                    to="/dashboard/courses"
+                                    class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                                    @click="showProfile = false"
+                                >
+                                    <i class="bi bi-book"></i>
                                     {{ $t('Courses') }}
                                 </router-link>
-                                <div class="dropdown-divider"></div>
-                                <button class="dropdown-item text-danger" @click="logout()">
-                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                <div class="border-t border-slate-100 my-1"></div>
+                                <button
+                                    @click="logout()"
+                                    class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full"
+                                >
+                                    <i class="bi bi-box-arrow-right"></i>
                                     {{ $t('Logout') }}
                                 </button>
                             </div>
-                        </div>
-                    </li>
-                </ul>
+                        </Transition>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button
+                    @click="mobileMenuOpen = !mobileMenuOpen"
+                    class="lg:hidden p-2 rounded-xl transition-colors"
+                    :class="isHomeOverlay
+                        ? 'text-white hover:bg-white/10'
+                        : 'text-slate-600 hover:bg-slate-100'"
+                >
+                    <i :class="mobileMenuOpen ? 'bi bi-x-lg text-xl' : 'bi bi-list text-2xl'"></i>
+                </button>
+
+                <!-- Mobile Dark Mode Toggle -->
+                <button
+                    @click="toggleDarkMode"
+                    class="lg:hidden p-2 rounded-xl transition-colors"
+                    :class="isHomeOverlay
+                        ? 'text-white/80 hover:bg-white/10'
+                        : 'text-slate-500 hover:bg-slate-100'"
+                    :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+                >
+                    <i :class="isDark ? 'bi bi-sun-fill text-lg' : 'bi bi-moon-fill text-lg'"></i>
+                </button>
             </div>
         </div>
-        <div class="navbar-accent" aria-hidden="true"></div>
+
+        <!-- Accent Bar -->
+        <div
+            class="h-[3px] bg-gradient-to-r from-primary-900 via-primary-400 to-primary-900 bg-[length:200%_100%] animate-[shimmer_5s_linear_infinite]"
+            :class="isHomeOverlay ? 'opacity-0' : 'opacity-80'"
+        ></div>
+
+        <!-- Mobile Menu -->
+        <Transition
+            enter-active-class="transition ease-out duration-300"
+            enter-from-class="opacity-0 -translate-y-4"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition ease-in duration-200"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-4"
+        >
+            <div
+                v-if="mobileMenuOpen"
+                class="lg:hidden absolute top-[75px] left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl z-40"
+            >
+                <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
+                    <router-link
+                        v-for="item in navItems"
+                        :key="item.path"
+                        :to="item.path"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
+                        :class="$route.path === item.path || $route.path.startsWith(item.path + '/')
+                            ? 'bg-primary-50 text-primary-700'
+                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <i :class="item.icon" class="text-lg w-5 text-center"></i>
+                        {{ $t(item.label) }}
+                    </router-link>
+
+                    <div class="border-t border-slate-100 my-3"></div>
+
+                    <template v-if="!authStore.authToken">
+                        <router-link
+                            to="/login"
+                            class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                            @click="mobileMenuOpen = false"
+                        >
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            {{ $t('Student Login') }}
+                        </router-link>
+                        <router-link
+                            to="/register"
+                            class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-primary-700 to-primary-500 shadow-lg"
+                            @click="mobileMenuOpen = false"
+                        >
+                            {{ $t('Get Started') }}
+                        </router-link>
+                    </template>
+
+                    <template v-else>
+                        <router-link
+                            to="/dashboard"
+                            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                            @click="mobileMenuOpen = false"
+                        >
+                            <i class="bi bi-speedometer2 text-lg w-5 text-center"></i>
+                            {{ $t('Dashboard') }}
+                        </router-link>
+                        <button
+                            @click="logout(); mobileMenuOpen = false"
+                            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors w-full"
+                        >
+                            <i class="bi bi-box-arrow-right text-lg w-5 text-center"></i>
+                            {{ $t('Logout') }}
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </Transition>
     </nav>
 </template>
 
-<style scoped lang="scss">
-.navbar-modern {
-    position: relative;
-    padding: 0;
-    width: 100%;
-    z-index: 1040;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(48, 108, 60, 0.12);
-    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
-    transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-}
-
-.navbar-modern--scrolled {
-    background: #ffffff;
-    box-shadow: 0 8px 32px rgba(48, 108, 60, 0.12);
-    border-bottom-color: rgba(48, 108, 60, 0.12);
-}
-
-.navbar-modern--home {
-    background: transparent;
-    border-bottom-color: transparent;
-    box-shadow: none;
-
-    .navbar-accent {
-        opacity: 0;
-    }
-
-    .nav-pill {
-        color: rgba(255, 255, 255, 0.88) !important;
-
-        i {
-            color: rgba(255, 255, 255, 0.72);
-        }
-
-        &:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-
-            i {
-                color: #fff;
-            }
-        }
-
-        &.active {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.25);
-            box-shadow: none;
-
-            i {
-                color: #fff;
-            }
-        }
-    }
-
-    .navbar-toggler-modern {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.25);
-
-        .navbar-toggler-icon-modern {
-            color: #fff;
-        }
-    }
-
-    .login-btn {
-        background: rgba(255, 255, 255, 0.14);
-        border-color: rgba(255, 255, 255, 0.28);
-        box-shadow: none;
-        backdrop-filter: blur(8px);
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.22);
-            box-shadow: none;
-        }
-    }
-}
-
-.navbar-modern__inner {
-    position: relative;
-    padding: 22px;
-}
-
-.navbar-accent {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #14532d, #22c55e, #4ade80, #22c55e, #14532d);
-    background-size: 200% 100%;
-    animation: navbar-shimmer 5s linear infinite;
-    opacity: 0.85;
-}
-
-@keyframes navbar-shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-@media (min-width: 992px) {
-    #navbarContent {
-        display: flex !important;
-        opacity: 1 !important;
-        transform: none !important;
-        visibility: visible !important;
-    }
-}
-
-.navbar-nav-modern {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.nav-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.95rem !important;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: #475569 !important;
-    border-radius: 50px;
-    border: 1px solid transparent;
-    transition: all 0.25s ease;
-    position: relative;
-
-    i {
-        font-size: 0.95rem;
-        color: #64748b;
-        transition: color 0.25s ease;
-    }
-
-    &::after {
-        display: none;
-    }
-
-    &:hover {
-        color: #14532d !important;
-        background: rgba(34, 197, 94, 0.08);
-        border-color: rgba(34, 197, 94, 0.15);
-        transform: translateY(-1px);
-
-        i {
-            color: #16a34a;
-        }
-    }
-
-    &.active {
-        color: #fff !important;
-        background: linear-gradient(135deg, #15803d, #22c55e);
-        border-color: transparent;
-        box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
-
-        i {
-            color: #fff;
-        }
-    }
-}
-
-.navbar-toggler-modern {
-    border: 1px solid rgba(48, 108, 60, 0.15);
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    padding: 0.4rem 0.65rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    transition: all 0.25s ease;
-
-    &:focus {
-        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
-    }
-
-    &:hover {
-        background: rgba(34, 197, 94, 0.08);
-        border-color: rgba(34, 197, 94, 0.3);
-    }
-}
-
-.navbar-toggler-icon-modern {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #15803d;
-    font-size: 1.35rem;
-    line-height: 1;
-}
-
-.login-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1.15rem;
-    font-size: 0.84rem;
-    font-weight: 700;
-    color: #fff !important;
-    text-decoration: none;
-    border-radius: 50px;
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    border: 1px solid transparent;
-    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
-    transition: all 0.25s ease;
-
-    i {
-        font-size: 0.95rem;
-    }
-
-    &:hover {
-        color: #fff !important;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
-        background: linear-gradient(135deg, #166534, #16a34a);
-    }
-}
-
-.profile-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.25s ease;
-
-    &:hover {
-        transform: scale(1.05);
-    }
-}
-
-.profile-btn__img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    position: relative;
-    z-index: 1;
-}
-
-.profile-btn__ring {
-    position: absolute;
-    padding: 2px;
-    z-index: 0;
-}
-
-.profile-dropdown {
-    border: none;
-    border-radius: 14px;
-    padding: 0.5rem;
-    margin-top: 0.5rem !important;
-    min-width: 200px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-
-    .dropdown-item {
-        border-radius: 10px;
-        padding: 0.55rem 0.85rem;
-        font-size: 0.88rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background: rgba(34, 197, 94, 0.1);
-            color: #15803d;
-        }
-    }
-}
-
-@media (max-width: 991.98px) {
-    .navbar-modern__inner {
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-
-    #navbarContent {
-        margin-top: 0.75rem;
-        padding: 1rem;
-        border-radius: 18px;
-        background: #ffffff;
-        border: 1px solid rgba(48, 108, 60, 0.1);
-        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
-    }
-
-    .navbar-modern--home #navbarContent {
-        background: rgba(0, 0, 0, 0.82);
-        border-color: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(16px);
-
-        .nav-pill {
-            color: rgba(255, 255, 255, 0.9) !important;
-
-            i {
-                color: rgba(255, 255, 255, 0.75);
-            }
-
-            &:hover,
-            &.active {
-                color: #fff !important;
-                background: rgba(255, 255, 255, 0.12);
-            }
-        }
-
-        .login-btn {
-            background: linear-gradient(135deg, #15803d, #22c55e);
-        }
-    }
-
-    #navbarContent.collapsing {
-        transition: height 0.3s ease;
-    }
-
-    #navbarContent.collapse:not(.show) {
-        display: none;
-    }
-
-    #navbarContent.collapse.show {
-        display: block;
-    }
-
-    .navbar-nav-modern {
-        gap: 0.35rem;
-        width: 100%;
-    }
-
-    .nav-item {
-        width: 100%;
-    }
-
-    .nav-pill {
-        width: 100%;
-        justify-content: flex-start;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.92rem;
-        border-radius: 12px;
-
-        &.active {
-            box-shadow: 0 4px 14px rgba(34, 197, 94, 0.25);
-        }
-    }
-
-    .nav-item-login,
-    .nav-item-profile {
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid rgba(48, 108, 60, 0.1);
-    }
-
-    .login-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.92rem;
-        border-radius: 12px;
-    }
-}
-</style>
-
 <script setup>
-import BrandLogo from "@/components/BrandLogo.vue";
 import { useAuthStore } from "@/stores/auth";
-import Swal from "sweetalert2";
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useMasterStore } from "@/stores/master";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import Swal from "sweetalert2";
+
+const props = defineProps({
+    isScrolled: { type: Boolean, default: false },
+    isHomeOverlay: { type: Boolean, default: false },
+});
 
 const router = useRouter();
-const route = useRoute();
 const authStore = useAuthStore();
-const isLoggedIn = ref(false);
-const isScrolled = ref(false);
+const masterStore = useMasterStore();
 const { t } = useI18n();
 
-const isHomePage = computed(() => route.path === "/");
-const isHomeOverlay = computed(() => isHomePage.value && !isScrolled.value);
+const mobileMenuOpen = ref(false);
+const showProfile = ref(false);
 
-const handleScroll = () => {
-    isScrolled.value = window.scrollY > 0;
+// Dark mode
+const isDark = ref(false);
+
+const toggleDarkMode = () => {
+    isDark.value = !isDark.value;
+    applyDarkMode();
+    localStorage.setItem("edutantr-dark-mode", isDark.value);
+};
+
+const applyDarkMode = () => {
+    if (isDark.value) {
+        document.documentElement.classList.add("dark-mode");
+    } else {
+        document.documentElement.classList.remove("dark-mode");
+    }
+};
+
+const navItems = [
+    { path: "/", label: "Home", icon: "bi bi-house-door" },
+    { path: "/programs", label: "Courses", icon: "bi bi-journal-bookmark" },
+    { path: "/careers", label: "Careers", icon: "bi bi-briefcase" },
+    { path: "/about-us", label: "About Us", icon: "bi bi-info-circle" },
+    { path: "/contact-us", label: "Contact Us", icon: "bi bi-envelope" },
+];
+
+const getNavClass = (path) => {
+    const isActive =
+        path === "/"
+            ? router.currentRoute.value.path === "/"
+            : router.currentRoute.value.path.startsWith(path);
+
+    if (props.isHomeOverlay) {
+        return isActive
+            ? "bg-white/18 text-white border border-white/25 shadow-sm"
+            : "text-white/85 hover:text-white hover:bg-white/12 border border-transparent";
+    }
+
+    return isActive
+        ? "bg-gradient-to-r from-primary-700 to-primary-500 text-white shadow-lg shadow-primary-500/30"
+        : "text-slate-600 hover:text-primary-700 hover:bg-primary-50/80 border border-transparent";
+};
+
+const logout = () => {
+    Swal.fire({
+        title: t("Are you sure?"),
+        text: t("You will be logged out of your account"),
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#15803d",
+        cancelButtonColor: "#64748b",
+        confirmButtonText: t("Yes, logout"),
+    }).then((result) => {
+        if (result.isConfirmed) {
+            authStore.logout();
+            router.push("/");
+        }
+    });
+};
+
+// Close dropdown on outside click
+const handleClickOutside = (e) => {
+    if (showProfile.value && !e.target.closest(".relative")) {
+        showProfile.value = false;
+    }
 };
 
 onMounted(() => {
-    window.addEventListener("scroll", handleScroll);
-    if (authStore.authToken) {
-        isLoggedIn.value = true;
+    // Initialize dark mode from localStorage
+    const savedDark = localStorage.getItem("edutantr-dark-mode");
+    if (savedDark === "true") {
+        isDark.value = true;
+        applyDarkMode();
+    } else if (savedDark === null) {
+        // Check system preference
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (prefersDark) {
+            isDark.value = true;
+            applyDarkMode();
+        }
     }
+
+    document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
-    window.removeEventListener("scroll", handleScroll);
+    document.removeEventListener("click", handleClickOutside);
 });
-
-function logout() {
-    Swal.fire({
-        title: t("Are you sure?"),
-        text: t("Do you want to log out?"),
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#306c3c",
-        cancelButtonColor: "#d33",
-        confirmButtonText: t("Yes, log out!"),
-        cancelButtonText: t("No"),
-    }).then((result) => {
-        if (result.isConfirmed) {
-            authStore.clearAuthData();
-
-            Swal.fire({
-                title: t("Logged Out!"),
-                text: t("Log out successful."),
-                showConfirmButton: false,
-                icon: "success",
-                timer: 1500,
-            });
-        }
-        router.push("/");
-    });
-}
 </script>

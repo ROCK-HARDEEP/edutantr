@@ -15,7 +15,7 @@
             <router-link
                 v-for="category in featuredCategories"
                 :key="category.id"
-                :to="'/courses?category_id=' + category.id"
+                :to="'/programs?category_id=' + category.id"
                 class="category-card text-decoration-none"
             >
                 <span class="category-card__icon">

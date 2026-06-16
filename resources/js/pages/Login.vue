@@ -1,190 +1,125 @@
 <template>
-    <section class="login-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-lg-5 py-5 my-auto mx-md-auto">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div v-if="masterStore?.masterData?.mode == 'local'" class="version-badge">v{{
-                            masterStore?.masterData?.version }}
+    <section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 relative overflow-hidden">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-green-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-600/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="w-full max-w-md px-4 py-8 relative z-10">
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 border border-white/20 overflow-hidden relative">
+                <!-- Version badge -->
+                <div v-if="masterStore?.masterData?.mode == 'local'"
+                    class="absolute top-0 right-0 bg-green-800 text-white text-sm font-bold px-5 py-1.5 rounded-bl-xl rounded-tr-xl shadow-md">
+                    v{{ masterStore?.masterData?.version }}
+                </div>
+
+                <!-- Logo -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-5 flex justify-center">
+                    <BrandLogo to="/" centered size="lg" />
+                </div>
+
+                <!-- Form area -->
+                <div class="px-6 sm:px-8 py-6">
+                    <!-- Back to home -->
+                    <router-link to="/"
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-800 mb-4 transition-colors">
+                        <FontAwesomeIcon :icon="faArrowLeft" class="text-xs" />
+                        {{ $t('Go to Home Page') }}
+                    </router-link>
+
+                    <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ $t('Login') }}</h2>
+                    <p class="text-sm text-gray-500 mb-6">{{ $t('Boost your skill always and forever') }}.</p>
+
+                    <form @submit.prevent="loginUser" class="space-y-4">
+                        <!-- Email -->
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('Email Address') }}</label>
+                            <InputText
+                                id="login-email"
+                                type="email"
+                                v-model="email"
+                                :placeholder="$t('Email Address')"
+                                class="w-full"
+                                :class="{ 'p-invalid': errors.email }"
+                            />
+                            <small v-if="errors.email" class="text-red-500 font-semibold mt-1 block">{{ errors.email[0] }}</small>
                         </div>
-                        <div v-if="masterStore?.masterData?.mode == 'local'" class="powerBy">Powered by
-                            RazinSoft &copy;{{ new Date().getFullYear() }}
+
+                        <!-- Password -->
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1.5">{{ $t('Password') }}</label>
+                            <Password
+                                id="login-password"
+                                v-model="password"
+                                :placeholder="$t('Password')"
+                                :feedback="false"
+                                toggleMask
+                                class="w-full"
+                                inputClass="w-full"
+                                :class="{ 'p-invalid': errors.password }"
+                            />
+                            <small v-if="errors.password" class="text-red-500 font-semibold mt-1 block">{{ errors.password[0] }}</small>
                         </div>
-                        <div class="card-body" :class="masterStore?.masterData?.mode == 'local' ? 'pb-5' : 'pb-0'">
-                            <div class="logo-img mb-2">
-                                <BrandLogo to="/" centered size="lg" />
-                            </div>
-                            <div class="d-flex p-2 p-md-4">
-                                <div class="my-auto w-100">
-                                    <router-link to="/" class="btn btn-outline-primary btn-sm rounded-pill home-btn mb-3">
-                                        <FontAwesomeIcon :icon="faArrowLeft" class="me-1" />
-                                        {{ $t('Go to Home Page') }}
-                                    </router-link>
-                                    <h3 class="fw-bold mb-3">{{ $t('Login') }}</h3>
-                                    <span class="text-muted">{{ $t('Boost your skill always and forever') }}.</span>
 
-                                    <form class="my-4" @submit.prevent="loginUser">
-                                        <div class="mb-4">
-                                            <input type="email" v-model="email" class="form-control"
-                                                :placeholder="$t('Email Address')" />
-                                            <p v-if="errors.email" class="text-danger fw-bold mt-2">
-                                                {{ errors.email[0] }}
-                                            </p>
-                                        </div>
-                                        <div class="mb-3 position-relative">
-                                            <input :type="showPassword ? 'text' : 'password'" v-model="password"
-                                                class="form-control" :placeholder="$t('Password')" />
-                                            <p v-if="errors.password" class="text-danger fw-bold mt-2">
-                                                {{ errors.password[0] }}
-                                            </p>
-                                            <div class="eye-icon" @click="showPassword = !showPassword">
-                                                <FontAwesomeIcon :icon="showPassword ? faEye : faEyeSlash" />
-                                            </div>
-                                        </div>
-                                        <router-link to="/reset_password"
-                                            class="small d-block text-decoration-none mb-4">
-                                            {{ $t('Forgot your password') }}?</router-link>
-                                        <button type="submit" class="btn btn-primary w-100 rounded-2">
-                                            <span :class="{ 'loader': loader }">{{ loginBtnText }}</span>
-                                        </button>
-                                    </form>
-
-                                    <span>{{ $t("Don't have an account") }}?
-                                        <router-link to="/register">
-                                            {{ $t('Sign Up') }}
-                                        </router-link>
-                                    </span>
-
-
-                                    <div v-if="masterStore?.masterData?.mode == 'local'"
-                                        class="border p-3 d-flex flex-wrap gap-3 align-items-center justify-content-between rounded-4 my-3">
-                                        <div>
-                                            <strong>{{ $t('Email') }}:</strong> user@readylms.com <br>
-                                            <strong>{{ $t('Password') }}:</strong> secret@123
-                                        </div>
-                                        <button @click="copyDemoCredentials('user@readylms.com', 'secret@123')"
-                                            class="btn btn-sm btn-outline-primary small float-end">{{ $t('Copy')
-                                            }}</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Forgot password -->
+                        <div class="flex justify-end">
+                            <router-link to="/reset_password" class="text-sm text-green-700 hover:text-green-800 font-medium transition-colors">
+                                {{ $t('Forgot your password') }}?
+                            </router-link>
                         </div>
+
+                        <!-- Submit -->
+                        <Button
+                            type="submit"
+                            :label="loginBtnText"
+                            :loading="loader"
+                            class="w-full"
+                            raised
+                        />
+                    </form>
+
+                    <!-- Sign up link -->
+                    <p class="text-center text-sm text-gray-500 mt-6">
+                        {{ $t("Don't have an account") }}?
+                        <router-link to="/register" class="text-green-700 hover:text-green-800 font-semibold transition-colors">
+                            {{ $t('Sign Up') }}
+                        </router-link>
+                    </p>
+
+                    <!-- Demo credentials (local mode) -->
+                    <div v-if="masterStore?.masterData?.mode == 'local'"
+                        class="mt-4 border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between bg-gray-50">
+                        <div class="text-sm">
+                            <strong class="text-gray-700">{{ $t('Email') }}:</strong> user@readylms.com <br>
+                            <strong class="text-gray-700">{{ $t('Password') }}:</strong> secret@123
+                        </div>
+                        <Button
+                            @click="copyDemoCredentials('user@readylms.com', 'secret@123')"
+                            :label="$t('Copy')"
+                            size="small"
+                            outlined
+                            severity="secondary"
+                        />
                     </div>
+                </div>
+
+                <!-- Powered by -->
+                <div v-if="masterStore?.masterData?.mode == 'local'"
+                    class="absolute bottom-2.5 right-4 text-green-800 text-sm font-bold">
+                    Powered by RazinSoft &copy;{{ new Date().getFullYear() }}
                 </div>
             </div>
         </div>
     </section>
 </template>
 
-<style lang="scss" scoped>
-.login-section {
-    background: url('/public/assets/website/authorization-page.png') no-repeat center;
-    background-size: cover;
-    height: 100vh;
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-@media (max-width: 576px) {
-   .login-section {
-    height: 100% !important;
-   }
-}
-
-
-.eye-icon {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-}
-
-.login-wizard {
-    border-radius: 2rem;
-
-    .side-image {
-        border-top-right-radius: 2rem;
-        border-bottom-right-radius: 2rem;
-    }
-}
-
-.home-btn {
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.logo-img {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #F9FBFF;
-    padding: 1.5rem 0;
-    border-radius: 1rem;
-}
-
-.loader {
-    transition: 0.3s;
-    position: relative;
-    padding-right: 47px;
-}
-
-.loader::after {
-    content: "";
-    font-weight: bold;
-    position: absolute;
-    transform: translateY(-50%);
-    top: 50%;
-    right: 10px;
-    width: 25px;
-    height: 25px;
-    vertical-align: text-bottom;
-    border: 4px solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    -webkit-animation: spinner-loader 0.75s linear infinite;
-    animation: spinner-loader 0.75s linear infinite;
-    margin-left: 7px;
-}
-
-@keyframes spinner-loader {
-    to {
-        transform: translateY(-50%) rotate(360deg);
-    }
-}
-
-.version-badge {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    background-color: #306c3c;
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 5px 20px;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 0px;
-    border-top-right-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.powerBy {
-    position: absolute;
-    bottom: 10px;
-    right: 0px;
-    color: #306c3c;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 5px 20px;
-    border-radius: 4px;
-}
-</style>
-
 <script setup>
 import BrandLogo from "@/components/BrandLogo.vue";
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
+import Button from "primevue/button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { onMounted, ref, watch } from "vue";
@@ -193,7 +128,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useMasterStore } from "@/stores/master";
 import { useI18n } from "vue-i18n";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faArrowLeft, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 let errors = ref("");
 const loader = ref(false);
@@ -206,7 +141,6 @@ const email = ref("");
 const password = ref("");
 const loginBtnText = ref("Sign in");
 const { t } = useI18n();
-let showPassword = ref(false);
 
 // Function to handle login
 const loginUser = async () => {
@@ -304,3 +238,16 @@ onMounted(async () => {
 })
 
 </script>
+
+<style>
+/* Override PrimeVue Password input wrapper to fill width */
+.p-password {
+    width: 100%;
+}
+.p-password input {
+    width: 100%;
+}
+.p-button.p-button-raised {
+    box-shadow: 0 4px 14px 0 rgba(22, 163, 74, 0.39);
+}
+</style>

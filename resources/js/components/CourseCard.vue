@@ -1,429 +1,189 @@
 <template>
-    <div class="course-card h-100" :class="{ 'course-card--popular': variant === 'popular' }">
-        <div v-if="variant === 'popular'" class="popular-course-card h-100 d-flex flex-column">
-            <router-link :to="'/details/' + course.id" class="popular-course-card__thumb">
-                <img :src="course.thumbnail" :alt="course.title" />
-            </router-link>
+    <!-- Popular Variant -->
+    <div v-if="variant === 'popular'" class="bg-white rounded-2xl border border-slate-100 overflow-hidden h-full flex flex-col hover:border-orange-100 transition-colors duration-300">
+        <router-link :to="`/details/${course.id}`" class="block h-[220px] overflow-hidden">
+            <img
+                :src="course.thumbnail"
+                :alt="course.title"
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-400"
+            />
+        </router-link>
 
-            <div class="popular-course-card__body flex-grow-1">
-                <div class="popular-course-card__meta">
-                    <router-link
-                        :to="'/instructor/' + course.instructor.id"
-                        class="popular-course-card__instructor text-decoration-none"
-                    >
-                        <img
-                            :src="course.instructor.profile_picture"
-                            alt=""
-                            width="32"
-                            height="32"
-                            class="rounded-circle object-fit-cover"
-                        />
-                        <span>{{ shortName(course.instructor?.name) }}</span>
-                    </router-link>
-                    <span class="popular-course-card__category">{{ course.category }}</span>
-                </div>
-
-                <router-link :to="`/details/${course.id}`" class="popular-course-card__title text-decoration-none">
-                    {{ shortText(course.title) }}
+        <div class="flex-1 p-5">
+            <!-- Meta: Instructor + Category -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+                <router-link
+                    :to="`/instructor/${course.instructor.id}`"
+                    class="inline-flex items-center gap-2 text-slate-500 text-sm font-semibold min-w-0"
+                >
+                    <img
+                        :src="course.instructor.profile_picture"
+                        alt=""
+                        class="w-8 h-8 rounded-full object-cover"
+                    />
+                    <span class="truncate">{{ shortName(course.instructor?.name) }}</span>
                 </router-link>
-
-                <div class="popular-course-card__stats">
-                    <span>
-                        <i class="bi bi-play-circle" aria-hidden="true"></i>
-                        {{ course.chapter_count }} {{ $t('Lessons') }}
-                    </span>
-                    <span>
-                        <i class="bi bi-clock" aria-hidden="true"></i>
-                        {{ formatPopularDuration(course?.total_duration) }}
-                    </span>
-                </div>
+                <span class="shrink-0 px-2.5 py-1 rounded-full bg-orange-50 text-orange-600 text-xs font-semibold max-w-[45%] truncate">
+                    {{ course.category }}
+                </span>
             </div>
 
-            <div class="popular-course-card__footer popular-course-card__footer--rating-only">
-                <div class="popular-course-card__rating">
-                    <i class="bi bi-star-fill" aria-hidden="true"></i>
-                    <strong>{{ course.average_rating }}</strong>
-                    ({{ course.review_count }})
-                </div>
+            <!-- Title -->
+            <router-link
+                :to="`/details/${course.id}`"
+                class="block text-navy font-bold text-[1.05rem] leading-snug mb-3 line-clamp-2 min-h-[2.95rem] hover:text-primary-700 transition-colors"
+            >
+                {{ shortText(course.title) }}
+            </router-link>
+
+            <!-- Stats -->
+            <div class="flex items-center justify-between text-sm text-slate-500 font-semibold mb-3">
+                <span class="inline-flex items-center gap-1">
+                    <i class="bi bi-play-circle text-slate-400"></i>
+                    {{ course.chapter_count }} {{ $t('Lessons') }}
+                </span>
+                <span class="inline-flex items-center gap-1">
+                    <i class="bi bi-clock text-slate-400"></i>
+                    {{ formatPopularDuration(course?.total_duration) }}
+                </span>
+            </div>
+
+            <!-- Tech Badges (NEW per Enhancement Plan) -->
+            <div v-if="course.tech_stacks?.length" class="flex flex-wrap gap-1.5 mb-3">
+                <span
+                    v-for="tech in course.tech_stacks.slice(0, 4)"
+                    :key="tech"
+                    class="px-2 py-0.5 rounded-md bg-tech-blue/10 text-tech-blue text-[0.7rem] font-semibold"
+                >
+                    {{ tech }}
+                </span>
+            </div>
+
+            <!-- Difficulty Level (NEW per Enhancement Plan) -->
+            <div v-if="course.difficulty_level" class="mb-1">
+                <span
+                    class="px-2 py-0.5 rounded-md text-[0.7rem] font-bold uppercase tracking-wider"
+                    :class="difficultyClass"
+                >
+                    {{ course.difficulty_level }}
+                </span>
             </div>
         </div>
 
-        <div v-else class="card border-light theme-shadow overflow-hidden h-100 premium-course-card">
-            <router-link :to="'/details/' + course.id" class="course-thumbnail-wrapper position-relative">
-                <img :src="course.thumbnail" class="course-thumbnail card-img-top object-fit-cover" alt="..." />
-                <div class="category-badge">
-                    <strong>{{ course.category }}</strong>
-                </div>
-            </router-link>
-            <div class="card-body pb-0">
-                <div class="course-details-wrapper">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-mortarboard"></i>
-                        <span>{{ course.chapter_count }} {{ $t("Classes") }}</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-clock text-warning"></i>
-                        <span>{{ formatDuration(course?.total_duration) }}</span>
-                    </div>
-                </div>
+        <!-- Footer: Rating -->
+        <div class="flex items-center justify-center px-5 py-3 bg-slate-50 border-t border-slate-100 mt-auto">
+            <span class="inline-flex items-center gap-1.5 text-sm text-slate-500">
+                <i class="bi bi-star-fill text-amber-400 text-sm"></i>
+                <strong class="text-slate-700">{{ course.average_rating }}</strong>
+                ({{ course.review_count }})
+            </span>
+        </div>
+    </div>
 
-                <div class="header-metadata">
-                    <router-link :to="`/details/${course.id}`" class="text-decoration-none d-block mb-2">
-                        <p class="course-title fw-bold text-hover">
-                            {{ shortText(course.title) }}
-                        </p>
-                    </router-link>
-                </div>
-                <div
-                    class="card-text text-muted d-flex flex-column flex-xl-row gap-2 justify-content-between mb-3 mt-3 mt-md-0">
-                    <div v-if="!course?.is_free && !course?.is_enrolled" class="d-flex align-items-center">
-                        <strong class="text-primary me-2">
-                            <span v-if="masterStore?.masterData?.currency_position == 'Left'" class="fs-4">
-                                {{ masterStore?.masterData?.currency_symbol }}{{ course.price ?? course.regular_price }}
-                            </span>
-                            <span v-else class="fs-4">
-                                {{ course.price ?? course.regular_price }}{{ masterStore?.masterData?.currency_symbol }}
-                            </span>
-                        </strong>
-                        <span v-if="course?.price" class="text-muted text-decoration-line-through">
-                            <span v-if="masterStore?.masterData?.currency_position == 'Left'" style="font-size: 14px;">
-                                {{ masterStore?.masterData?.currency_symbol }}{{ course.regular_price }}
-                            </span>
-                            <span v-else style="font-size: 14px;">
-                                {{ course.regular_price }}{{ masterStore?.masterData?.currency_symbol }}
-                            </span>
-                        </span>
-                    </div>
-                    <div v-else class="d-flex w-100 align-self-center me-auto my-auto mt-1">
-                        <span class="badge px-3 py-2 rounded fw-semibold"
-                            :class="course?.is_enrolled ? 'bg-primary text-white' : 'bg-light text-primary border border-primary'"
-                            style="font-size: 13px;">
-                            {{ course?.is_enrolled ? $t("Enrolled") : $t("Free") }}
-                        </span>
-                    </div>
-                </div>
+    <!-- Default Variant -->
+    <div v-else class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-full hover:border-primary-200/30 hover:shadow-lg transition-all duration-350">
+        <router-link :to="`/details/${course.id}`" class="block relative h-[200px] overflow-hidden">
+            <img
+                :src="course.thumbnail"
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-400"
+                alt=""
+            />
+            <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-gradient-to-r from-primary-700 to-primary-500 text-white text-[11px] font-semibold shadow-lg shadow-primary-700/30">
+                {{ course.category }}
+            </span>
+        </router-link>
+
+        <div class="p-4 pb-0">
+            <!-- Duration & Lessons -->
+            <div class="flex items-center justify-between text-sm font-semibold text-slate mb-2">
+                <span class="flex items-center gap-2">
+                    <i class="bi bi-mortarboard"></i>
+                    {{ course.chapter_count }} {{ $t('Classes') }}
+                </span>
+                <span class="flex items-center gap-2">
+                    <i class="bi bi-clock text-amber-500"></i>
+                    {{ formatDuration(course?.total_duration) }}
+                </span>
             </div>
-            <div class="card-footer bg-white border-light py-0">
-                <div class="row">
-                    <div class="col-12 text-muted course-metadata py-2">
-                        <router-link :to="'/instructor/' + course.instructor.id"
-                            class="d-flex align-items-center gap-2 text-decoration-none text-muted">
-                            <img :src="course.instructor.profile_picture" alt="instructor-avatar" width="35" height="35"
-                                class="rounded-circle object-fit-cover">
-                            <span class="fw-bold">{{ shortName(course.instructor?.name) }}</span>
-                        </router-link>
-                        <span class="order-md-1 order-xl-2">
-                            <i class="bi bi-star-fill me-2 text-warning"></i>
-                            <strong>{{ course.average_rating }}</strong>
-                            ({{ course.review_count }})
+
+            <!-- Title -->
+            <router-link :to="`/details/${course.id}`" class="block mb-2">
+                <p class="font-bold text-navy text-base leading-snug line-clamp-2 hover:text-primary-700 transition-colors">
+                    {{ shortText(course.title) }}
+                </p>
+            </router-link>
+
+            <!-- Price -->
+            <div class="flex items-center gap-2 mb-3 mt-3">
+                <template v-if="!course?.is_free && !course?.is_enrolled">
+                    <strong class="text-primary-700 text-xl">
+                        <span v-if="masterStore?.masterData?.currency_position == 'Left'">
+                            {{ masterStore?.masterData?.currency_symbol }}{{ course.price ?? course.regular_price }}
                         </span>
-                    </div>
-                </div>
+                        <span v-else>
+                            {{ course.price ?? course.regular_price }}{{ masterStore?.masterData?.currency_symbol }}
+                        </span>
+                    </strong>
+                    <span v-if="course?.price" class="text-slate-400 text-sm line-through">
+                        <span v-if="masterStore?.masterData?.currency_position == 'Left'">
+                            {{ masterStore?.masterData?.currency_symbol }}{{ course.regular_price }}
+                        </span>
+                        <span v-else>
+                            {{ course.regular_price }}{{ masterStore?.masterData?.currency_symbol }}
+                        </span>
+                    </span>
+                </template>
+                <template v-else>
+                    <span
+                        class="px-3 py-1.5 rounded-lg text-sm font-semibold"
+                        :class="course?.is_enrolled
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-primary-50 text-primary-700 border border-primary-200'"
+                    >
+                        {{ course?.is_enrolled ? $t('Enrolled') : $t('Free') }}
+                    </span>
+                </template>
             </div>
+        </div>
+
+        <!-- Footer: Instructor + Rating -->
+        <div class="flex items-center justify-between px-4 py-3 bg-slate-50 border-t border-slate-100 mt-auto">
+            <router-link
+                :to="`/instructor/${course.instructor.id}`"
+                class="flex items-center gap-2 text-slate-500 hover:text-primary-700 transition-colors"
+            >
+                <img
+                    :src="course.instructor.profile_picture"
+                    alt=""
+                    class="w-8 h-8 rounded-full object-cover"
+                />
+                <span class="font-bold text-sm">{{ shortName(course.instructor?.name) }}</span>
+            </router-link>
+            <span class="flex items-center gap-1 text-sm">
+                <i class="bi bi-star-fill text-amber-400 text-sm"></i>
+                <strong class="text-slate-700">{{ course.average_rating }}</strong>
+                <span class="text-slate-400">({{ course.review_count }})</span>
+            </span>
         </div>
     </div>
 </template>
 
-<style lang="scss" scoped>
-.course-card--popular {
-    .popular-course-card {
-        background: #fff;
-        border-radius: 18px;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        transition: border-color 0.3s ease;
-
-        &:hover {
-            border-color: #fed7aa;
-        }
-    }
-
-    .popular-course-card__thumb {
-        display: block;
-        height: 220px;
-        overflow: hidden;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-    }
-
-    &:hover .popular-course-card__thumb img {
-        transform: scale(1.06);
-    }
-
-    .popular-course-card__body {
-        padding: 1.25rem 1.25rem 1rem;
-    }
-
-    .popular-course-card__meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        margin-bottom: 0.65rem;
-    }
-
-    .popular-course-card__instructor {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        color: #6b7280;
-        font-size: 0.875rem;
-        font-weight: 600;
-        min-width: 0;
-
-        span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-
-    .popular-course-card__category {
-        flex-shrink: 0;
-        padding: 0.25rem 0.65rem;
-        border-radius: 50px;
-        background: #fff7ed;
-        color: #ea580c;
-        font-size: 0.78rem;
-        font-weight: 600;
-        max-width: 45%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .popular-course-card__title {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: #111827;
-        font-size: 1.05rem;
-        font-weight: 700;
-        line-height: 1.4;
-        margin-bottom: 0.75rem;
-        min-height: 2.95rem;
-    }
-
-    .popular-course-card__stats {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #6b7280;
-
-        span {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        i {
-            color: #9ca3af;
-            font-size: 0.85rem;
-        }
-    }
-
-    .popular-course-card__footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.25rem;
-        background: #f9fafb;
-        border-top: 1px solid #f3f4f6;
-        margin-top: auto;
-
-        &--rating-only {
-            justify-content: center;
-        }
-    }
-
-    .popular-course-card__rating {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        font-size: 0.9rem;
-        color: #6b7280;
-
-        i {
-            color: #fbbf24;
-            font-size: 0.85rem;
-        }
-
-        strong {
-            color: #374151;
-        }
-    }
-}
-
-@media (max-width: 767px) {
-    .course-card--popular {
-        .popular-course-card__thumb {
-            height: 190px;
-        }
-
-        .popular-course-card__body {
-            padding: 1rem 1rem 0.85rem;
-        }
-
-        .popular-course-card__title {
-            font-size: 0.98rem;
-            min-height: auto;
-            margin-bottom: 0.65rem;
-        }
-
-        .popular-course-card__stats {
-            flex-wrap: wrap;
-            font-size: 0.8rem;
-            gap: 0.35rem 0.75rem;
-        }
-
-        .popular-course-card__category {
-            max-width: 42%;
-            font-size: 0.72rem;
-        }
-
-        .popular-course-card__footer {
-            padding: 0.85rem 1rem;
-        }
-    }
-}
-
-.header-metadata {
-    height: 50px;
-    overflow: hidden;
-    margin-bottom: 5px;
-}
-
-.course-metadata {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    color: #64748B !important;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 20px;
-}
-
-.course-title {
-    overflow: hidden;
-    color: #0F172A;
-    font-family: Lexend;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 24px;
-}
-
-.goto-details-icon {
-    background-color: #eee;
-}
-
-.course-card:not(.course-card--popular) {
-    transition: all 0.35s ease;
-
-    .premium-course-card {
-        border-radius: 18px;
-        border: 1px solid #e2e8f0 !important;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
-    }
-
-    .course-thumbnail-wrapper {
-        height: 200px;
-        overflow: hidden;
-
-        .course-thumbnail {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.4s ease;
-        }
-    }
-
-    .border-light {
-        border-color: #e2e8f0 !important;
-    }
-
-    &:hover {
-        .premium-course-card {
-            border-color: rgba(48, 108, 60, 0.2) !important;
-            box-shadow: 0 16px 40px rgba(48, 108, 60, 0.12);
-        }
-
-        .course-thumbnail {
-            transform: scale(1.08);
-        }
-    }
-}
-
-.category-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    color: #fff;
-    padding: 5px 12px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(48, 108, 60, 0.3);
-}
-
-.course-details-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--bg-primary);
-    margin-bottom: 10px;
-}
-
-@media (max-width: 576px) {
-    .card-body {
-        padding: 0.5rem 0.5rem;
-    }
-
-    .card-footer {
-        padding: 0.5rem 0.5rem;
-    }
-
-    .header-metadata {
-        height: 75px;
-    }
-
-    .course-metadata {
-        border-right: none;
-        border-bottom: 1px solid #eaeaea;
-        border-top: 1px solid #eaeaea;
-    }
-}
-</style>
-
 <script setup>
 import { useMasterStore } from "@/stores/master";
+import { computed } from "vue";
 
 const masterStore = useMasterStore();
 
-defineProps({
+const props = defineProps({
     course: Object,
-    variant: {
-        type: String,
-        default: "default",
-    },
+    variant: { type: String, default: "default" },
+});
+
+const difficultyClass = computed(() => {
+    const level = props.course?.difficulty_level?.toLowerCase();
+    if (level === "beginner") return "bg-green-50 text-green-700";
+    if (level === "intermediate") return "bg-amber-50 text-amber-700";
+    return "bg-red-50 text-red-700";
 });
 
 function shortText(text) {
@@ -433,10 +193,10 @@ function shortText(text) {
 }
 
 const shortName = (name) => {
-    if (!name) return '';
-    const names = name.split(' ');
+    if (!name) return "";
+    const names = name.split(" ");
     if (names.length === 1) return names[0];
-    return names[0] + ' ' + names[names.length - 1];
+    return names[0] + " " + names[names.length - 1];
 };
 
 const formatDuration = (duration) => {
