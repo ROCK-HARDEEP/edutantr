@@ -25,9 +25,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Install JS dependencies and build frontend
 RUN npm install && npm run build
 
-# Cache Laravel config
-RUN php artisan config:cache && php artisan route:cache
-
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Clear any cached config from build time — env vars are injected at runtime by Render
+CMD php artisan config:clear && php artisan cache:clear && php artisan serve --host=0.0.0.0 --port=8000
