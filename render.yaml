@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: edutantr
+    runtime: php
+    buildCommand: composer install --no-dev --optimize-autoloader && npm install && npm run build
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        syncFromPostgres: false
+      - key: APP_KEY
+        generateValue: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: APP_TIMEZONE
+        value: Asia/Dhaka
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_DRIVER
+        value: file
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: QUEUE_CONNECTION
+        value: sync
